@@ -1,0 +1,79 @@
+{
+  "name": "zen-colors",
+  "version": "0.1.0",
+  "description": "Zen-like CSS color scales, tints, shades, and contrast helpers — OKLCH by default",
+  "type": "module",
+  "main": "./dist/index.cjs",
+  "module": "./dist/index.js",
+  "types": "./dist/index.d.ts",
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "import": "./dist/index.js",
+      "require": "./dist/index.cjs"
+    }
+  },
+  "files": [
+    "dist",
+    "LICENSE",
+    "README.md",
+    "CHANGELOG.md",
+    "CREDITS.md"
+  ],
+  "sideEffects": false,
+  "scripts": {
+    "build": "tsup",
+    "dev": "tsup --watch",
+    "test": "vitest run",
+    "test:watch": "vitest",
+    "test:coverage": "vitest run --coverage",
+    "typecheck": "tsc --noEmit",
+    "lint": "eslint .",
+    "lint:fix": "eslint . --fix",
+    "format": "prettier --write .",
+    "format:check": "prettier --check .",
+    "prepublishOnly": "npm run typecheck && npm run test:coverage && npm run build"
+  },
+  "keywords": [
+    "color",
+    "css",
+    "oklch",
+    "tint",
+    "shade",
+    "scale",
+    "contrast",
+    "tailwind",
+    "palette"
+  ],
+  "author": "kematzy",
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/kematzy/zen-colors.git"
+  },
+  "bugs": {
+    "url": "https://github.com/kematzy/zen-colors/issues"
+  },
+  "homepage": "https://github.com/kematzy/zen-colors#readme",
+  "engines": {
+    "node": ">=18"
+  },
+  "dependencies": {
+    "culori": "^4.0.2"
+  },
+  "devDependencies": {
+    "@eslint/js": "^9.39.2",
+    "@types/node": "^25.0.3",
+    "@vitest/coverage-v8": "^4.1.10",
+    "eslint": "^9.39.2",
+    "eslint-config-prettier": "^10.1.8",
+    "prettier": "^3.7.4",
+    "tsup": "^8.5.1",
+    "typescript": "^5.9.3",
+    "typescript-eslint": "^8.50.1",
+    "vitest": "^4.1.10"
+  },
+  "allowScripts": {
+    "esbuild@0.27.7": true
+  }
+}
