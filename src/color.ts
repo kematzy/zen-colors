@@ -1,5 +1,12 @@
 import type { Color as CuloriColor } from 'culori';
 
+import {
+  bestForegroundOf,
+  contrastOf,
+  onContrast,
+  type ContrastResult,
+  type OnOptions,
+} from './contrast.js';
 import { ColorError } from './errors.js';
 import {
   formatHexDigits,
@@ -187,6 +194,34 @@ export class Color {
    */
   scale(weight?: number, options?: ScaleOptions): Color[] | Record<string, Color> {
     return buildScale(this, weight, options);
+  }
+
+  /**
+   * Compare this color with another and return a rich contrast report
+   * (ratio, WCAG pass flags, darker/lighter).
+   */
+  contrast(other: string | Color): ContrastResult {
+    return contrastOf(this, other);
+  }
+
+  /**
+   * Best black or white foreground to place on top of this color (as a background).
+   */
+  fg(): Color {
+    return bestForegroundOf(this);
+  }
+
+  /** Alias of {@link fg}. */
+  bestForeground(): Color {
+    return this.fg();
+  }
+
+  /**
+   * Return a tint or shade of **this** color that meets `targetRatio`
+   * against a surface (default: white).
+   */
+  on(targetRatio: number, options?: OnOptions): Color {
+    return onContrast(this, targetRatio, options);
   }
 }
 

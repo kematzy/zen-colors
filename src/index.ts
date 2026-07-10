@@ -6,6 +6,7 @@
  */
 
 export { Color, parse } from './color.js';
+export type { ContrastPasses, ContrastResult, OnOptions } from './contrast.js';
 export { ColorError } from './errors.js';
 export type {
   ColorJSON,
