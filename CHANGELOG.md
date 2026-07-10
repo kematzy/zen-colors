@@ -9,4 +9,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Added
 
-- Project scaffold: TypeScript, tsup, Vitest, ESLint, Prettier, MIT license.
+- Project scaffold: TypeScript, tsup, Vitest (≥90% coverage), ESLint, Prettier, CI, MIT license.
+- `Color` construction from common CSS color strings (via culori) and null-safe `parse()`.
+- Formatters: `oklchString()`, `rgbString()`, `hslString()`, `hexString()`, `toString()`, `toJSON()`.
+- OKLCH object channels with lightness as **percent** (`0–100`).
+- OKLCH `tint` / `shade` / `tints` / `shades` / `all` mix helpers.
+- `scale(weight, options?)` basic scale (integer weight 2–25, default 10) as `Color[]`.
+- Optional scale presets: `preset: 'tailwind'` (`50…950`) and `preset: 'zen'` (`t90…s90`).
+- Contrast helpers: `contrast()`, `fg()` / `bestForeground()`, `on(ratio, options?)`.
+- `ColorError` for invalid input and arguments.

@@ -26,7 +26,9 @@ const TAILWIND_SHADE_WEIGHTS: Readonly<Record<string, number>> = {
  */
 export function assertScaleWeight(weight: unknown): number {
   if (typeof weight !== 'number' || Number.isNaN(weight) || !Number.isFinite(weight)) {
-    throw new ColorError(`Scale weight must be an integer between 2 and 25, got: ${String(weight)}`);
+    throw new ColorError(
+      `Scale weight must be an integer between 2 and 25, got: ${String(weight)}`,
+    );
   }
   if (!Number.isInteger(weight) || weight < 2 || weight > 25) {
     throw new ColorError(`Scale weight must be an integer between 2 and 25, got: ${weight}`);

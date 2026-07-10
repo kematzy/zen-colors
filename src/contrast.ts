@@ -48,13 +48,10 @@ function passesFromRatio(ratio: number): ContrastPasses {
 
 function toColor(input: string | Color, label: string): Color {
   if (input instanceof Color) return input;
-  if (typeof input !== 'string') {
-    throw new ColorError(`Invalid ${label}: expected a CSS color string or Color`);
-  }
   try {
     return new Color(input);
   } catch {
-    throw new ColorError(`Unable to parse ${label} color: ${input}`);
+    throw new ColorError(`Unable to parse ${label} color: ${String(input)}`);
   }
 }
 
@@ -97,13 +94,11 @@ export function bestForegroundOf(background: Color): Color {
  * 2. Progressive shades (darker) and tints (lighter) by increasing weight
  * 3. Best-effort highest-ratio candidate if the target is unreachable
  */
-export function onContrast(
-  color: Color,
-  targetRatio: number,
-  options: OnOptions = {},
-): Color {
+export function onContrast(color: Color, targetRatio: number, options: OnOptions = {}): Color {
   if (typeof targetRatio !== 'number' || !Number.isFinite(targetRatio) || targetRatio <= 0) {
-    throw new ColorError(`Target contrast ratio must be a positive number, got: ${String(targetRatio)}`);
+    throw new ColorError(
+      `Target contrast ratio must be a positive number, got: ${String(targetRatio)}`,
+    );
   }
 
   const against = toColor(options.against ?? '#ffffff', 'against');

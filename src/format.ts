@@ -1,10 +1,4 @@
-import {
-  converter,
-  formatCss,
-  formatHex,
-  formatHex8,
-  round,
-} from 'culori';
+import { converter, formatHex, formatHex8, round } from 'culori';
 import type { Color as CuloriColor } from 'culori';
 
 import type { OklchChannels, RgbChannels } from './types.js';
@@ -92,21 +86,14 @@ export function formatHslString(color: CuloriColor): string {
 /** `#rrggbb` or `#rrggbbaa` when alpha < 1. */
 export function formatHexString(color: CuloriColor): string {
   const alpha = getAlpha(color);
+  // culori always returns a string for valid rgb-convertible colors
   if (alpha < 1) {
-    return formatHex8(color) ?? '#00000000';
+    return formatHex8(color) as string;
   }
-  return formatHex(color) ?? '#000000';
+  return formatHex(color) as string;
 }
 
 /** Hex without leading `#`. */
 export function formatHexDigits(color: CuloriColor): string {
   return formatHexString(color).replace(/^#/, '');
-}
-
-/**
- * Fallback CSS serialization via culori (useful for debugging).
- * Preferred public APIs are the dedicated formatters above.
- */
-export function formatCssString(color: CuloriColor): string {
-  return formatCss(color) ?? formatOklchString(color);
 }

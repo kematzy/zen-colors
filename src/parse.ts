@@ -6,6 +6,5 @@ import type { Color } from 'culori';
  * Returns `undefined` when input is not a recognized color string.
  */
 export function parseCulori(input: string): Color | undefined {
-  if (typeof input !== 'string') return undefined;
   return culoriParse(input.trim()) ?? undefined;
 }

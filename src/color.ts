@@ -33,7 +33,7 @@ import type { ColorJSON, ColorType, OklchChannels, RgbChannels, ScaleOptions } f
  */
 export class Color {
   /** Underlying culori color (RGB/HSL/OKLCH modes as provided by the library). */
-  private readonly _color: CuloriColor;
+  private _color: CuloriColor;
 
   /** Role of this instance (`base`, `tint`, `shade`, …). */
   readonly type: ColorType;
@@ -61,10 +61,8 @@ export class Color {
 
   /** Create a Color from an already-parsed culori color (internal + advanced use). */
   static fromCulori(color: CuloriColor, type: ColorType = 'base', weight = 0): Color {
-    const instance = Object.create(Color.prototype) as Color;
-    (instance as { _color: CuloriColor })._color = color;
-    (instance as { type: ColorType }).type = type;
-    (instance as { weight: number }).weight = weight;
+    const instance = new Color('#000000', type, weight);
+    instance._color = color;
     return instance;
   }
 
