@@ -13,7 +13,8 @@ import {
 } from './format.js';
 import { normalizeWeight, seriesWeights, shadeOklch, tintOklch } from './mix.js';
 import { parseCulori } from './parse.js';
-import type { ColorJSON, ColorType, OklchChannels, RgbChannels } from './types.js';
+import { buildScale } from './scale.js';
+import type { ColorJSON, ColorType, OklchChannels, RgbChannels, ScaleOptions } from './types.js';
 
 /**
  * A CSS color with OKLCH-first mixing, formatting, and (upcoming) scale helpers.
@@ -163,7 +164,7 @@ export class Color {
 
   /**
    * Full series: lightest tint → … → base → … → darkest shade.
-   * Default step: `10` (21 colors total).
+   * Default step: `10` (21 colors total). Includes pure white and black.
    */
   all(step?: number): Color[] {
     const s = normalizeWeight(step, 10);
@@ -172,6 +173,20 @@ export class Color {
     const base = Color.fromCulori(this._color, 'base', 0);
     const shades = this.shades(effective);
     return [...tints, base, ...shades];
+  }
+
+  /**
+   * Generate a scale of tints and shades from this color.
+   *
+   * **Basic (default)** — integer `weight` in `2–25` (default `10`).
+   * Returns `Color[]` ordered lightest → base → darkest, skipping pure white/black.
+   *
+   * **Presets** — optional extras when `options.preset` is set:
+   * - `'tailwind'` → `Record` keyed `50…950` (base at `500`)
+   * - `'zen'` → `Record` keyed `t90…t10`, `base`, `s10…s90`
+   */
+  scale(weight?: number, options?: ScaleOptions): Color[] | Record<string, Color> {
+    return buildScale(this, weight, options);
   }
 }
 
