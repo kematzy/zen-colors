@@ -2,7 +2,18 @@
  * zen-colors
  *
  * Zen-like CSS color scales, tints, shades, and contrast helpers.
- * Public API is built out via TDD; this file re-exports as modules land.
+ * Default mix space: OKLCH. Default string form: modern `oklch(...)`.
  */
+
+export { Color, parse } from './color.js';
+export { ColorError } from './errors.js';
+export type {
+  ColorJSON,
+  ColorType,
+  OklchChannels,
+  RgbChannels,
+  ScaleOptions,
+  ScalePreset,
+} from './types.js';
 
 export const VERSION = '0.1.0';
