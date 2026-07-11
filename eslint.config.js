@@ -1,5 +1,6 @@
 import eslint from '@eslint/js';
 import eslintConfigPrettier from 'eslint-config-prettier';
+import globals from 'globals';
 import tseslint from 'typescript-eslint';
 
 export default tseslint.config(
@@ -24,6 +25,17 @@ export default tseslint.config(
         'error',
         { prefer: 'type-imports', fixStyle: 'separate-type-imports' },
       ],
+    },
+  },
+  // Node examples (console, etc.)
+  {
+    files: ['examples/**/*.{js,mjs,cjs}'],
+    languageOptions: {
+      ecmaVersion: 2022,
+      sourceType: 'module',
+      globals: {
+        ...globals.node,
+      },
     },
   },
 );
