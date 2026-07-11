@@ -59,7 +59,7 @@
   },
   "homepage": "https://github.com/kematzy/zen-colors#readme",
   "engines": {
-    "node": ">=18"
+    "node": ">=20"
   },
   "dependencies": {
     "culori": "^4.0.2"

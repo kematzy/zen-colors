@@ -17,7 +17,7 @@ new Color('#0af').tint(25).oklchString();
 npm install zen-colors
 ```
 
-**Requirements:** Node.js ≥ 18
+**Requirements:** Node.js ≥ 20
 
 ## Quick start
 
