@@ -116,10 +116,12 @@ Full signatures are in the published TypeScript declarations (`dist/index.d.ts`)
 ```bash
 npm install
 npm test              # vitest (node)
+npm run test:ui       # vitest interactive UI
 npm run test:coverage # ≥ 90% thresholds enforced
 npm run test:browser  # vitest browser smoke (Playwright / Chromium)
 npm run typecheck
 npm run lint
+npm run spellcheck    # project dictionary via cspell
 npm run build
 ```
 

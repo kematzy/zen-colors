@@ -1,0 +1,30 @@
+{
+  "$schema": "https://raw.githubusercontent.com/streetsidesoftware/cspell/main/cspell.schema.json",
+  "version": "0.2",
+  "language": "en",
+  "caseSensitive": false,
+  "useGitignore": true,
+  "ignorePaths": [
+    "node_modules",
+    "coverage",
+    "dist",
+    "package-lock.json",
+    "**/*.map",
+    "**/*.tsbuildinfo"
+  ],
+  "words": [
+    "aaff",
+    "culori",
+    "kematzy",
+    "oklab",
+    "oklch",
+    "rgba",
+    "rrggbb",
+    "rrggbbaa",
+    "tseslint",
+    "tsup",
+    "unitless",
+    "vitest",
+    "WCAG"
+  ]
+}

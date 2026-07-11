@@ -19,4 +19,6 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Contrast helpers: `contrast()`, `fg()` / `bestForeground()`, `on(ratio, options?)`.
 - `ColorError` for invalid input and arguments.
 - `npm run test:browser` smoke suite via Vitest + Playwright Chromium.
+- `npm run test:ui` for Vitest interactive UI.
 - ESLint support for `examples/**` Node scripts.
+- Project CSpell config (`.cspell.json`) and `npm run spellcheck`.
