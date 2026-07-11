@@ -21,4 +21,4 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - `npm run test:browser` smoke suite via Vitest + Playwright Chromium.
 - `npm run test:ui` for Vitest interactive UI.
 - ESLint support for `examples/**` Node scripts.
-- Project CSpell config (`.cspell.json`) and `npm run spellcheck`.
+- Project CSpell config (`.cspell.json`) and `npm run spellcheck` (CI: Node 22+ only; cspell requires ≥22.18).
