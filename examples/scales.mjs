@@ -22,3 +22,15 @@ const zen = brand.scale(10, { preset: 'zen' });
 for (const [key, c] of Object.entries(zen)) {
   console.log(`${key.padEnd(4)}  ${c.oklchString()}`);
 }
+
+console.log('\n--- preset: zen max ---');
+const zenMax = brand.scale(2, { preset: 'zen' });
+for (const [key, c] of Object.entries(zenMax)) {
+  console.log(`${key.padEnd(4)}  ${c.oklchString()}`);
+}
+
+console.log('\n--- preset: zen min ---');
+const zenMin = brand.scale(25, { preset: 'zen' });
+for (const [key, c] of Object.entries(zenMin)) {
+  console.log(`${key.padEnd(4)}  ${c.oklchString()}`);
+}

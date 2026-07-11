@@ -40,8 +40,10 @@ cyan.scale(); // weight 10 default → Color[]
 cyan.scale(25); // 75,50,25 + base + 25,50,75
 
 // Optional named presets (explicit only — never the default)
-cyan.scale(10, { preset: 'tailwind' }); // { 50…950 }, base at 500
+cyan.scale(10, { preset: 'tailwind' }); // fixed { 50…950 }, base at 500
 cyan.scale(10, { preset: 'zen' }); // { t90…t10, base, s10…s90 }
+cyan.scale(25, { preset: 'zen' }); // { t75, t50, t25, base, s25, s50, s75 }
+cyan.scale(2, { preset: 'zen' }); // { t98…t2, base, s2…s98 }
 
 // Contrast (current-color centric)
 cyan.contrast('#fff'); // { ratio, passes, darker, lighter, current }
@@ -69,7 +71,7 @@ new Color('not-a-color'); // throws ColorError
 | **String default** | Modern `oklch(L% C H)` |
 | **Primary job** | Tints & shades from one color |
 | **`scale(weight)`** | Integer weight **2–25**, default **10**; skips 0 & 100 |
-| **Presets** | Extra only — `preset: 'tailwind' \| 'zen'` |
+| **Presets** | Extra only — `preset: 'tailwind'` (fixed) or `'zen'` (weight-driven keys) |
 | **Immutability** | Methods return **new** `Color` instances |
 
 ### `scale()` weight examples
@@ -113,12 +115,15 @@ Full signatures are in the published TypeScript declarations (`dist/index.d.ts`)
 
 ```bash
 npm install
-npm test              # vitest
+npm test              # vitest (node)
 npm run test:coverage # ≥ 90% thresholds enforced
+npm run test:browser  # vitest browser smoke (Playwright / Chromium)
 npm run typecheck
 npm run lint
 npm run build
 ```
+
+> First-time browser tests need Playwright browsers: `npx playwright install chromium`
 
 This library is developed **test-first** (TDD).
 

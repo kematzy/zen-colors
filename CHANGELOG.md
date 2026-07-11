@@ -15,6 +15,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - OKLCH object channels with lightness as **percent** (`0–100`).
 - OKLCH `tint` / `shade` / `tints` / `shades` / `all` mix helpers.
 - `scale(weight, options?)` basic scale (integer weight 2–25, default 10) as `Color[]`.
-- Optional scale presets: `preset: 'tailwind'` (`50…950`) and `preset: 'zen'` (`t90…s90`).
+- Optional scale presets: `preset: 'tailwind'` (`50…950`, fixed) and `preset: 'zen'` (weight-driven `t{N}` / `s{N}` keys).
 - Contrast helpers: `contrast()`, `fg()` / `bestForeground()`, `on(ratio, options?)`.
 - `ColorError` for invalid input and arguments.
+- `npm run test:browser` smoke suite via Vitest + Playwright Chromium.
+- ESLint support for `examples/**` Node scripts.

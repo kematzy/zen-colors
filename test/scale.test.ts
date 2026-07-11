@@ -117,13 +117,9 @@ describe("Color.scale() — preset: 'tailwind'", () => {
 describe("Color.scale() — preset: 'zen'", () => {
   const base = new Color('#0af');
 
-  it('returns a record with t*, base, and s* keys', () => {
-    const scale = base.scale(10, { preset: 'zen' }) as Record<string, Color>;
+  it('defaults weight to 10 → t90…t10, base, s10…s90', () => {
+    const scale = base.scale(undefined, { preset: 'zen' }) as Record<string, Color>;
     expect(scale.base?.hexString().toLowerCase()).toBe(base.hexString().toLowerCase());
-    expect(scale.t90).toBeInstanceOf(Color);
-    expect(scale.t10).toBeInstanceOf(Color);
-    expect(scale.s10).toBeInstanceOf(Color);
-    expect(scale.s90).toBeInstanceOf(Color);
     expect(Object.keys(scale)).toEqual([
       't90',
       't80',
@@ -147,11 +143,50 @@ describe("Color.scale() — preset: 'zen'", () => {
     ]);
   });
 
-  it('orders tints lightest (t90) to darkest shade (s90) to become lighter/darker', () => {
+  it('uses weight 10 keys when weight is 10', () => {
+    const scale = base.scale(10, { preset: 'zen' }) as Record<string, Color>;
+    expect(scale.t90).toBeInstanceOf(Color);
+    expect(scale.t10).toBeInstanceOf(Color);
+    expect(scale.s10).toBeInstanceOf(Color);
+    expect(scale.s90).toBeInstanceOf(Color);
+    expect(scale.t90!.weight).toBe(90);
+    expect(scale.s10!.weight).toBe(10);
+  });
+
+  it('uses weight 25 → t75, t50, t25, base, s25, s50, s75', () => {
+    const scale = base.scale(25, { preset: 'zen' }) as Record<string, Color>;
+    expect(Object.keys(scale)).toEqual(['t75', 't50', 't25', 'base', 's25', 's50', 's75']);
+    expect(scale.t75!.type).toBe('tint');
+    expect(scale.s75!.type).toBe('shade');
+    expect(scale.t75!.oklch.l).toBeGreaterThan(scale.t25!.oklch.l);
+    expect(scale.s75!.oklch.l).toBeLessThan(scale.s25!.oklch.l);
+  });
+
+  it('uses weight 2 for dense tN / sN keys from 2…98', () => {
+    const scale = base.scale(2, { preset: 'zen' }) as Record<string, Color>;
+    const keys = Object.keys(scale);
+    // 49 tints + base + 49 shades = 99
+    expect(keys).toHaveLength(99);
+    expect(keys[0]).toBe('t98');
+    expect(keys[48]).toBe('t2');
+    expect(keys[49]).toBe('base');
+    expect(keys[50]).toBe('s2');
+    expect(keys[keys.length - 1]).toBe('s98');
+    expect(scale.t98).toBeInstanceOf(Color);
+    expect(scale.s2).toBeInstanceOf(Color);
+  });
+
+  it('orders tints lightest → base → darkest shade', () => {
     const scale = base.scale(10, { preset: 'zen' }) as Record<string, Color>;
     expect(scale.t90!.oklch.l).toBeGreaterThan(scale.t10!.oklch.l);
     expect(scale.t10!.oklch.l).toBeGreaterThan(scale.base!.oklch.l);
     expect(scale.s10!.oklch.l).toBeLessThan(scale.base!.oklch.l);
     expect(scale.s90!.oklch.l).toBeLessThan(scale.s10!.oklch.l);
+  });
+
+  it('validates weight for zen preset', () => {
+    expect(() => base.scale(1, { preset: 'zen' })).toThrow(ColorError);
+    expect(() => base.scale(26, { preset: 'zen' })).toThrow(ColorError);
+    expect(() => base.scale(10.5, { preset: 'zen' })).toThrow(ColorError);
   });
 });

@@ -187,8 +187,9 @@ export class Color {
    * Returns `Color[]` ordered lightest → base → darkest, skipping pure white/black.
    *
    * **Presets** — optional extras when `options.preset` is set:
-   * - `'tailwind'` → `Record` keyed `50…950` (base at `500`)
-   * - `'zen'` → `Record` keyed `t90…t10`, `base`, `s10…s90`
+   * - `'tailwind'` → fixed `Record` keyed `50…950` (base at `500`; weight ignored)
+   * - `'zen'` → weight-driven `Record` keyed `t{N}`, `base`, `s{N}`
+   *   (e.g. weight `10` → `t90…t10, base, s10…s90`)
    */
   scale(weight?: number, options?: ScaleOptions): Color[] | Record<string, Color> {
     return buildScale(this, weight, options);

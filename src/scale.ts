@@ -87,18 +87,28 @@ export function generateTailwindScale(color: Color): Record<string, Color> {
 }
 
 /**
- * Zen-style scale `t90…t10`, `base`, `s10…s90`.
+ * Zen-style scale with weight-driven keys.
+ *
+ * Steps share the basic-scale grid (`weight, 2×weight, …` while `< 100`).
+ * Keys:
+ * - tints: `t{N}` lightest first (`t90…t10` when weight is 10)
+ * - `base`
+ * - shades: `s{N}` lightest-shade first (`s10…s90` when weight is 10)
+ *
+ * @example weight 25 → `{ t75, t50, t25, base, s25, s50, s75 }`
+ * @example weight 2  → `{ t98, t96, …, t2, base, s2, …, s98 }`
  */
-export function generateZenScale(color: Color): Record<string, Color> {
+export function generateZenScale(color: Color, weight: number): Record<string, Color> {
+  const steps = basicScaleWeights(weight);
   const scale: Record<string, Color> = {};
 
-  for (let w = 90; w >= 10; w -= 10) {
+  for (const w of steps.slice().reverse()) {
     scale[`t${w}`] = cloneAs(color.tint(w), 'tint', w);
   }
 
   scale.base = cloneAs(color, 'base', 0);
 
-  for (let w = 10; w <= 90; w += 10) {
+  for (const w of steps) {
     scale[`s${w}`] = cloneAs(color.shade(w), 'shade', w);
   }
 
@@ -114,11 +124,11 @@ export function resolvePreset(options?: ScaleOptions): ScalePreset {
 }
 
 /**
- * Build ascale for `color`.
+ * Build a scale for `color`.
  *
  * - Default / `preset: null` → basic `Color[]` using integer `weight` (2–25, default 10)
  * - `preset: 'tailwind'` → fixed `50…950` record (weight ignored once validated if passed)
- * - `preset: 'zen'` → fixed `t* / base / s*` record
+ * - `preset: 'zen'` → weight-driven `t* / base / s*` record (same weight rules)
  */
 export function buildScale(
   color: Color,
@@ -133,8 +143,8 @@ export function buildScale(
   }
 
   if (preset === 'zen') {
-    if (weight !== undefined) assertScaleWeight(weight);
-    return generateZenScale(color);
+    const w = weight === undefined ? 10 : assertScaleWeight(weight);
+    return generateZenScale(color, w);
   }
 
   const w = weight === undefined ? 10 : assertScaleWeight(weight);
