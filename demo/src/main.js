@@ -2,13 +2,16 @@ import Alpine from 'alpinejs';
 import { Color, VERSION, parse } from 'zen-colors';
 
 import { runApi } from './lib/api.js';
+import { methodChainSample } from './lib/code-sample.js';
 import { exportThemeCss, sanitizeVarName, validateVarName } from './lib/export-css.js';
+import { highlightCode } from './lib/highlight.js';
 import { formatRelativeTime, loadHistory, pushHistory, saveHistory } from './lib/history.js';
 import { parseQuery, shareUrl, writeQuery } from './lib/url.js';
 import './main.css';
 
 const INTRO_SKIP_KEY = 'zen-colors-skip-intro';
 const THEME_KEY = 'zen-colors-theme';
+const DEFAULT_COLOR = 'oklch(52.1% 0.023 104)';
 
 /**
  * @returns {'light' | 'dark'}
@@ -21,10 +24,9 @@ function detectTheme() {
 
 document.addEventListener('alpine:init', () => {
   Alpine.data('app', () => ({
-    // --- shared state ---
     VERSION,
     mode: 'intro',
-    colorInput: '#00aaff',
+    colorInput: DEFAULT_COLOR,
     weight: 10,
     theme: 'dark',
     error: '',
@@ -36,47 +38,41 @@ document.addEventListener('alpine:init', () => {
     /** @type {import('zen-colors').Color[]} */
     scaleColors: [],
 
-    // OKLCH slider model (L 0–100, C, H, alpha 0–1)
-    oklch: { l: 70, c: 0.15, h: 240, alpha: 1 },
+    oklch: { l: 52.1, c: 0.023, h: 104, alpha: 1 },
     showSliders: false,
     syncingFromSliders: false,
 
-    // drawer
     drawerOpen: false,
     drawerTab: 'export',
 
-    // export
     variableName: 'primary',
     outputFormat: /** @type {'oklch'|'hex'|'rgb'} */ ('oklch'),
     includeThemeWrapper: true,
     clearDefaults: false,
     tailwindSteps: false,
 
-    // history
     /** @type {import('./lib/history.js').HistoryEntry[]} */
     history: [],
     historyTimer: null,
 
-    // toast
     showToast: false,
     toastMessage: '',
     toastTimer: null,
 
-    // methods mode
+    // methods mode — shared controls
     methodWeight: 25,
     methodStep: 10,
 
-    // contrast mode
     contrastAgainst: '#ffffff',
     onRatio: 4.5,
 
-    // api mode
     apiOp: 'scale',
     apiPreset: 'zen',
     apiJson: '',
 
-    // docs section
-    docsSection: 'start',
+    // highlighted snippets cache
+    /** @type {Record<string, string>} */
+    shiny: {},
 
     init() {
       this.theme = detectTheme();
@@ -88,7 +84,6 @@ document.addEventListener('alpine:init', () => {
       if (q.c) this.colorInput = q.c;
       if (q.w != null) this.weight = q.w;
 
-      // Initial mode: explicit query > skip-intro preference > intro
       if (q.mode) {
         this.mode = q.mode;
       } else if (this.skipIntro) {
@@ -98,11 +93,9 @@ document.addEventListener('alpine:init', () => {
       }
 
       this.applyColorInput({ silentUrl: true });
+      this.refreshHighlights();
 
-      // If API mode opened with op params, run immediately
-      if (this.mode === 'api') {
-        this.runApiFromLocation();
-      }
+      if (this.mode === 'api') this.runApiFromLocation();
 
       this.$watch('colorInput', () => {
         if (this.syncingFromSliders) return;
@@ -112,8 +105,15 @@ document.addEventListener('alpine:init', () => {
         this.rebuildScale();
         this.scheduleHistory();
         this.syncUrl();
+        this.refreshHighlights();
       });
-      this.$watch('mode', () => this.syncUrl());
+      this.$watch('mode', () => {
+        this.syncUrl();
+        this.refreshHighlights();
+      });
+      this.$watch('methodWeight', () => this.refreshHighlights());
+      this.$watch('methodStep', () => this.refreshHighlights());
+      this.$watch('theme', () => this.refreshHighlights());
 
       document.addEventListener('keydown', (e) => {
         if ((e.metaKey || e.ctrlKey) && e.key.toLowerCase() === 'k') {
@@ -127,7 +127,6 @@ document.addEventListener('alpine:init', () => {
       });
     },
 
-    // ---------- theme ----------
     applyTheme() {
       document.body.classList.toggle('theme-dark', this.theme === 'dark');
       document.body.classList.toggle('theme-light', this.theme === 'light');
@@ -138,7 +137,6 @@ document.addEventListener('alpine:init', () => {
       this.applyTheme();
     },
 
-    // ---------- intro skip ----------
     setSkipIntro(value) {
       this.skipIntro = Boolean(value);
       localStorage.setItem(INTRO_SKIP_KEY, this.skipIntro ? '1' : '0');
@@ -148,7 +146,6 @@ document.addEventListener('alpine:init', () => {
       this.syncUrl();
     },
 
-    // ---------- color pipeline ----------
     debounceColor() {
       clearTimeout(this._colorTimer);
       this._colorTimer = setTimeout(() => this.applyColorInput(), 280);
@@ -172,6 +169,7 @@ document.addEventListener('alpine:init', () => {
       this.rebuildScale();
       this.scheduleHistory();
       if (!silentUrl) this.syncUrl();
+      this.refreshHighlights();
     },
 
     applyFromSliders() {
@@ -186,6 +184,7 @@ document.addEventListener('alpine:init', () => {
         this.rebuildScale();
         this.scheduleHistory();
         this.syncUrl();
+        this.refreshHighlights();
       } catch {
         this.error = 'Could not build color from sliders.';
       }
@@ -200,7 +199,6 @@ document.addEventListener('alpine:init', () => {
         return;
       }
       try {
-        // Default canvas: all(weight)
         this.scaleColors = this.baseColor.all(this.weight);
       } catch (err) {
         this.error = err instanceof Error ? err.message : String(err);
@@ -209,12 +207,11 @@ document.addEventListener('alpine:init', () => {
     },
 
     setAsBase(color) {
-      this.colorInput = color.hexString();
+      this.colorInput = color.oklchString();
       this.applyColorInput();
       this.toast('Base color updated');
     },
 
-    // ---------- URL ----------
     syncUrl() {
       writeQuery({ c: this.colorInput, w: this.weight, mode: this.mode });
     },
@@ -225,7 +222,6 @@ document.addEventListener('alpine:init', () => {
       await this.copyText(this.currentShareUrl(), 'URL copied');
     },
 
-    // ---------- clipboard / toast ----------
     async copyText(text, message = 'Copied!') {
       try {
         await navigator.clipboard.writeText(text);
@@ -243,7 +239,6 @@ document.addEventListener('alpine:init', () => {
       }, 1800);
     },
 
-    // ---------- drawer / export ----------
     toggleDrawer(tab) {
       if (tab) this.drawerTab = tab;
       this.drawerOpen = !this.drawerOpen;
@@ -275,7 +270,6 @@ document.addEventListener('alpine:init', () => {
       return sanitizeVarName(this.variableName);
     },
 
-    // ---------- history ----------
     scheduleHistory() {
       clearTimeout(this.historyTimer);
       this.historyTimer = setTimeout(() => this.commitHistory(), 600);
@@ -313,7 +307,7 @@ document.addEventListener('alpine:init', () => {
     },
     relTime: formatRelativeTime,
 
-    // ---------- methods helpers ----------
+    // ---------- methods ----------
     methodTint() {
       return this.baseColor?.tint(this.methodWeight) ?? null;
     },
@@ -327,19 +321,36 @@ document.addEventListener('alpine:init', () => {
       return this.baseColor?.shades(this.methodStep) ?? [];
     },
     methodAll() {
-      return this.baseColor?.all(this.methodStep) ?? [];
+      return this.baseColor?.all(this.weight) ?? [];
     },
     methodScaleBasic() {
-      return this.baseColor?.scale(this.methodStep) ?? [];
+      try {
+        return this.baseColor?.scale(this.methodStep) ?? [];
+      } catch {
+        return [];
+      }
     },
     methodScaleZen() {
-      return this.baseColor?.scale(this.methodStep, { preset: 'zen' }) ?? {};
+      try {
+        return this.baseColor?.scale(this.methodStep, { preset: 'zen' }) ?? {};
+      } catch {
+        return {};
+      }
     },
     methodScaleTw() {
-      return this.baseColor?.scale(this.methodStep, { preset: 'tailwind' }) ?? {};
+      try {
+        return this.baseColor?.scale(this.methodStep, { preset: 'tailwind' }) ?? {};
+      } catch {
+        return {};
+      }
     },
-    snippet(code) {
-      return code;
+
+    /** Emphasized multi-line sample HTML */
+    chainSample(methodLine) {
+      return methodChainSample({
+        color: this.colorInput,
+        methodLine,
+      });
     },
 
     // ---------- contrast ----------
@@ -371,17 +382,61 @@ document.addEventListener('alpine:init', () => {
       });
     },
 
-    // ---------- swatch presentation ----------
-    swatchStyle(color) {
-      return {
-        backgroundColor: color.hexString(),
-        color: color.fg().hexString(),
-      };
-    },
-    /** @param {import('zen-colors').Color} color */
     labelFor(color) {
       if (color.type === 'base') return 'BASE';
       return color.type.toUpperCase();
+    },
+    chipLabel(color) {
+      if (color.type === 'base') return 'base';
+      return `${color.type}: ${color.weight}`;
+    },
+
+    headerSwatch() {
+      return this.baseColor?.hexString() ?? '#6b6a5b';
+    },
+
+    // ---------- shiki ----------
+    async refreshHighlights() {
+      const mode = this.theme;
+      const jobs = {
+        introInstall: await highlightCode('npm install zen-colors', 'bash', mode),
+        introUsage: await highlightCode(
+          `import { Color } from 'zen-colors'\n\nconst c = new Color('${this.colorInput}')\nc.tint(25).oklchString()`,
+          'javascript',
+          mode,
+        ),
+        scaleCanvas: await highlightCode(
+          `new Color('${this.colorInput}').all(${this.weight})`,
+          'javascript',
+          mode,
+        ),
+        docsStart: await highlightCode(
+          `import { Color } from 'zen-colors'\n\nconst c = new Color('#0af')\nc.tint(25).oklchString()\nc.all(10)\nc.scale(10, { preset: 'zen' })\nc.fg().rgbString()\nc.on(4.5)`,
+          'javascript',
+          mode,
+        ),
+        docsApi: await highlightCode(
+          `new Color(input)\nparse(input)                 // Color | null\ncolor.tint(w?) / shade(w?)\ncolor.tints(step?) / shades(step?) / all(step?)\ncolor.scale(weight?, { preset?: 'zen' | 'tailwind' | null })\ncolor.contrast(other)\ncolor.fg() / bestForeground()\ncolor.on(ratio, { against? })\ncolor.oklchString() / rgbString() / hslString() / hexString()`,
+          'javascript',
+          mode,
+        ),
+        scaleZen: await highlightCode(
+          `new Color('${this.colorInput}')\n  .scale(${this.methodStep}, { preset: 'zen' })`,
+          'javascript',
+          mode,
+        ),
+        scaleTw: await highlightCode(
+          `new Color('${this.colorInput}')\n  .scale(${this.methodStep}, { preset: 'tailwind' })`,
+          'javascript',
+          mode,
+        ),
+        scaleBasic: await highlightCode(
+          `new Color('${this.colorInput}')\n  .scale(${this.methodStep})`,
+          'javascript',
+          mode,
+        ),
+      };
+      this.shiny = jobs;
     },
 
     // ---------- api ----------
@@ -405,13 +460,6 @@ document.addEventListener('alpine:init', () => {
       const result = runApi(new URLSearchParams(window.location.search));
       this.apiJson = JSON.stringify(result, null, 2);
       if (result.input?.c) this.colorInput = String(result.input.c);
-    },
-
-    /**
-     * Lightweight text-input width for header
-     */
-    headerSwatch() {
-      return this.baseColor?.hexString() ?? this.colorInput;
     },
   }));
 });
