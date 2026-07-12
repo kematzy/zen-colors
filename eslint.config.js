@@ -5,7 +5,7 @@ import tseslint from 'typescript-eslint';
 
 export default tseslint.config(
   {
-    ignores: ['dist/**', 'coverage/**', 'node_modules/**', 'demo/**'],
+    ignores: ['dist/**', 'demo/dist/**', 'coverage/**', 'node_modules/**'],
   },
   eslint.configs.recommended,
   ...tseslint.configs.recommended,
@@ -36,6 +36,21 @@ export default tseslint.config(
       globals: {
         ...globals.node,
       },
+    },
+  },
+  // Demo playground (browser)
+  {
+    files: ['demo/**/*.{js,mjs}'],
+    languageOptions: {
+      ecmaVersion: 2022,
+      sourceType: 'module',
+      globals: {
+        ...globals.browser,
+      },
+    },
+    rules: {
+      // Alpine templates pass dynamic handlers; demo favors clarity over lint strictness
+      '@typescript-eslint/no-unused-vars': 'off',
     },
   },
 );

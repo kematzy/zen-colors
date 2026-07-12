@@ -1,0 +1,1018 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="color-scheme" content="light dark" />
+    <meta
+      name="description"
+      content="zen-colors playground — OKLCH tints, shades, scales, contrast helpers, and CSS export."
+    />
+    <title>zen-colors</title>
+    <link rel="icon" href="./favicon.svg" type="image/svg+xml" />
+  </head>
+  <body x-data="app()" x-cloak class="theme-dark">
+    <!-- Toast -->
+    <div x-show="showToast" x-transition class="toast" x-text="toastMessage"></div>
+
+    <!-- Header -->
+    <header
+      class="sticky top-0 border-b border-[var(--color-border)] bg-[var(--color-surface)]"
+      style="z-index: var(--z-header)"
+    >
+      <div class="mx-auto flex h-16 max-w-[1600px] items-center gap-3 px-3 sm:px-5">
+        <a
+          href="#"
+          @click.prevent="mode = skipIntro ? 'scale' : 'intro'"
+          class="shrink-0 text-lg font-semibold tracking-tight"
+          >zen-colors</a
+        >
+
+        <div class="mx-auto flex min-w-0 flex-1 items-center justify-center gap-2 sm:gap-3">
+          <!-- Swatch + sliders toggle -->
+          <div class="relative shrink-0">
+            <button
+              type="button"
+              class="h-10 w-10 rounded-lg border border-[var(--color-border)] shadow-sm"
+              :style="`background:${headerSwatch()}`"
+              @click="showSliders = !showSliders"
+              title="OKLCH sliders"
+              aria-label="Toggle OKLCH sliders"
+            ></button>
+            <div
+              x-show="showSliders"
+              x-transition
+              @click.outside="showSliders = false"
+              class="absolute top-12 left-0 z-50 w-72 rounded-xl border border-[var(--color-border)] bg-[var(--color-surface)] p-4 shadow-xl"
+            >
+              <p
+                class="mb-3 text-xs font-semibold uppercase tracking-wide text-[var(--color-fg-muted)]"
+              >
+                OKLCH
+              </p>
+              <div class="space-y-3">
+                <label class="slider-row">
+                  <span>L</span>
+                  <input
+                    type="range"
+                    min="0"
+                    max="100"
+                    step="0.1"
+                    x-model.number="oklch.l"
+                    @input="applyFromSliders()"
+                  />
+                  <span class="font-mono text-right" x-text="oklch.l.toFixed(1)"></span>
+                </label>
+                <label class="slider-row">
+                  <span>C</span>
+                  <input
+                    type="range"
+                    min="0"
+                    max="0.4"
+                    step="0.001"
+                    x-model.number="oklch.c"
+                    @input="applyFromSliders()"
+                  />
+                  <span class="font-mono text-right" x-text="oklch.c.toFixed(3)"></span>
+                </label>
+                <label class="slider-row">
+                  <span>H</span>
+                  <input
+                    type="range"
+                    min="0"
+                    max="360"
+                    step="0.1"
+                    x-model.number="oklch.h"
+                    @input="applyFromSliders()"
+                  />
+                  <span class="font-mono text-right" x-text="oklch.h.toFixed(1)"></span>
+                </label>
+                <label class="slider-row">
+                  <span>α</span>
+                  <input
+                    type="range"
+                    min="0"
+                    max="1"
+                    step="0.01"
+                    x-model.number="oklch.alpha"
+                    @input="applyFromSliders()"
+                  />
+                  <span class="font-mono text-right" x-text="oklch.alpha.toFixed(2)"></span>
+                </label>
+              </div>
+            </div>
+          </div>
+
+          <input
+            id="color-input"
+            type="text"
+            class="input min-w-0 flex-1 max-w-md font-mono"
+            :class="{ error: error }"
+            x-model="colorInput"
+            placeholder="#0af · oklch(…%) · rgb(…)"
+            spellcheck="false"
+            autocomplete="off"
+          />
+
+          <div class="flex shrink-0 items-center gap-1">
+            <input
+              id="weight"
+              type="number"
+              min="2"
+              max="25"
+              step="1"
+              class="input w-14 text-center font-mono"
+              x-model.number="weight"
+              title="Scale weight 2–25"
+            />
+            <span class="hidden text-sm text-[var(--color-fg-muted)] sm:inline">wt</span>
+          </div>
+        </div>
+
+        <div class="flex shrink-0 items-center gap-0.5">
+          <button
+            type="button"
+            class="btn-icon"
+            @click="copyShareUrl()"
+            title="Copy share URL"
+            aria-label="Copy share URL"
+          >
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              width="18"
+              height="18"
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              stroke-width="2"
+            >
+              <path d="M12 2v13" />
+              <path d="m16 6-4-4-4 4" />
+              <path d="M4 12v8a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-8" />
+            </svg>
+          </button>
+          <button
+            type="button"
+            class="btn-icon"
+            @click="toggleTheme()"
+            :aria-label="theme === 'dark' ? 'Light mode' : 'Dark mode'"
+          >
+            <svg
+              x-show="theme === 'dark'"
+              xmlns="http://www.w3.org/2000/svg"
+              width="18"
+              height="18"
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              stroke-width="2"
+            >
+              <circle cx="12" cy="12" r="4" />
+              <path
+                d="M12 2v2M12 20v2M4.93 4.93l1.41 1.41M17.66 17.66l1.41 1.41M2 12h2M20 12h2M6.34 17.66l-1.41 1.41M19.07 4.93l-1.41 1.41"
+              />
+            </svg>
+            <svg
+              x-show="theme === 'light'"
+              xmlns="http://www.w3.org/2000/svg"
+              width="18"
+              height="18"
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              stroke-width="2"
+            >
+              <path d="M12 3a6 6 0 0 0 9 9 9 9 0 1 1-9-9Z" />
+            </svg>
+          </button>
+          <button
+            type="button"
+            class="btn-icon"
+            @click="toggleDrawer()"
+            :aria-label="drawerOpen ? 'Close drawer' : 'Open drawer'"
+          >
+            <svg
+              x-show="!drawerOpen"
+              xmlns="http://www.w3.org/2000/svg"
+              width="18"
+              height="18"
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              stroke-width="2"
+            >
+              <path d="M4 6h16M4 12h16M4 18h16" />
+            </svg>
+            <svg
+              x-show="drawerOpen"
+              xmlns="http://www.w3.org/2000/svg"
+              width="18"
+              height="18"
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              stroke-width="2"
+            >
+              <path d="M18 6 6 18M6 6l12 12" />
+            </svg>
+          </button>
+        </div>
+      </div>
+
+      <!-- Mode nav -->
+      <nav class="mx-auto flex max-w-[1600px] gap-1 overflow-x-auto px-3 pb-2 sm:px-5">
+        <template
+          x-for="item in [
+          { id: 'intro', label: 'Intro' },
+          { id: 'scale', label: 'Scale' },
+          { id: 'methods', label: 'Methods' },
+          { id: 'contrast', label: 'Contrast' },
+          { id: 'docs', label: 'Docs' },
+          { id: 'api', label: 'API' },
+        ]"
+          :key="item.id"
+        >
+          <button
+            type="button"
+            class="nav-link"
+            :class="{ active: mode === item.id }"
+            @click="mode = item.id; if (item.id === 'api') runApiDemo()"
+            x-text="item.label"
+          ></button>
+        </template>
+      </nav>
+    </header>
+
+    <!-- Error -->
+    <div
+      x-show="error"
+      class="bg-[var(--color-danger)] px-4 py-2 text-center text-sm text-[var(--color-danger-fg)]"
+      x-text="error"
+    ></div>
+
+    <main class="mx-auto max-w-[1600px]">
+      <!-- ========== INTRO ========== -->
+      <section x-show="mode === 'intro'" class="prose-demo px-5 py-10 sm:px-8">
+        <p class="text-sm font-semibold tracking-wide text-[var(--color-fg-muted)] uppercase">
+          zen-colors playground
+        </p>
+        <h1 class="mt-2 text-3xl font-semibold tracking-tight sm:text-4xl">
+          Perceptual tints, shades & scales — OKLCH by default
+        </h1>
+        <p class="mt-4 max-w-2xl text-base leading-relaxed text-[var(--color-fg-muted)]">
+          Paste any common CSS color, explore a full tint/shade series, export CSS variables, check
+          contrast, and copy agent-friendly JSON — all in the browser.
+        </p>
+
+        <div class="mt-8 flex flex-wrap gap-3">
+          <button type="button" class="btn btn-primary" @click="goToScaleFromIntro()">
+            Open Scale
+          </button>
+          <button type="button" class="btn" @click="mode = 'methods'">Browse methods</button>
+          <button type="button" class="btn" @click="mode = 'docs'">Read docs</button>
+        </div>
+
+        <label
+          class="mt-6 flex cursor-pointer items-center gap-2 text-sm text-[var(--color-fg-muted)]"
+        >
+          <input
+            type="checkbox"
+            class="rounded"
+            :checked="skipIntro"
+            @change="setSkipIntro($event.target.checked)"
+          />
+          Skip intro next time (go straight to Scale)
+        </label>
+
+        <div class="mt-10 grid gap-4 sm:grid-cols-3">
+          <div class="panel">
+            <h3 class="text-sm font-semibold">Scale</h3>
+            <p class="mt-2 text-sm text-[var(--color-fg-muted)]">
+              Default canvas uses <code>all(weight)</code> — lightest → base → darkest, including
+              pure white & black.
+            </p>
+          </div>
+          <div class="panel">
+            <h3 class="text-sm font-semibold">Methods</h3>
+            <p class="mt-2 text-sm text-[var(--color-fg-muted)]">
+              Live demos of <code>tint</code>, <code>shade</code>, <code>tints</code>,
+              <code>shades</code>, <code>all</code>, and <code>scale</code>.
+            </p>
+          </div>
+          <div class="panel">
+            <h3 class="text-sm font-semibold">Contrast & Export</h3>
+            <p class="mt-2 text-sm text-[var(--color-fg-muted)]">
+              WCAG helpers (<code>fg</code>, <code>on</code>) plus CSS <code>@theme</code> export
+              with zen or Tailwind keys.
+            </p>
+          </div>
+        </div>
+
+        <pre class="code-block mt-10 max-w-xl"><code>import { Color } from 'zen-colors'
+
+new Color('#0af').tint(25).oklchString()
+// → oklch(78.04% 0.126 242.04)</code></pre>
+        <p class="mt-3 text-xs text-[var(--color-fg-muted)]">
+          Library v<span x-text="VERSION"></span> · MIT
+        </p>
+      </section>
+
+      <!-- ========== SCALE ========== -->
+      <section x-show="mode === 'scale'" class="w-full">
+        <div class="flex flex-wrap">
+          <template x-for="(color, index) in scaleColors" :key="index + color.hexString()">
+            <div
+              class="color-swatch"
+              :class="{ base: color.type === 'base' }"
+              :style="`background-color:${color.hexString()};color:${color.fg().hexString()}`"
+            >
+              <div class="text-sm">
+                <span class="uppercase" x-text="labelFor(color)"></span>
+                <span class="ml-1 font-semibold" x-text="color.weight + '%'"></span>
+              </div>
+              <div class="space-y-1">
+                <button
+                  type="button"
+                  class="block text-sm font-semibold hover:underline"
+                  @click="copyText(color.hexString(), 'HEX copied')"
+                  x-text="color.hexString()"
+                ></button>
+                <button
+                  type="button"
+                  class="block font-mono text-xs hover:underline"
+                  @click="copyText(color.oklchString(), 'OKLCH copied')"
+                  x-text="color.oklchString()"
+                ></button>
+                <button
+                  type="button"
+                  class="block font-mono text-xs hover:underline"
+                  @click="copyText(color.rgbString(), 'RGB copied')"
+                  x-text="color.rgbString()"
+                ></button>
+                <p class="mt-3 text-xs uppercase opacity-80">
+                  L <span class="font-semibold" x-text="color.oklch.l.toFixed(1) + '%'"></span>
+                </p>
+              </div>
+              <button
+                type="button"
+                class="btn-set-base"
+                x-show="color.type !== 'base'"
+                @click="setAsBase(color)"
+              >
+                Set Base
+              </button>
+            </div>
+          </template>
+        </div>
+        <p class="px-5 py-3 text-xs text-[var(--color-fg-muted)]">
+          Canvas: <code>new Color(c).all(<span x-text="weight"></span>)</code> · Open the drawer for
+          CSS export & history
+        </p>
+      </section>
+
+      <!-- ========== METHODS ========== -->
+      <section x-show="mode === 'methods'" class="space-y-6 px-4 py-6 sm:px-6">
+        <div class="flex flex-wrap items-end gap-4">
+          <label class="text-sm">
+            <span class="mb-1 block text-[var(--color-fg-muted)]">Single mix weight</span>
+            <input
+              type="number"
+              min="0"
+              max="100"
+              class="input w-24"
+              x-model.number="methodWeight"
+            />
+          </label>
+          <label class="text-sm">
+            <span class="mb-1 block text-[var(--color-fg-muted)]">Series / scale step</span>
+            <input type="number" min="2" max="25" class="input w-24" x-model.number="methodStep" />
+          </label>
+        </div>
+
+        <!-- tint / shade -->
+        <div class="grid gap-4 lg:grid-cols-2">
+          <div class="panel">
+            <h3 class="font-semibold">tint(<span x-text="methodWeight"></span>)</h3>
+            <pre
+              class="code-block mt-2"
+            ><code x-text="`new Color('${colorInput}').tint(${methodWeight}).oklchString()`"></code></pre>
+            <template x-if="methodTint()">
+              <div class="mt-3 flex items-stretch gap-3">
+                <div
+                  class="h-20 w-24 rounded-lg border border-[var(--color-border)]"
+                  :style="`background:${methodTint().hexString()}`"
+                ></div>
+                <div class="font-mono text-xs">
+                  <p x-text="methodTint().oklchString()"></p>
+                  <p class="mt-1" x-text="methodTint().hexString()"></p>
+                </div>
+              </div>
+            </template>
+          </div>
+          <div class="panel">
+            <h3 class="font-semibold">shade(<span x-text="methodWeight"></span>)</h3>
+            <pre
+              class="code-block mt-2"
+            ><code x-text="`new Color('${colorInput}').shade(${methodWeight}).oklchString()`"></code></pre>
+            <template x-if="methodShade()">
+              <div class="mt-3 flex items-stretch gap-3">
+                <div
+                  class="h-20 w-24 rounded-lg border border-[var(--color-border)]"
+                  :style="`background:${methodShade().hexString()}`"
+                ></div>
+                <div class="font-mono text-xs">
+                  <p x-text="methodShade().oklchString()"></p>
+                  <p class="mt-1" x-text="methodShade().hexString()"></p>
+                </div>
+              </div>
+            </template>
+          </div>
+        </div>
+
+        <!-- strips -->
+        <div class="panel">
+          <h3 class="font-semibold">
+            tints(<span x-text="methodStep"></span>) · shades · all · scale
+          </h3>
+          <div class="mt-4 space-y-4">
+            <div>
+              <p class="mb-1 text-xs font-semibold uppercase text-[var(--color-fg-muted)]">tints</p>
+              <div class="flex h-10 overflow-hidden rounded-md">
+                <template x-for="(c,i) in methodTints()" :key="'ti'+i">
+                  <div
+                    class="flex-1"
+                    :style="`background:${c.hexString()}`"
+                    :title="c.oklchString()"
+                  ></div>
+                </template>
+              </div>
+            </div>
+            <div>
+              <p class="mb-1 text-xs font-semibold uppercase text-[var(--color-fg-muted)]">
+                shades
+              </p>
+              <div class="flex h-10 overflow-hidden rounded-md">
+                <template x-for="(c,i) in methodShades()" :key="'sh'+i">
+                  <div
+                    class="flex-1"
+                    :style="`background:${c.hexString()}`"
+                    :title="c.oklchString()"
+                  ></div>
+                </template>
+              </div>
+            </div>
+            <div>
+              <p class="mb-1 text-xs font-semibold uppercase text-[var(--color-fg-muted)]">all</p>
+              <div class="flex h-10 overflow-hidden rounded-md">
+                <template x-for="(c,i) in methodAll()" :key="'al'+i">
+                  <div
+                    class="flex-1"
+                    :style="`background:${c.hexString()}`"
+                    :title="c.oklchString()"
+                  ></div>
+                </template>
+              </div>
+            </div>
+            <div>
+              <p class="mb-1 text-xs font-semibold uppercase text-[var(--color-fg-muted)]">
+                scale(basic)
+              </p>
+              <div class="flex h-10 overflow-hidden rounded-md">
+                <template x-for="(c,i) in methodScaleBasic()" :key="'sc'+i">
+                  <div
+                    class="flex-1"
+                    :style="`background:${c.hexString()}`"
+                    :title="c.oklchString()"
+                  ></div>
+                </template>
+              </div>
+            </div>
+            <div>
+              <p class="mb-1 text-xs font-semibold uppercase text-[var(--color-fg-muted)]">
+                scale({ preset: 'zen' })
+              </p>
+              <div class="flex h-10 overflow-hidden rounded-md">
+                <template x-for="([k,c],i) in Object.entries(methodScaleZen())" :key="'zn'+k">
+                  <div
+                    class="flex-1"
+                    :style="`background:${c.hexString()}`"
+                    :title="`${k}: ${c.oklchString()}`"
+                  ></div>
+                </template>
+              </div>
+            </div>
+            <div>
+              <p class="mb-1 text-xs font-semibold uppercase text-[var(--color-fg-muted)]">
+                scale({ preset: 'tailwind' })
+              </p>
+              <div class="flex h-10 overflow-hidden rounded-md">
+                <template x-for="([k,c]) in Object.entries(methodScaleTw())" :key="'tw'+k">
+                  <div
+                    class="flex-1"
+                    :style="`background:${c.hexString()}`"
+                    :title="`${k}: ${c.oklchString()}`"
+                  ></div>
+                </template>
+              </div>
+            </div>
+          </div>
+          <pre
+            class="code-block mt-4"
+          ><code x-text="`new Color('${colorInput}').scale(${methodStep}, { preset: 'zen' })`"></code></pre>
+        </div>
+      </section>
+
+      <!-- ========== CONTRAST ========== -->
+      <section x-show="mode === 'contrast'" class="space-y-6 px-4 py-6 sm:px-6">
+        <div class="flex flex-wrap items-end gap-4">
+          <label class="text-sm">
+            <span class="mb-1 block text-[var(--color-fg-muted)]">Against</span>
+            <input type="text" class="input w-40 font-mono" x-model="contrastAgainst" />
+          </label>
+          <label class="text-sm">
+            <span class="mb-1 block text-[var(--color-fg-muted)]">on() target ratio</span>
+            <input
+              type="number"
+              min="1"
+              max="21"
+              step="0.1"
+              class="input w-24"
+              x-model.number="onRatio"
+            />
+          </label>
+        </div>
+
+        <div class="grid gap-4 md:grid-cols-3">
+          <div class="panel">
+            <h3 class="font-semibold">contrast(against)</h3>
+            <template x-if="contrastReport()">
+              <div class="mt-3 space-y-2 text-sm">
+                <p
+                  class="text-2xl font-semibold font-mono"
+                  x-text="contrastReport().ratio.toFixed(2) + ' : 1'"
+                ></p>
+                <div class="flex flex-wrap gap-1">
+                  <span
+                    class="badge"
+                    :class="contrastReport().passes.aa ? 'badge-pass' : 'badge-fail'"
+                    >AA</span
+                  >
+                  <span
+                    class="badge"
+                    :class="contrastReport().passes.aaLarge ? 'badge-pass' : 'badge-fail'"
+                    >AA large</span
+                  >
+                  <span
+                    class="badge"
+                    :class="contrastReport().passes.aaa ? 'badge-pass' : 'badge-fail'"
+                    >AAA</span
+                  >
+                  <span
+                    class="badge"
+                    :class="contrastReport().passes.aaaLarge ? 'badge-pass' : 'badge-fail'"
+                    >AAA large</span
+                  >
+                </div>
+                <p class="text-xs text-[var(--color-fg-muted)]">
+                  Current is <span x-text="contrastReport().current"></span>
+                </p>
+              </div>
+            </template>
+          </div>
+          <div class="panel">
+            <h3 class="font-semibold">fg()</h3>
+            <p class="mt-1 text-xs text-[var(--color-fg-muted)]">
+              Best black/white on this color as background
+            </p>
+            <template x-if="foregroundOnBase()">
+              <div class="mt-3 flex overflow-hidden rounded-lg border border-[var(--color-border)]">
+                <div
+                  class="flex h-24 flex-1 items-center justify-center text-sm font-semibold"
+                  :style="`background:${baseColor.hexString()};color:${foregroundOnBase().hexString()}`"
+                >
+                  Sample text
+                </div>
+              </div>
+            </template>
+            <pre
+              class="code-block mt-3"
+            ><code x-text="`new Color('${colorInput}').fg().rgbString()`"></code></pre>
+          </div>
+          <div class="panel">
+            <h3 class="font-semibold">on(<span x-text="onRatio"></span>)</h3>
+            <p class="mt-1 text-xs text-[var(--color-fg-muted)]">
+              Tint/shade of current color meeting the ratio
+            </p>
+            <template x-if="onTarget()">
+              <div class="mt-3">
+                <div
+                  class="h-16 rounded-lg border border-[var(--color-border)]"
+                  :style="`background:${onTarget().hexString()}`"
+                ></div>
+                <p class="mt-2 font-mono text-xs" x-text="onTarget().oklchString()"></p>
+                <p class="font-mono text-xs" x-text="onTarget().hexString()"></p>
+              </div>
+            </template>
+            <pre
+              class="code-block mt-3"
+            ><code x-text="`new Color('${colorInput}').on(${onRatio}, { against: '${contrastAgainst}' })`"></code></pre>
+          </div>
+        </div>
+
+        <div class="panel overflow-x-auto">
+          <h3 class="font-semibold">Scale vs white / black</h3>
+          <table class="mt-3 w-full min-w-[32rem] text-left text-xs">
+            <thead class="text-[var(--color-fg-muted)]">
+              <tr>
+                <th class="py-1 pr-3">Step</th>
+                <th class="py-1 pr-3">Swatch</th>
+                <th class="py-1 pr-3">vs white</th>
+                <th class="py-1 pr-3">AA</th>
+                <th class="py-1 pr-3">vs black</th>
+                <th class="py-1">AA</th>
+              </tr>
+            </thead>
+            <tbody>
+              <template x-for="(row, i) in contrastMatrix()" :key="'m'+i">
+                <tr class="border-t border-[var(--color-border)]">
+                  <td
+                    class="py-1.5 pr-3 font-mono"
+                    x-text="row.step.type + ' ' + row.step.weight"
+                  ></td>
+                  <td class="py-1.5 pr-3">
+                    <span
+                      class="inline-block h-5 w-10 rounded"
+                      :style="`background:${row.step.hexString()}`"
+                    ></span>
+                  </td>
+                  <td class="py-1.5 pr-3 font-mono" x-text="row.vsWhite.ratio.toFixed(2)"></td>
+                  <td class="py-1.5 pr-3">
+                    <span
+                      class="badge"
+                      :class="row.vsWhite.passes.aa ? 'badge-pass' : 'badge-fail'"
+                      x-text="row.vsWhite.passes.aa ? 'pass' : 'fail'"
+                    ></span>
+                  </td>
+                  <td class="py-1.5 pr-3 font-mono" x-text="row.vsBlack.ratio.toFixed(2)"></td>
+                  <td class="py-1.5">
+                    <span
+                      class="badge"
+                      :class="row.vsBlack.passes.aa ? 'badge-pass' : 'badge-fail'"
+                      x-text="row.vsBlack.passes.aa ? 'pass' : 'fail'"
+                    ></span>
+                  </td>
+                </tr>
+              </template>
+            </tbody>
+          </table>
+        </div>
+      </section>
+
+      <!-- ========== DOCS ========== -->
+      <section
+        x-show="mode === 'docs'"
+        class="prose-demo grid gap-8 px-5 py-8 lg:grid-cols-[12rem_1fr] sm:px-8"
+      >
+        <aside class="space-y-1 text-sm lg:sticky lg:top-28 lg:self-start">
+          <button
+            type="button"
+            class="nav-link w-full text-left"
+            :class="{ active: docsSection === 'start' }"
+            @click="docsSection = 'start'"
+          >
+            Getting started
+          </button>
+          <button
+            type="button"
+            class="nav-link w-full text-left"
+            :class="{ active: docsSection === 'concepts' }"
+            @click="docsSection = 'concepts'"
+          >
+            Concepts
+          </button>
+          <button
+            type="button"
+            class="nav-link w-full text-left"
+            :class="{ active: docsSection === 'api' }"
+            @click="docsSection = 'api'"
+          >
+            API cheatsheet
+          </button>
+          <button
+            type="button"
+            class="nav-link w-full text-left"
+            :class="{ active: docsSection === 'agents' }"
+            @click="docsSection = 'agents'"
+          >
+            Agents / JSON
+          </button>
+          <button
+            type="button"
+            class="nav-link w-full text-left"
+            :class="{ active: docsSection === 'credits' }"
+            @click="docsSection = 'credits'"
+          >
+            Credits
+          </button>
+        </aside>
+        <div>
+          <div x-show="docsSection === 'start'">
+            <h2>Getting started</h2>
+            <pre class="code-block"><code>npm install zen-colors</code></pre>
+            <pre class="code-block mt-3"><code>import { Color } from 'zen-colors'
+
+const c = new Color('#0af')
+c.tint(25).oklchString()
+c.all(10)                      // default playground canvas
+c.scale(10, { preset: 'zen' }) // export-friendly keys
+c.fg().rgbString()
+c.on(4.5)                      // family color for AA on white</code></pre>
+            <p class="mt-4">
+              This playground is a static GitHub Pages demo. The npm package is the library of
+              record.
+            </p>
+          </div>
+          <div x-show="docsSection === 'concepts'">
+            <h2>Concepts</h2>
+            <ul>
+              <li><strong>Mix space:</strong> OKLCH (perceptual lightness, stabile hue)</li>
+              <li>
+                <strong>Weight:</strong> integer <code>2–25</code> for scale series; single
+                tint/shade accepts <code>0–100</code>
+              </li>
+              <li><strong>all(weight):</strong> includes pure white/black at 100%</li>
+              <li>
+                <strong>scale(weight):</strong> skips pure white/black; optional presets
+                <code>zen</code> / <code>tailwind</code>
+              </li>
+              <li><strong>OKLCH object L:</strong> percent <code>0–100</code></li>
+              <li>
+                <strong>Share URL:</strong> <code>?c=</code> color · <code>?w=</code> weight ·
+                <code>?mode=</code>
+              </li>
+            </ul>
+          </div>
+          <div x-show="docsSection === 'api'">
+            <h2>API cheatsheet</h2>
+            <pre class="code-block"><code>new Color(input)
+parse(input)                 // Color | null
+color.tint(w?) / shade(w?)
+color.tints(step?) / shades(step?) / all(step?)
+color.scale(weight?, { preset?: 'zen' | 'tailwind' | null })
+color.contrast(other)        // { ratio, passes, darker, lighter, current }
+color.fg() / bestForeground()
+color.on(ratio, { against? })
+color.oklchString() / rgbString() / hslString() / hexString()</code></pre>
+          </div>
+          <div x-show="docsSection === 'agents'">
+            <h2>Agents / browser JSON</h2>
+            <p>
+              v1 is <strong>client-side only</strong> (GitHub Pages). Use the
+              <button type="button" class="underline" @click="mode = 'api'; runApiDemo()">
+                API
+              </button>
+              mode to build query strings and copy JSON envelopes.
+            </p>
+            <p class="mt-3">
+              Example ops: <code>parse</code>, <code>tint</code>, <code>shade</code>,
+              <code>all</code>, <code>scale</code>, <code>contrast</code>, <code>fg</code>,
+              <code>on</code>, <code>random</code>.
+            </p>
+            <p class="mt-3">
+              See also <code>llms.txt</code> in this demo deploy for a short machine-readable
+              summary.
+            </p>
+          </div>
+          <div x-show="docsSection === 'credits'">
+            <h2>Credits</h2>
+            <ul>
+              <li>Inspired by Noel Delgado’s <em>values.js</em> & <em>parse-css-color</em></li>
+              <li>Color math via culori</li>
+              <li>Playground UX evolved from the zen-themes experiments</li>
+              <li>zen-colors by kematzy · MIT</li>
+            </ul>
+          </div>
+        </div>
+      </section>
+
+      <!-- ========== API ========== -->
+      <section x-show="mode === 'api'" class="space-y-4 px-4 py-6 sm:px-6">
+        <div class="panel">
+          <h2 class="text-lg font-semibold">Browser JSON API</h2>
+          <p class="mt-1 text-sm text-[var(--color-fg-muted)]">
+            Static demo helper for agents — not a networked HTTP service. Shareable via query
+            params.
+          </p>
+          <div class="mt-4 flex flex-wrap gap-3">
+            <label class="text-sm">
+              <span class="mb-1 block text-[var(--color-fg-muted)]">op</span>
+              <select class="input" x-model="apiOp" @change="runApiDemo()">
+                <option>parse</option>
+                <option>tint</option>
+                <option>shade</option>
+                <option>tints</option>
+                <option>shades</option>
+                <option>all</option>
+                <option>scale</option>
+                <option>contrast</option>
+                <option>fg</option>
+                <option>on</option>
+                <option>random</option>
+              </select>
+            </label>
+            <label class="text-sm" x-show="apiOp === 'scale'">
+              <span class="mb-1 block text-[var(--color-fg-muted)]">preset</span>
+              <select class="input" x-model="apiPreset" @change="runApiDemo()">
+                <option value="zen">zen</option>
+                <option value="tailwind">tailwind</option>
+                <option value="">null (basic)</option>
+              </select>
+            </label>
+            <button type="button" class="btn btn-primary self-end" @click="runApiDemo()">
+              Run
+            </button>
+            <button type="button" class="btn self-end" @click="copyText(apiJson, 'JSON copied')">
+              Copy JSON
+            </button>
+          </div>
+          <pre
+            class="code-block mt-4 max-h-[28rem] overflow-auto"
+          ><code x-text="apiJson || 'Click Run to generate JSON'"></code></pre>
+        </div>
+      </section>
+    </main>
+
+    <!-- Drawer overlay -->
+    <div
+      x-show="drawerOpen"
+      x-transition.opacity
+      class="fixed inset-0 bg-black/40"
+      style="z-index: var(--z-overlay)"
+      @click="drawerOpen = false"
+    ></div>
+
+    <!-- Drawer -->
+    <aside
+      x-show="drawerOpen"
+      x-transition:enter="transition transform ease-out duration-300"
+      x-transition:enter-start="translate-x-full"
+      x-transition:enter-end="translate-x-0"
+      x-transition:leave="transition transform ease-in duration-200"
+      x-transition:leave-start="translate-x-0"
+      x-transition:leave-end="translate-x-full"
+      class="fixed top-0 right-0 bottom-0 flex w-full max-w-xl flex-col border-l border-[var(--color-border)] bg-[var(--color-surface)] shadow-2xl sm:top-0"
+      style="z-index: var(--z-drawer)"
+    >
+      <div
+        class="flex items-center justify-between border-b border-[var(--color-border)] px-4 py-3"
+      >
+        <div class="flex gap-2">
+          <button
+            type="button"
+            class="nav-link"
+            :class="{ active: drawerTab === 'export' }"
+            @click="drawerTab = 'export'"
+          >
+            Export
+          </button>
+          <button
+            type="button"
+            class="nav-link"
+            :class="{ active: drawerTab === 'history' }"
+            @click="drawerTab = 'history'"
+          >
+            History
+          </button>
+        </div>
+        <button type="button" class="btn-icon" @click="drawerOpen = false" aria-label="Close">
+          ✕
+        </button>
+      </div>
+
+      <div class="flex-1 overflow-y-auto p-5">
+        <!-- Export -->
+        <div x-show="drawerTab === 'export'" class="space-y-5">
+          <div>
+            <h2 class="text-xl font-semibold">CSS Export</h2>
+            <p class="mt-1 text-sm text-[var(--color-fg-muted)]">
+              zen keys by default · Tailwind steps optional
+            </p>
+          </div>
+          <label class="block text-sm">
+            <span class="mb-1 block font-medium">Palette name</span>
+            <input type="text" class="input w-full font-mono" x-model="variableName" />
+            <p
+              class="mt-1 text-xs text-[var(--color-danger)]"
+              x-show="varNameError()"
+              x-text="varNameError()"
+            ></p>
+          </label>
+          <div class="text-sm">
+            <span class="mb-2 block font-medium">Format</span>
+            <div class="flex flex-wrap gap-3">
+              <label class="flex items-center gap-2"
+                ><input type="radio" value="oklch" x-model="outputFormat" /> OKLCH</label
+              >
+              <label class="flex items-center gap-2"
+                ><input type="radio" value="hex" x-model="outputFormat" /> HEX</label
+              >
+              <label class="flex items-center gap-2"
+                ><input type="radio" value="rgb" x-model="outputFormat" /> RGB</label
+              >
+            </div>
+          </div>
+          <label class="flex items-center gap-2 text-sm"
+            ><input type="checkbox" x-model="includeThemeWrapper" /> Include
+            <code>@theme</code> wrapper</label
+          >
+          <label class="flex items-center gap-2 text-sm"
+            ><input type="checkbox" x-model="clearDefaults" /> Clear default Tailwind colors</label
+          >
+          <label class="flex items-center gap-2 text-sm"
+            ><input type="checkbox" x-model="tailwindSteps" /> Tailwind steps (50…950)</label
+          >
+
+          <div>
+            <div class="mb-2 flex items-center justify-between">
+              <h3 class="font-semibold">Output</h3>
+              <button
+                type="button"
+                class="btn btn-primary text-xs uppercase"
+                @click="copyText(exportCss(), 'CSS copied')"
+              >
+                Copy
+              </button>
+            </div>
+            <pre class="code-block max-h-80 overflow-auto"><code x-text="exportCss()"></code></pre>
+          </div>
+        </div>
+
+        <!-- History -->
+        <div x-show="drawerTab === 'history'" class="space-y-4">
+          <div class="flex items-center justify-between">
+            <h2 class="text-xl font-semibold">History</h2>
+            <button
+              type="button"
+              class="btn btn-danger text-xs"
+              x-show="history.length"
+              @click="clearHistory()"
+            >
+              Clear
+            </button>
+          </div>
+          <p x-show="!history.length" class="text-sm text-[var(--color-fg-muted)]">
+            Generated scales will appear here (local only).
+          </p>
+          <ul class="space-y-2">
+            <template x-for="entry in history" :key="entry.id">
+              <li
+                class="flex items-center gap-3 rounded-lg border border-[var(--color-border)] p-3"
+              >
+                <button
+                  type="button"
+                  class="flex flex-1 items-center gap-3 text-left"
+                  @click="loadHistoryEntry(entry)"
+                >
+                  <span
+                    class="h-8 w-8 rounded border border-[var(--color-border)]"
+                    :style="`background:${entry.inputColor}`"
+                  ></span>
+                  <span>
+                    <span class="block font-mono text-sm" x-text="entry.inputColor"></span>
+                    <span class="block text-xs text-[var(--color-fg-muted)]">
+                      w=<span x-text="entry.weight"></span> ·
+                      <span x-text="relTime(entry.createdAt)"></span>
+                    </span>
+                  </span>
+                </button>
+                <button
+                  type="button"
+                  class="btn-icon text-[var(--color-danger)]"
+                  @click="deleteHistoryEntry(entry.id)"
+                  aria-label="Delete"
+                >
+                  ✕
+                </button>
+              </li>
+            </template>
+          </ul>
+        </div>
+      </div>
+    </aside>
+
+    <footer
+      class="border-t border-[var(--color-border)] px-5 py-4 text-center text-xs text-[var(--color-fg-muted)]"
+    >
+      zen-colors v<span x-text="VERSION"></span> ·
+      <a
+        class="underline"
+        href="https://github.com/kematzy/zen-colors"
+        target="_blank"
+        rel="noreferrer"
+        >GitHub</a
+      >
+    </footer>
+
+    <script type="module" src="/src/main.js"></script>
+  </body>
+</html>

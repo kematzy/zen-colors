@@ -1,0 +1,36 @@
+# zen-colors
+
+> Perceptual CSS color tints, shades, scales, and contrast helpers (OKLCH by default).
+
+Library: https://github.com/kematzy/zen-colors
+Playground: this GitHub Pages site
+
+## Package
+
+```ts
+import { Color, parse } from 'zen-colors'
+new Color('#0af').tint(25).oklchString()
+```
+
+## Browser JSON (demo, client-side)
+
+Open the playground API mode with query parameters. This is not a networked HTTP API;
+it builds a JSON envelope in the browser for agents and copy/paste workflows.
+
+Common query keys:
+- op: parse | tint | shade | tints | shades | all | scale | contrast | fg | on | random
+- c / color: CSS color string
+- w / weight / step: number
+- preset: zen | tailwind (scale only)
+- against: contrast surface
+- ratio: target for on()
+- seed: optional for random
+
+Example conceptual URL shape:
+  ?mode=api&op=scale&c=%230af&w=10&preset=zen
+
+## Defaults
+
+- Mix space: OKLCH
+- Playground canvas: all(weight), weight integer 2–25
+- Export: zen tN/sN keys; optional Tailwind 50–950

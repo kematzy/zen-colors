@@ -123,11 +123,30 @@ npm run typecheck
 npm run lint
 npm run spellcheck    # project dictionary via cspell
 npm run build
+npm run demo:dev      # playground (Vite)
+npm run demo:build    # static demo → demo/dist
 ```
 
 > First-time browser tests need Playwright browsers: `npx playwright install chromium`
 
 This library is developed **test-first** (TDD).
+
+## Playground demo
+
+Static GitHub Pages app under `demo/`:
+
+- **Intro** first (skippable; preference in `localStorage`)
+- **Scale** — `all(weight)` swatch grid, OKLCH sliders, Set Base, share URL
+- **Methods** — live `tint` / `shade` / series / `scale` presets
+- **Contrast** — `contrast`, `fg`, `on`, scale matrix
+- **Docs** — short getting-started + API notes
+- **API** — browser-only JSON builder for agents
+- Drawer: CSS export (zen keys default, Tailwind optional) + history
+
+```bash
+npm run demo:dev
+# http://localhost:5173/zen-colors/
+```
 
 ## Credits
 

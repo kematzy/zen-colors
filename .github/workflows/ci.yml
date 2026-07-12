@@ -30,3 +30,6 @@ jobs:
         run: npm run spellcheck
       - run: npm run test:coverage
       - run: npm run build
+      - name: Build demo
+        if: matrix.node-version == 24
+        run: npm run demo:build
