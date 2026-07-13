@@ -4,5 +4,35 @@
   "trailingComma": "all",
   "printWidth": 100,
   "tabWidth": 2,
-  "arrowParens": "always"
+  "arrowParens": "always",
+  "endOfLine": "lf",
+  "proseWrap": "preserve",
+  "objectWrap": "preserve",
+  "overrides": [
+    {
+      "files": ".prettierrc",
+      "options": { "parser": "json" }
+    },
+    {
+      "files": "*.ts",
+      "options": {
+        "parser": "typescript",
+        "arrowParens": "always",
+        "singleQuote": true,
+        "bracketSpacing": true
+      }
+    },
+    {
+      "files": "*.html",
+      "options": {
+        "parser": "html",
+        "bracketSpacing": true,
+        "bracketSameLine": false,
+        "singleAttributePerLine": false,
+        "htmlWhitespaceSensitivity": "css",
+        "vueIndentScriptAndStyle": false,
+        "embeddedLanguageFormatting": "auto"
+      }
+    }
+  ]
 }
