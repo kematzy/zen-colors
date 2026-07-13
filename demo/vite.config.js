@@ -17,6 +17,15 @@ export default defineConfig({
   server: {
     port: 5173,
     open: true,
+
+    // allow @fontsource fonts
+    fs: {
+      allow: [
+        '.',
+        '../node_modules/@fontsource/montserrat',
+        '../node_modules/@fontsource/roboto-mono',
+      ],
+    },
   },
   build: {
     outDir: resolve(import.meta.dirname, 'dist'),
