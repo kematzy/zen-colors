@@ -96,20 +96,22 @@ export function generateTailwindScale(color: Color): Record<string, Color> {
  * - shades: `s{N}` lightest-shade first (`s10…s90` when weight is 10)
  *
  * @example weight 25 → `{ t75, t50, t25, base, s25, s50, s75 }`
- * @example weight 2  → `{ t98, t96, …, t2, base, s2, …, s98 }`
+ * @example weight 2  → `{ t98, t96, …, t02, base, s02, …, s98 }`
  */
 export function generateZenScale(color: Color, weight: number): Record<string, Color> {
   const steps = basicScaleWeights(weight);
   const scale: Record<string, Color> = {};
 
   for (const w of steps.slice().reverse()) {
-    scale[`t${w}`] = cloneAs(color.tint(w), 'tint', w);
+    const strWeight = String(w).padStart(2, '0');
+    scale[`t${strWeight}`] = cloneAs(color.tint(w), 'tint', w);
   }
 
   scale.base = cloneAs(color, 'base', 0);
 
   for (const w of steps) {
-    scale[`s${w}`] = cloneAs(color.shade(w), 'shade', w);
+    const strWeight = String(w).padStart(2, '0');
+    scale[`s${strWeight}`] = cloneAs(color.shade(w), 'shade', w);
   }
 
   return scale;
