@@ -395,13 +395,22 @@ document.addEventListener('alpine:init', () => {
       return this.baseColor?.hexString() ?? '#6b6a5b';
     },
 
+    featureColors() {
+      const hexStr = this.baseColor?.hexString() || '#6b6a5b';
+      const rgbStr = this.baseColor?.rgbString() || 'rgb(107 106 91)';
+      const hslStr = this.baseColor?.hslString() || 'hsl(56.2 8.08% 38.8%)';
+      const lchStr = this.baseColor?.oklchString() || 'oklch(52.07% 0.0229 104.03)';
+
+      return `Convert <kbd>${hexStr}</kbd> or <kbd>${rgbStr}</kbd> or <kbd>${lchStr}</kbd> or <kbd>${hslStr}</kbd> and even <kbd>rebeccapurple</kbd>.`;
+    },
+
     // ---------- shiki ----------
     async refreshHighlights() {
       const mode = this.theme;
       const jobs = {
         introInstall: await highlightCode('npm install zen-colors', 'bash', mode),
         introUsage: await highlightCode(
-          `import { Color } from 'zen-colors'\n\nconst c = new Color('${this.colorInput}')\nc.tint(25).oklchString()`,
+          `import { Color } from 'zen-colors'\n\nconst c = new Color('${this.colorInput}')\n  .tint(25).oklchString();`,
           'javascript',
           mode,
         ),
