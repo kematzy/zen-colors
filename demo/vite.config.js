@@ -31,5 +31,9 @@ export default defineConfig({
     outDir: resolve(import.meta.dirname, 'dist'),
     emptyOutDir: true,
     sourcemap: true,
+    // Vite 8 defaults to lightningcss for CSS minify, which rewrites native
+    // light-dark() into --lightningcss-light/--lightningcss-dark var pairs.
+    // That breaks our @theme semantic tokens. Keep native light-dark().
+    cssMinify: 'esbuild',
   },
 });
