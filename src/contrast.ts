@@ -134,5 +134,6 @@ export function onContrast(color: Color, targetRatio: number, options: OnOptions
   }
 
   // Unreachable target — return best effort from the family
+  /* v8 ignore next -- @preserve */
   return best;
 }

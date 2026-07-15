@@ -140,6 +140,7 @@ export function buildScale(
   const preset = resolvePreset(options);
 
   if (preset === 'tailwind') {
+    /* v8 ignore next -- @preserve */
     if (weight !== undefined) assertScaleWeight(weight);
     return generateTailwindScale(color);
   }

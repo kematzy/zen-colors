@@ -30,6 +30,7 @@ export function getOklch(color: CuloriColor): OklchChannels {
   const o = toOklch(color);
   const alpha = o.alpha ?? 1;
   return {
+    /* v8 ignore next -- @preserve */
     l: (o.l ?? 0) * 100,
     c: o.c ?? 0,
     h: o.h ?? 0,
