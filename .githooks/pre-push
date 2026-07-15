@@ -1,0 +1,16 @@
+#!/usr/bin/env bash
+# Abort `git push` when local quality gates fail.
+# Bypass (discouraged): git push --no-verify
+set -euo pipefail
+
+ROOT="$(git rev-parse --show-toplevel 2>/dev/null || true)"
+if [[ -z "${ROOT}" ]]; then
+  echo "pre-push: not inside a git work tree" >&2
+  exit 1
+fi
+cd "${ROOT}"
+
+echo "▶ pre-push: npm run check"
+npm run check
+
+echo "✔ pre-push checks passed"

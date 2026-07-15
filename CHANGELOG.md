@@ -9,6 +9,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Added
 
+- Local `pre-push` hook (`.githooks/`) and `npm run check` so bad builds cannot be pushed easily; `prepare` enables hooks on install.
 - Interactive playground under `demo/` (Intro, Scale, Methods, Contrast, Docs, browser JSON API).
 - CSS export drawer with zen keys by default, optional Tailwind 50–950, share-URL comment.
 - GitHub Pages deploy workflow (`.github/workflows/pages.yml`).

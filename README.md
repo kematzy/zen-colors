@@ -122,6 +122,7 @@ npm run test:browser  # vitest browser smoke (Playwright / Chromium)
 npm run typecheck
 npm run lint
 npm run spellcheck    # project dictionary via cspell
+npm run check         # typecheck + lint + format + test (pre-push gate)
 npm run build
 npm run demo:dev      # playground (Vite)
 npm run demo:build    # static demo → demo/dist
@@ -130,6 +131,19 @@ npm run demo:build    # static demo → demo/dist
 > First-time browser tests need Playwright browsers: `npx playwright install chromium`
 
 This library is developed **test-first** (TDD).
+
+### Quality gates (push / main)
+
+**Local `pre-push` hook** (installed via `npm install` / `prepare`):
+
+- Runs `npm run check` and **blocks the push** if anything fails
+- See [`.githooks/README.md`](./.githooks/README.md)
+- Bypass only when intentional: `git push --no-verify`
+
+**GitHub (required for real protection):** on `main`, enable a
+[ruleset / branch protection](https://docs.github.com/en/repositories/configuring-branches-and-merges-in-your-repository/managing-rulesets/about-rulesets)
+with **Require status checks to pass**, selecting the CI `test (…)` jobs from
+`.github/workflows/ci.yml`. That cannot be skipped with `--no-verify`.
 
 ## Playground demo
 

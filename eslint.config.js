@@ -27,9 +27,9 @@ export default tseslint.config(
       ],
     },
   },
-  // Node examples (console, etc.)
+  // Node examples + tooling scripts
   {
-    files: ['examples/**/*.{js,mjs,cjs}'],
+    files: ['examples/**/*.{js,mjs,cjs}', 'scripts/**/*.{js,mjs,cjs}'],
     languageOptions: {
       ecmaVersion: 2022,
       sourceType: 'module',

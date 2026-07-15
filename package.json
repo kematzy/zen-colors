@@ -38,6 +38,9 @@
     "demo:dev": "vite --config demo/vite.config.js",
     "demo:build": "vite build --config demo/vite.config.js",
     "demo:preview": "vite preview --config demo/vite.config.js",
+    "check": "npm run typecheck && npm run lint && npm run format:check && npm test",
+    "hooks:install": "git config core.hooksPath .githooks && chmod +x .githooks/pre-push",
+    "prepare": "node scripts/install-hooks.mjs",
     "prepublishOnly": "npm run typecheck && npm run test:coverage && npm run build"
   },
   "keywords": [
