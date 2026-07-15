@@ -31,6 +31,9 @@
     "tsup",
     "unitless",
     "vitest",
-    "WCAG"
+    "WCAG",
+    "shadowlord",
+    "fontsource",
+    "pixelia"
   ]
 }
