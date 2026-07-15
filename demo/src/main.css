@@ -74,7 +74,8 @@
   --color-theme-success-fg: oklch(98% 0 0);
 
   --color-theme-link: light-dark(var(--color-primary-s30), var(--color-primary-t30));
-  --color-theme-link-hover: light-dark(var(--color-primary-s40), var(--color-primary-t40));
+  /* s40/t40 tokens are not generated for this primary scale — use nearest existing steps */
+  --color-theme-link-hover: light-dark(var(--color-primary-s20), var(--color-primary-t20));
 
   --font-sans: 'Montserrat', system-ui, -apple-system, sans-serif;
   --font-mono: 'Roboto Mono', ui-monospace, Menlo, monospace;
@@ -198,11 +199,11 @@
     @apply block text-base leading-6;
   }
 
-  /* Soften Shiki inline backgrounds to our surface */
+  /* Soften optional highlighter backgrounds so they match the theme surface */
   pre.shiki,
   pre code.shi-code,
   .code-block.shi {
-    background: var(--color-code) !important;
+    background: var(--color-theme-t02) !important;
   }
 
   .code-block .line {

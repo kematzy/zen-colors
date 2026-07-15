@@ -162,18 +162,18 @@ describe("Color.scale() — preset: 'zen'", () => {
     expect(scale.s75!.oklch.l).toBeLessThan(scale.s25!.oklch.l);
   });
 
-  it('uses weight 2 for dense tN / sN keys from 2…98', () => {
+  it('uses weight 2 for dense tN / sN keys from 02…98 (zero-padded)', () => {
     const scale = base.scale(2, { preset: 'zen' }) as Record<string, Color>;
     const keys = Object.keys(scale);
     // 49 tints + base + 49 shades = 99
     expect(keys).toHaveLength(99);
     expect(keys[0]).toBe('t98');
-    expect(keys[48]).toBe('t2');
+    expect(keys[48]).toBe('t02');
     expect(keys[49]).toBe('base');
-    expect(keys[50]).toBe('s2');
+    expect(keys[50]).toBe('s02');
     expect(keys[keys.length - 1]).toBe('s98');
     expect(scale.t98).toBeInstanceOf(Color);
-    expect(scale.s2).toBeInstanceOf(Color);
+    expect(scale.s02).toBeInstanceOf(Color);
   });
 
   it('orders tints lightest → base → darkest shade', () => {

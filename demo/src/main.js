@@ -130,6 +130,8 @@ document.addEventListener('alpine:init', () => {
     applyTheme() {
       document.body.classList.toggle('theme-dark', this.theme === 'dark');
       document.body.classList.toggle('theme-light', this.theme === 'light');
+      // Keep <html data-theme> in sync for native form controls / CSS hooks
+      document.documentElement.dataset.theme = this.theme;
     },
     toggleTheme() {
       this.theme = this.theme === 'dark' ? 'light' : 'dark';
