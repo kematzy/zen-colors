@@ -1,12 +1,12 @@
 <!doctype html>
-<html lang="en">
+<html lang="en" data-theme="dark">
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <meta name="color-scheme" content="light dark" />
     <meta
       name="description"
-      content="zen-colors — create perceptual color tints, shades, scales, and contrast helpers. OKLCH by default."
+      content="Zen Colors — create perceptual color tints, shades and scales easily"
     />
     <title>Zen Colors — perceptual tints, shades & scales</title>
     <link rel="apple-touch-icon" sizes="180x180" href="./apple-touch-icon.png" />
@@ -19,202 +19,235 @@
     <div x-show="showToast" x-transition class="toast" x-text="toastMessage"></div>
 
     <!-- Header -->
-    <header class="sticky top-0 border-b border-border bg-surface" style="z-index: var(--z-header)">
-      <div class="mx-auto flex h-16 items-center gap-3 px-3 sm:px-5">
+    <header id="site-header" class="">
+      <!-- #logo -->
+      <div id="logo" class="">
         <a
           href="#"
           @click.prevent="mode = skipIntro ? 'scale' : 'intro'"
-          class="shrink-0 text-lg font-semibold tracking-tight"
-          >zen-colors</a
+          class="text-4xl font-normal text-theme-primary-t02 pl-6 pr-4 lg:pr-8"
         >
+          zen-colors
+        </a>
+      </div>
+      <!-- /#logo -->
 
-        <div class="mx-auto flex min-w-0 flex-1 items-center justify-center gap-2 sm:gap-3">
-          <div class="relative shrink-0">
-            <button
-              type="button"
-              class="h-10 w-10 cursor-pointer rounded-lg border border-border shadow-sm"
-              :style="`background:${headerSwatch()}`"
-              @click="showSliders = !showSliders"
-              title="OKLCH sliders"
-              aria-label="Toggle OKLCH sliders"
-            ></button>
-            <div
-              x-show="showSliders"
-              x-transition
-              @click.outside="showSliders = false"
-              class="absolute top-12 left-0 z-50 w-72 rounded-xl border border-border bg-surface p-4 shadow-xl"
-            >
-              <p class="mb-3 text-xs font-semibold tracking-wide text-fg-muted uppercase">OKLCH</p>
-              <div class="space-y-3">
-                <label class="slider-row">
-                  <span>L</span>
-                  <input
-                    type="range"
-                    min="0"
-                    max="100"
-                    step="0.1"
-                    x-model.number="oklch.l"
-                    @input="applyFromSliders()"
-                  />
-                  <span class="text-right font-mono" x-text="oklch.l.toFixed(1)"></span>
-                </label>
-                <label class="slider-row">
-                  <span>C</span>
-                  <input
-                    type="range"
-                    min="0"
-                    max="0.4"
-                    step="0.001"
-                    x-model.number="oklch.c"
-                    @input="applyFromSliders()"
-                  />
-                  <span class="text-right font-mono" x-text="oklch.c.toFixed(3)"></span>
-                </label>
-                <label class="slider-row">
-                  <span>H</span>
-                  <input
-                    type="range"
-                    min="0"
-                    max="360"
-                    step="0.1"
-                    x-model.number="oklch.h"
-                    @input="applyFromSliders()"
-                  />
-                  <span class="text-right font-mono" x-text="oklch.h.toFixed(1)"></span>
-                </label>
-                <label class="slider-row">
-                  <span>α</span>
-                  <input
-                    type="range"
-                    min="0"
-                    max="1"
-                    step="0.01"
-                    x-model.number="oklch.alpha"
-                    @input="applyFromSliders()"
-                  />
-                  <span class="text-right font-mono" x-text="oklch.alpha.toFixed(2)"></span>
-                </label>
-              </div>
+      <!-- #inputs -->
+      <div id="inputs" class="">
+        <div class="relative">
+          <button
+            type="button"
+            class="h-10 w-10 cursor-pointer rounded-lg border bg-theme-border shadow-sm"
+            :style="`background:${headerSwatch()}`"
+            @click="showSliders = !showSliders"
+            title="OKLCH sliders"
+            aria-label="Toggle OKLCH sliders"
+          ></button>
+
+          <!-- overlay: color sliders -->
+          <div
+            x-show="showSliders"
+            x-transition
+            @click.outside="showSliders = false"
+            class="absolute top-12 left-0 z-50 w-72 rounded-xl border bg-theme-border bg-theme-t01 p-4 shadow-xl"
+          >
+            <p class="mb-3 text-xs font-semibold tracking-wide text-theme-fg-muted uppercase">
+              OKLCH
+            </p>
+
+            <div class="space-y-3">
+              <label class="slider-row">
+                <span>L</span>
+                <input
+                  type="range"
+                  min="0"
+                  max="100"
+                  step="0.1"
+                  x-model.number="oklch.l"
+                  @input="applyFromSliders()"
+                />
+                <span class="text-right font-mono" x-text="oklch.l.toFixed(1)"></span>
+              </label>
+              <label class="slider-row">
+                <span>C</span>
+                <input
+                  type="range"
+                  min="0"
+                  max="0.4"
+                  step="0.001"
+                  x-model.number="oklch.c"
+                  @input="applyFromSliders()"
+                />
+                <span class="text-right font-mono" x-text="oklch.c.toFixed(3)"></span>
+              </label>
+              <label class="slider-row">
+                <span>H</span>
+                <input
+                  type="range"
+                  min="0"
+                  max="360"
+                  step="0.1"
+                  x-model.number="oklch.h"
+                  @input="applyFromSliders()"
+                />
+                <span class="text-right font-mono" x-text="oklch.h.toFixed(1)"></span>
+              </label>
+              <label class="slider-row">
+                <span>α</span>
+                <input
+                  type="range"
+                  min="0"
+                  max="1"
+                  step="0.01"
+                  x-model.number="oklch.alpha"
+                  @input="applyFromSliders()"
+                />
+                <span class="text-right font-mono" x-text="oklch.alpha.toFixed(2)"></span>
+              </label>
             </div>
           </div>
-
-          <input
-            id="color-input"
-            type="text"
-            class="input max-w-md min-w-0 flex-1 font-mono"
-            :class="{ error: error }"
-            x-model="colorInput"
-            placeholder="#0af · oklch(…%) · rgb(…)"
-            spellcheck="false"
-            autocomplete="off"
-          />
-
-          <div class="flex shrink-0 items-center gap-1">
-            <input
-              id="weight"
-              type="number"
-              min="2"
-              max="25"
-              step="1"
-              class="input w-14 text-center font-mono"
-              x-model.number="weight"
-              title="Scale weight 2–25"
-            />
-            <span class="hidden text-sm text-fg-muted sm:inline">wt</span>
-          </div>
+          <!-- /overlay: color sliders -->
         </div>
 
-        <div class="flex shrink-0 items-center gap-0.5">
-          <button
-            type="button"
-            class="btn-icon"
-            @click="copyShareUrl()"
-            title="Copy share URL"
-            aria-label="Copy share URL"
-          >
-            <svg
-              xmlns="http://www.w3.org/2000/svg"
-              width="18"
-              height="18"
-              viewBox="0 0 24 24"
-              fill="none"
-              stroke="currentColor"
-              stroke-width="2"
-            >
-              <path d="M12 2v13" />
-              <path d="m16 6-4-4-4 4" />
-              <path d="M4 12v8a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-8" />
-            </svg>
-          </button>
-          <button
-            type="button"
-            class="btn-icon"
-            @click="toggleTheme()"
-            :aria-label="theme === 'dark' ? 'Light mode' : 'Dark mode'"
-          >
-            <svg
-              x-show="theme === 'dark'"
-              xmlns="http://www.w3.org/2000/svg"
-              width="18"
-              height="18"
-              viewBox="0 0 24 24"
-              fill="none"
-              stroke="currentColor"
-              stroke-width="2"
-            >
-              <circle cx="12" cy="12" r="4" />
-              <path
-                d="M12 2v2M12 20v2M4.93 4.93l1.41 1.41M17.66 17.66l1.41 1.41M2 12h2M20 12h2M6.34 17.66l-1.41 1.41M19.07 4.93l-1.41 1.41"
-              />
-            </svg>
-            <svg
-              x-show="theme === 'light'"
-              xmlns="http://www.w3.org/2000/svg"
-              width="18"
-              height="18"
-              viewBox="0 0 24 24"
-              fill="none"
-              stroke="currentColor"
-              stroke-width="2"
-            >
-              <path d="M12 3a6 6 0 0 0 9 9 9 9 0 1 1-9-9Z" />
-            </svg>
-          </button>
-          <button
-            type="button"
-            class="btn-icon"
-            @click="toggleDrawer()"
-            :aria-label="drawerOpen ? 'Close drawer' : 'Open drawer'"
-          >
-            <svg
-              x-show="!drawerOpen"
-              xmlns="http://www.w3.org/2000/svg"
-              width="18"
-              height="18"
-              viewBox="0 0 24 24"
-              fill="none"
-              stroke="currentColor"
-              stroke-width="2"
-            >
-              <path d="M4 6h16M4 12h16M4 18h16" />
-            </svg>
-            <svg
-              x-show="drawerOpen"
-              xmlns="http://www.w3.org/2000/svg"
-              width="18"
-              height="18"
-              viewBox="0 0 24 24"
-              fill="none"
-              stroke="currentColor"
-              stroke-width="2"
-            >
-              <path d="M18 6 6 18M6 6l12 12" />
-            </svg>
-          </button>
+        <input
+          id="color-input"
+          type="text"
+          class="input w-60 lg:w-80 font-mono"
+          :class="{ error: error }"
+          x-model="colorInput"
+          placeholder="#0af · oklch(…%) · rgb(…)"
+          spellcheck="false"
+          autocomplete="off"
+        />
+
+        <div class="flex items-center gap-1">
+          <input
+            type="number"
+            id="weight"
+            min="2"
+            max="25"
+            step="1"
+            class="input w-20 text-center font-mono px-2"
+            x-model.number="weight"
+            title="Scale weight 2–25"
+          />
+          <span class="hidden text-sm text-theme-fg-muted sm:inline pl-2">weight</span>
         </div>
       </div>
+      <!-- /#inputs -->
 
-      <nav class="flex gap-1 overflow-x-auto px-3 pb-2 sm:px-5">
+      <div id="buttons" class="">
+        <a
+          class="btn-icon"
+          href="https://github.com/kematzy/zen-colors"
+          target="_blank"
+          rel="noreferrer"
+        >
+          <svg xmlns="http://www.w3.org/2000/svg" width="20px" height="20px" viewBox="0 0 24 24">
+            <path
+              fill="currentColor"
+              d="M12 2A10 10 0 0 0 2 12c0 4.42 2.87 8.17 6.84 9.5c.5.08.66-.23.66-.5v-1.69c-2.77.6-3.36-1.34-3.36-1.34c-.46-1.16-1.11-1.47-1.11-1.47c-.91-.62.07-.6.07-.6c1 .07 1.53 1.03 1.53 1.03c.87 1.52 2.34 1.07 2.91.83c.09-.65.35-1.09.63-1.34c-2.22-.25-4.55-1.11-4.55-4.92c0-1.11.38-2 1.03-2.71c-.1-.25-.45-1.29.1-2.64c0 0 .84-.27 2.75 1.02c.79-.22 1.65-.33 2.5-.33s1.71.11 2.5.33c1.91-1.29 2.75-1.02 2.75-1.02c.55 1.35.2 2.39.1 2.64c.65.71 1.03 1.6 1.03 2.71c0 3.82-2.34 4.66-4.57 4.91c.36.31.69.92.69 1.85V21c0 .27.16.59.67.5C19.14 20.16 22 16.42 22 12A10 10 0 0 0 12 2"
+            />
+          </svg>
+        </a>
+
+        <button
+          type="button"
+          class="btn-icon"
+          @click="copyShareUrl()"
+          title="Copy share URL"
+          aria-label="Copy share URL"
+        >
+          <svg
+            xmlns="http://www.w3.org/2000/svg"
+            width="18"
+            height="18"
+            viewBox="0 0 24 24"
+            fill="none"
+            stroke="currentColor"
+            stroke-width="1"
+            stroke-linecap="round"
+            stroke-linejoin="round"
+          >
+            <circle cx="18" cy="5" r="3" />
+            <circle cx="6" cy="12" r="3" />
+            <circle cx="18" cy="19" r="3" />
+            <line x1="8.59" x2="15.42" y1="13.51" y2="17.49" />
+            <line x1="15.41" x2="8.59" y1="6.51" y2="10.49" />
+          </svg>
+        </button>
+
+        <button
+          type="button"
+          class="btn-icon"
+          @click="toggleTheme()"
+          :aria-label="theme === 'dark' ? 'Light mode' : 'Dark mode'"
+        >
+          <svg
+            x-show="theme === 'dark'"
+            xmlns="http://www.w3.org/2000/svg"
+            width="18"
+            height="18"
+            viewBox="0 0 24 24"
+            fill="none"
+            stroke="currentColor"
+            stroke-width="2"
+          >
+            <circle cx="12" cy="12" r="4" />
+            <path
+              d="M12 2v2M12 20v2M4.93 4.93l1.41 1.41M17.66 17.66l1.41 1.41M2 12h2M20 12h2M6.34 17.66l-1.41 1.41M19.07 4.93l-1.41 1.41"
+            />
+          </svg>
+          <svg
+            x-show="theme === 'light'"
+            xmlns="http://www.w3.org/2000/svg"
+            width="18"
+            height="18"
+            viewBox="0 0 24 24"
+            fill="none"
+            stroke="currentColor"
+            stroke-width="2"
+          >
+            <path d="M12 3a6 6 0 0 0 9 9 9 9 0 1 1-9-9Z" />
+          </svg>
+        </button>
+
+        <button
+          type="button"
+          class="btn-icon"
+          @click="toggleDrawer()"
+          :aria-label="drawerOpen ? 'Close drawer' : 'Open drawer'"
+        >
+          <svg
+            x-show="!drawerOpen"
+            xmlns="http://www.w3.org/2000/svg"
+            width="18"
+            height="18"
+            viewBox="0 0 24 24"
+            fill="none"
+            stroke="currentColor"
+            stroke-width="2"
+          >
+            <path d="M4 6h16M4 12h16M4 18h16" />
+          </svg>
+          <svg
+            x-show="drawerOpen"
+            xmlns="http://www.w3.org/2000/svg"
+            width="18"
+            height="18"
+            viewBox="0 0 24 24"
+            fill="none"
+            stroke="currentColor"
+            stroke-width="2"
+          >
+            <path d="M18 6 6 18M6 6l12 12" />
+          </svg>
+        </button>
+      </div>
+      <!-- /#buttons -->
+
+      <!-- #navbar -->
+      <nav id="navbar" class="px-4">
         <template
           x-for="item in [
             { id: 'intro', label: 'Intro' },
@@ -235,86 +268,214 @@
           ></button>
         </template>
       </nav>
+      <!-- /#navbar -->
     </header>
 
     <div
       x-show="error"
-      class="bg-danger px-4 py-2 text-center text-sm text-danger-fg"
+      class="bg-theme-danger px-4 py-2 text-center text-sm text-theme-danger-fg"
       x-text="error"
     ></div>
 
     <main>
       <!-- ========== INTRO ========== -->
       <section x-show="mode === 'intro'" class="intro-hero page-pad">
-        <p class="text-sm font-semibold tracking-wide text-fg-muted uppercase">
-          zen-colors playground
-        </p>
-        <h1 class="mt-3 max-w-3xl text-3xl font-semibold tracking-tight sm:text-4xl lg:text-5xl">
-          Zen Colors helps you create perceptual color tints, shades and scales easily
+        <h1 class="mt-3 max-w-3xl lg:max-w-2xl">
+          <span class="text-4xl sm:text-4xl lg:text-5xl font-semibold mb-4 block">
+            Zen Colors
+          </span>
+          <span class="font-light text-3xl sm:text-3xl lg:text-4xl mb-8 block">
+            easily create perceptual color tints, shades and scales
+          </span>
         </h1>
-        <p class="mt-3 text-base font-medium text-fg-muted sm:text-lg">
-          OKLCH by default · modern CSS in & out
-        </p>
-        <p class="mt-4 max-w-2xl text-sm leading-relaxed text-fg-muted sm:text-base">
+
+        <!--
+        <p class="mt-4 max-w-2xl text-sm leading-relaxed text-theme-fg-muted sm:text-base">
           Paste any common CSS color, explore a full series, export Tailwind-ready variables, check
           contrast, and copy agent-friendly JSON — all in the browser.
         </p>
+        -->
 
-        <div class="mt-8 flex flex-wrap gap-3">
+        <!--<div class="mt-8 flex flex-wrap gap-3">
           <button type="button" class="btn btn-primary" @click="goToScaleFromIntro()">
             Open Scale
           </button>
           <button type="button" class="btn" @click="mode = 'methods'">Browse methods</button>
           <button type="button" class="btn" @click="mode = 'docs'">Read docs</button>
-        </div>
+        </div>-->
+
+        <div class="my-8 text-2xl text-theme-fg">Library Features</div>
 
         <div class="mt-10 grid gap-4 sm:grid-cols-2 xl:grid-cols-3">
           <div class="feature-panel">
-            <h3>Scale canvas</h3>
-            <p>
-              Default playground uses <code>all(weight)</code> — lightest → base → darkest,
-              including pure white and black at 100%.
-            </p>
+            <h3>Works with your color</h3>
+
+            <p x-html="featureColors"></p>
+
+            <pre
+              class="feature-code"
+            ><code><span class="opacity-60">const c =</span> new Color('#6b6a5b');</code></pre>
           </div>
+
           <div class="feature-panel">
-            <h3>Live methods</h3>
+            <h3>Effortless color scales</h3>
+
             <p>
-              Interactive demos of <code>.tint()</code>, <code>.shade()</code>, series helpers, and
-              named <code>.scale()</code> presets.
+              Generate predictable color palettes from a single color with <kbd>.all(weight)</kbd>
+              that includes tints and shades.
             </p>
+
+            <pre
+              class="feature-code"
+            ><code><span class="opacity-60">new Color('#6b6a5b')</span>.all(10);</code></pre>
           </div>
+
           <div class="feature-panel">
-            <h3>Contrast tools</h3>
+            <h3>Easy Tints</h3>
+
             <p>
-              WCAG reports via <code>contrast()</code>, readable text with <code>fg()</code>, and
-              family colors with <code>on(ratio)</code>.
+              Mix a base color with white and create a single <kbd>.tint()</kbd> or multiple
+              <kbd>.tints()</kbd>.
             </p>
+            <pre
+              class="feature-code"
+            ><code><span class="opacity-60">new Color('#6b6a5b')</span>.tint(10);</code></pre>
           </div>
+
           <div class="feature-panel">
-            <h3>Tailwind CSS export</h3>
+            <h3>Quick Shades</h3>
+
             <p>
-              Copy zen <code>tN</code>/<code>sN</code> keys or tick Tailwind <code>50…950</code> —
-              ready for <code>@theme</code>.
+              Mix a base color with black and create a single <kbd>.shade()</kbd> or multiple
+              <kbd>.shades()</kbd>.
             </p>
-            <div class="feature-bg" aria-hidden="true">
-              @theme {<br />
-              &nbsp;&nbsp;--color-primary-t90: oklch(…);<br />
-              &nbsp;&nbsp;--color-primary-base: oklch(…);<br />
-              &nbsp;&nbsp;--color-primary-s90: oklch(…);<br />
-              }
-            </div>
+            <pre
+              class="feature-code"
+            ><code><span class="opacity-60">new Color('#6b6a5b')</span>.shades(10);</code></pre>
           </div>
+
+          <div class="feature-panel">
+            <h3><kdb>oklch()</kdb> by default</h3>
+
+            <p>
+              Working with modern CSS colors creates predictable color matching aligned with our
+              vision capabilities.
+            </p>
+
+            <pre class="feature-code"><code>oklch(73% 0.1 161)</code></pre>
+          </div>
+
+          <div class="feature-panel">
+            <h3>Contrast information</h3>
+
+            <p>Get WCAG contrast information via <kbd>.contrast(color)</kbd>.</p>
+            <pre
+              class="feature-code"
+            ><code><span class="opacity-60">new Color('#6b6a5b')</span>.contrast('#fff');</code></pre>
+          </div>
+
+          <div class="feature-panel">
+            <h3>Readable text colors</h3>
+
+            <p>Use <kbd>.fg()</kbd> to quickly get an AA - AAA contrast text color.</p>
+
+            <pre
+              class="feature-code"
+            ><code><span class="opacity-60">new Color('#6b6a5b')</span>.fg();<span class="opacity-60"> // #fff</span></code></pre>
+          </div>
+
+          <div class="feature-panel">
+            <h3>Output as strings</h3>
+
+            <p>
+              Easily output your color scale as <kbd>oklch</kbd> / <kbd>hex</kbd> / <kbd>rgb</kbd> /
+              <kbd>hsl</kbd>.
+            </p>
+
+            <pre class="feature-code"><code><span class="opacity-60">new Color('#6b6a5b')</span>
+   .rgbString(); <span class="opacity-60">// 'rgb(107 106 91)'</span> </code></pre>
+          </div>
+
+          <div class="feature-panel">
+            <h3>Output as CSS variables</h3>
+
+            <p>Output single colors or scales as: <kbd>--color-{name}-*</kbd>.</p>
+
+            <pre
+              class="feature-code"
+            ><code><span class="opacity-60">new Color('#6b6a5b').all(10)</span>
+   .cssVariablesString('primary');</code></pre>
+          </div>
+        </div>
+
+        <div class="my-8 text-2xl text-theme-fg">Demo Features</div>
+
+        <div class="mt-10 grid gap-4 sm:grid-cols-2 xl:grid-cols-3">
+          <div class="feature-panel">
+            <h3>Fine-tune your color</h3>
+
+            <p>
+              Click the header swatch to adjust the lightness, chroma and hue of your color to fit
+              your style.
+            </p>
+          </div>
+
+          <div class="feature-panel">
+            <h3>Color scale previews</h3>
+
+            <p>Preview generated color palettes with tints and shades from a single color.</p>
+          </div>
+
+          <div class="feature-panel">
+            <h3>Export CSS variables</h3>
+
+            <!--<p>Copy color scales as CSS variables for easy use in your project.</p>-->
+
+            <p>
+              Choose between the <kbd>50 … 950</kbd> scale, or a scale with tint (<kbd>-tN</kbd>)
+              and shade (<kbd>-sN</kbd>) keys for your exported color scales.
+            </p>
+          </div>
+
+          <div class="feature-panel">
+            <h3>Tailwind ready</h3>
+
+            <p>
+              Export color scales as Tailwind CSS ready <kbd>@theme {}</kbd> variables for easy use
+              within your Tailwind project.
+            </p>
+            <p><kbd>--color-brand: &hellip;;</kbd> &#8594; <kbd>.bg-brand</kbd></p>
+          </div>
+
+          <div class="feature-panel">
+            <h3>History saved</h3>
+
+            <p>
+              Go back in time to your last 20 colors saved in your own browser. Available in the
+              sidebar.
+            </p>
+          </div>
+        </div>
+
+        <div class="my-16 text-2xl text-theme-fg">Installation &amp; Usage</div>
+
+        <div class="mt-10 grid gap-8 sm:grid-cols-2">
           <div class="feature-panel">
             <h3>Install</h3>
+
+            <p>Install using <kbd>npm</kbd>, <kbd>pnpm</kbd>, <kbd>bun</kbd> or <kbd>yarn</kbd>.</p>
+
             <div class="mt-3" x-html="shiny.introInstall || ''"></div>
           </div>
+
           <div class="feature-panel">
             <h3>Usage</h3>
+
             <div class="mt-3" x-html="shiny.introUsage || ''"></div>
           </div>
         </div>
 
-        <label class="mt-10 flex cursor-pointer items-center gap-2 text-sm text-fg-muted">
+        <label class="mt-10 flex cursor-pointer items-center gap-2 text-sm text-theme-fg-muted">
           <input
             type="checkbox"
             class="rounded"
@@ -323,16 +484,20 @@
           />
           Skip intro next time (go straight to Scale)
         </label>
-        <p class="mt-6 text-xs text-fg-muted">Library v<span x-text="VERSION"></span> · MIT</p>
+
+        <p class="mt-6 text-xs text-theme-fg-muted">
+          Library v<span x-text="VERSION"></span> · MIT
+        </p>
       </section>
 
       <!-- ========== SCALE ========== -->
       <section x-show="mode === 'scale'" class="w-full">
         <div class="scale-toolbar">
-          <div class="min-w-0 text-xs text-fg-muted sm:text-sm">
+          <div class="min-w-0 text-xs text-theme-fg-muted sm:text-sm">
             Canvas:
-            <code class="font-mono text-fg">new Color(c).all(<span x-text="weight"></span>)</code>
+            <code class="font-mono pl-4"> new Color(c).all(<span x-text="weight"></span>) </code>
           </div>
+
           <div class="flex gap-2">
             <button type="button" class="btn text-xs sm:text-sm" @click="openDrawer('export')">
               CSS Export
@@ -354,25 +519,27 @@
                 <span class="uppercase" x-text="labelFor(color)"></span>
                 <span class="ml-1 font-semibold" x-text="color.weight + '%'"></span>
               </div>
-              <div class="mt-2 space-y-0.5">
+
+              <div class="mt-6 space-y-0.5">
                 <button
                   type="button"
-                  class="swatch-copy font-mono text-xs"
+                  class="swatch-copy"
                   @click="copyText(color.oklchString(), 'OKLCH copied')"
                   x-text="color.oklchString()"
                 ></button>
                 <button
                   type="button"
-                  class="swatch-copy text-sm font-semibold"
+                  class="swatch-copy"
                   @click="copyText(color.hexString(), 'HEX copied')"
                   x-text="color.hexString()"
                 ></button>
                 <button
                   type="button"
-                  class="swatch-copy font-mono text-xs"
+                  class="swatch-copy"
                   @click="copyText(color.rgbString(), 'RGB copied')"
                   x-text="color.rgbString()"
                 ></button>
+
                 <p class="mt-3 text-xs uppercase opacity-80">
                   Brightness:
                   <span class="font-semibold" x-text="color.oklch.l.toFixed(1) + '%'"></span>
@@ -394,8 +561,9 @@
       <!-- ========== METHODS ========== -->
       <section x-show="mode === 'methods'" class="page-pad space-y-8">
         <!-- tint + shade share weight -->
+
         <div class="flex flex-wrap items-center gap-3">
-          <label class="text-sm text-fg-muted">
+          <label class="text-sm text-theme-fg-muted">
             Shared mix weight
             <input
               type="range"
@@ -405,14 +573,18 @@
               class="ml-2 align-middle"
               x-model.number="methodWeight"
             />
-            <span class="ml-2 font-mono text-fg" x-text="methodWeight"></span>
+            <span class="ml-2 font-mono text-theme-fg" x-text="methodWeight"></span>
           </label>
         </div>
 
         <div class="grid gap-6 lg:grid-cols-2">
           <div class="panel">
             <h3 class="panel-title-code">.tint(weight)</h3>
-            <p>Lighten toward white in OKLCH by <code>weight</code> percent (default 50).</p>
+
+            <p>
+              Lighten toward white in OKLCH by <kbd>weight</kbd> percent (default <kbd>50</kbd>).
+            </p>
+
             <div class="mt-4 grid gap-4 lg:grid-cols-3">
               <template x-if="methodTint()">
                 <div
@@ -423,13 +595,18 @@
                   <span class="text-sm font-semibold" x-text="methodTint().hexString()"></span>
                 </div>
               </template>
+
               <div class="lg:col-span-2" x-html="chainSample('.tint(' + methodWeight + ')')"></div>
             </div>
           </div>
 
           <div class="panel">
             <h3 class="panel-title-code">.shade(weight)</h3>
-            <p>Darken toward black in OKLCH by <code>weight</code> percent (default 50).</p>
+
+            <p>
+              Darken toward black in OKLCH by <kbd>weight</kbd> percent (default <kbd>50</kbd>).
+            </p>
+
             <div class="mt-4 grid gap-4 lg:grid-cols-3">
               <template x-if="methodShade()">
                 <div
@@ -440,15 +617,17 @@
                   <span class="text-sm font-semibold" x-text="methodShade().hexString()"></span>
                 </div>
               </template>
+
               <div class="lg:col-span-2" x-html="chainSample('.shade(' + methodWeight + ')')"></div>
             </div>
           </div>
         </div>
 
         <!-- series share step -->
-        <div class="flex flex-wrap items-center gap-3 border-t border-border pt-6">
-          <label class="text-sm text-fg-muted">
-            Shared series step (2–25)
+
+        <div class="flex flex-wrap items-center gap-3 border-t border-theme-border pt-6">
+          <label class="text-theme-fg-muted">
+            Shared series step <kbd>(2–25)</kbd>
             <input
               type="range"
               min="2"
@@ -457,109 +636,133 @@
               class="ml-2 align-middle"
               x-model.number="methodStep"
             />
-            <span class="ml-2 font-mono text-fg" x-text="methodStep"></span>
+            <span class="ml-2 font-mono text-theme-fg" x-text="methodStep"></span>
           </label>
         </div>
 
         <div class="panel">
           <h3 class="panel-title-code">.tints(step)</h3>
-          <p>Series of tints at every <code>step</code> percent, including weight 100 (white).</p>
+
+          <p>
+            Series of tints at every <kbd>step</kbd> percent, including weight
+            <kbd>100</kbd> (white).
+          </p>
+
           <div class="mt-4 flex flex-wrap gap-1">
             <template x-for="(c, i) in methodTints()" :key="'ti'+i">
               <div
-                class="method-chip min-w-20 flex-1 basis-16 rounded-md sm:basis-20"
+                class="method-chip"
                 :style="`background:${c.hexString()};color:${c.fg().hexString()}`"
               >
                 <span x-text="'tint: ' + c.weight"></span>
               </div>
             </template>
           </div>
+
           <div class="mt-4" x-html="chainSample('.tints(' + methodStep + ')')"></div>
         </div>
 
         <div class="panel">
           <h3 class="panel-title-code">.shades(step)</h3>
-          <p>Series of shades at every <code>step</code> percent, including weight 100 (black).</p>
+
+          <p>
+            Series of shades at every <kbd>step</kbd> percent, including weight
+            <kbd>100</kbd> (black).
+          </p>
+
           <div class="mt-4 flex flex-wrap gap-1">
             <template x-for="(c, i) in methodShades()" :key="'sh'+i">
               <div
-                class="method-chip min-w-20 flex-1 basis-16 rounded-md sm:basis-20"
+                class="method-chip"
                 :style="`background:${c.hexString()};color:${c.fg().hexString()}`"
               >
                 <span x-text="'shade: ' + c.weight"></span>
               </div>
             </template>
           </div>
+
           <div class="mt-4" x-html="chainSample('.shades(' + methodStep + ')')"></div>
         </div>
 
         <div class="panel">
           <h3 class="panel-title-code">.all(step)</h3>
+
           <p>
             Full series lightest → base → darkest. This panel uses the
-            <strong>global</strong> header color & weight (<code x-text="weight"></code>).
+            <strong>global</strong> header color & weight (<kbd x-text="weight"></kbd>).
           </p>
+
           <div class="mt-4 flex flex-wrap gap-1">
             <template x-for="(c, i) in methodAll()" :key="'al'+i">
               <div
-                class="method-chip min-w-20 flex-1 basis-16 rounded-md sm:basis-20"
+                class="method-chip"
                 :style="`background:${c.hexString()};color:${c.fg().hexString()}`"
               >
                 <span x-text="chipLabel(c)"></span>
               </div>
             </template>
           </div>
+
           <div class="mt-4" x-html="chainSample('.all(' + weight + ')')"></div>
         </div>
 
         <div class="panel">
           <h3 class="panel-title-code">.scale(weight)</h3>
+
           <p>Basic scale as a flat array — skips pure white/black. Uses the series step control.</p>
+
           <div class="mt-4 flex flex-wrap gap-1">
             <template x-for="(c, i) in methodScaleBasic()" :key="'sc'+i">
               <div
-                class="method-chip min-w-20 flex-1 basis-16 rounded-md sm:basis-20"
+                class="method-chip"
                 :style="`background:${c.hexString()};color:${c.fg().hexString()}`"
               >
                 <span x-text="chipLabel(c)"></span>
               </div>
             </template>
           </div>
+
           <div class="mt-4" x-html="shiny.scaleBasic || ''"></div>
         </div>
 
         <div class="panel">
           <h3 class="panel-title-code">.scale(weight, { preset: 'zen' })</h3>
+
           <p>
-            Weight-driven keys <code>tN</code> / <code>base</code> / <code>sN</code> — default
-            export vocabulary.
+            Weight-driven keys <kbd>tN</kbd> / <kbd>base</kbd> / <kbd>sN</kbd> — default export
+            vocabulary.
           </p>
+
           <div class="mt-4 flex flex-wrap gap-1">
             <template x-for="([k, c]) in Object.entries(methodScaleZen())" :key="'zn'+k">
               <div
-                class="method-chip min-w-20 flex-1 basis-16 rounded-md sm:basis-20"
+                class="method-chip"
                 :style="`background:${c.hexString()};color:${c.fg().hexString()}`"
               >
                 <span x-text="k"></span>
               </div>
             </template>
           </div>
+
           <div class="mt-4" x-html="shiny.scaleZen || ''"></div>
         </div>
 
         <div class="panel">
           <h3 class="panel-title-code">.scale(weight, { preset: 'tailwind' })</h3>
-          <p>Fixed stops <code>50…950</code> with the base color at <code>500</code>.</p>
+
+          <p>Fixed stops <kbd>50…950</kbd> with the base color at <kbd>500</kbd>.</p>
+
           <div class="mt-4 flex flex-wrap gap-1">
             <template x-for="([k, c]) in Object.entries(methodScaleTw())" :key="'tw'+k">
               <div
-                class="method-chip min-w-20 flex-1 basis-16 rounded-md sm:basis-20"
+                class="method-chip"
                 :style="`background:${c.hexString()};color:${c.fg().hexString()}`"
               >
                 <span x-text="k"></span>
               </div>
             </template>
           </div>
+
           <div class="mt-4" x-html="shiny.scaleTw || ''"></div>
         </div>
       </section>
@@ -568,11 +771,11 @@
       <section x-show="mode === 'contrast'" class="page-pad space-y-6">
         <div class="flex flex-wrap items-end gap-4">
           <label class="text-sm">
-            <span class="mb-1 block text-fg-muted">Against</span>
+            <span class="mb-1 block text-theme-fg-muted">Against</span>
             <input type="text" class="input w-40 font-mono" x-model="contrastAgainst" />
           </label>
           <label class="text-sm">
-            <span class="mb-1 block text-fg-muted">on() target ratio</span>
+            <span class="mb-1 block text-theme-fg-muted">on() target ratio</span>
             <input
               type="number"
               min="1"
@@ -593,39 +796,47 @@
                   class="font-mono text-2xl font-semibold"
                   x-text="contrastReport().ratio.toFixed(2) + ' : 1'"
                 ></p>
+
                 <div class="flex flex-wrap gap-1">
                   <span
                     class="badge"
                     :class="contrastReport().passes.aa ? 'badge-pass' : 'badge-fail'"
-                    >AA</span
                   >
+                    AA
+                  </span>
                   <span
                     class="badge"
                     :class="contrastReport().passes.aaLarge ? 'badge-pass' : 'badge-fail'"
-                    >AA large</span
                   >
+                    AA large
+                  </span>
                   <span
                     class="badge"
                     :class="contrastReport().passes.aaa ? 'badge-pass' : 'badge-fail'"
-                    >AAA</span
                   >
+                    AAA
+                  </span>
                   <span
                     class="badge"
                     :class="contrastReport().passes.aaaLarge ? 'badge-pass' : 'badge-fail'"
-                    >AAA large</span
                   >
+                    AAA large
+                  </span>
                 </div>
-                <p class="text-xs text-fg-muted">
+
+                <p class="text-xs text-theme-fg-muted">
                   Current is <span x-text="contrastReport().current"></span>
                 </p>
               </div>
             </template>
           </div>
+
           <div class="panel">
             <h3 class="panel-title-code">.fg()</h3>
+
             <p>Best black/white on this color as background.</p>
             <template x-if="foregroundOnBase()">
-              <div class="mt-3 flex overflow-hidden rounded-lg border border-border">
+              <div class="mt-3 flex overflow-hidden rounded-lg border border-theme-border">
                 <div
                   class="flex h-24 flex-1 items-center justify-center text-sm font-semibold"
                   :style="`background:${baseColor.hexString()};color:${foregroundOnBase().hexString()}`"
@@ -635,16 +846,20 @@
               </div>
             </template>
           </div>
+
           <div class="panel">
             <h3 class="panel-title-code">.on(ratio)</h3>
+
             <p>Tint/shade of current color that meets the ratio.</p>
             <template x-if="onTarget()">
               <div class="mt-3">
                 <div
-                  class="h-16 rounded-lg border border-border"
+                  class="h-16 rounded-lg border border-theme-border"
                   :style="`background:${onTarget().hexString()}`"
                 ></div>
+
                 <p class="mt-2 font-mono text-xs" x-text="onTarget().oklchString()"></p>
+
                 <p class="font-mono text-xs" x-text="onTarget().hexString()"></p>
               </div>
             </template>
@@ -653,8 +868,8 @@
 
         <div class="panel overflow-x-auto">
           <h3 class="font-semibold">Scale vs white / black</h3>
-          <table class="mt-3 w-full min-w-[32rem] text-left text-xs">
-            <thead class="text-fg-muted">
+          <table class="mt-3 w-full min-w-lg text-left text-xs">
+            <thead class="text-theme-fg-muted">
               <tr>
                 <th class="py-1 pr-3">Step</th>
                 <th class="py-1 pr-3">Swatch</th>
@@ -666,7 +881,7 @@
             </thead>
             <tbody>
               <template x-for="(row, i) in contrastMatrix()" :key="'m'+i">
-                <tr class="border-t border-border">
+                <tr class="border-t border-t-theme-border">
                   <td
                     class="py-1.5 pr-3 font-mono"
                     x-text="row.step.type + ' ' + row.step.weight"
@@ -703,67 +918,140 @@
       <!-- ========== DOCS (single page) ========== -->
       <section x-show="mode === 'docs'" class="prose-demo page-pad max-w-3xl">
         <h2 class="mt-0 text-2xl font-semibold">Getting started</h2>
-        <div class="mt-3" x-html="shiny.docsStart || ''"></div>
-        <p class="mt-4 text-sm text-fg-muted">
+
+        <p class="mt-4 text-theme-fg-muted">
           This playground is a static GitHub Pages demo. The npm package is the library of record.
         </p>
 
+        <div class="mt-3" x-html="shiny.docsStart || ''"></div>
+
         <h2 class="mt-10 text-2xl font-semibold">Concepts</h2>
-        <ul class="mt-3 list-disc space-y-1 pl-5 text-sm text-fg-muted">
+
+        <ul class="mt-3 list-disc space-y-1 pl-5 text-theme-fg-muted">
           <li>
-            <strong class="text-fg">Mix space:</strong> OKLCH (perceptual lightness, stable hue)
+            <strong>Mix space:</strong>
+            OKLCH (perceptual lightness, stable hue)
           </li>
+
           <li>
-            <strong class="text-fg">Weight:</strong> integer <code>2–25</code> for scale series;
-            single tint/shade accepts <code>0–100</code>
+            <strong>Weight:</strong>
+            integer <kbd>2–25</kbd> for scale series; &nbsp; single tint/shade accepts
+            <kbd>0–100</kbd>
           </li>
-          <li><strong class="text-fg">all(weight):</strong> includes pure white/black at 100%</li>
+
           <li>
-            <strong class="text-fg">scale(weight):</strong> skips pure white/black; optional presets
-            <code>zen</code> / <code>tailwind</code>
+            <strong class="font-mono">all(weight):</strong>
+            includes pure white/black at <kdb>100%</kdb>
           </li>
-          <li><strong class="text-fg">OKLCH object L:</strong> percent <code>0–100</code></li>
+
           <li>
-            <strong class="text-fg">Share URL:</strong> <code>?c=</code> color ·
-            <code>?w=</code> weight · <code>?mode=</code>
+            <strong class="font-mono">scale(weight):</strong>
+            skips pure white/black; optional presets <kbd>zen</kbd> / <kbd>tailwind</kbd>
+          </li>
+
+          <li>
+            <strong>OKLCH object L:</strong>
+            percent <kbd>0–100</kbd>
           </li>
         </ul>
 
         <h2 class="mt-10 text-2xl font-semibold">API cheatsheet</h2>
+
         <div class="mt-3" x-html="shiny.docsApi || ''"></div>
 
         <h2 class="mt-10 text-2xl font-semibold">Agents / browser JSON</h2>
-        <p class="mt-3 text-sm text-fg-muted">
-          v1 is <strong class="text-fg">client-side only</strong> (GitHub Pages). Use the
+
+        <p class="mt-3 text-theme-fg-muted">
+          v1 is <strong class="text-theme-fg">client-side only</strong> (GitHub Pages). Use the
           <button type="button" class="underline" @click="mode = 'api'; runApiDemo()">API</button>
           mode to build query strings and copy JSON envelopes.
         </p>
-        <p class="mt-3 text-sm text-fg-muted">
+
+        <p class="mt-3 text-sm text-theme-fg-muted">
           Ops: <code>parse</code>, <code>tint</code>, <code>shade</code>, <code>all</code>,
           <code>scale</code>, <code>contrast</code>, <code>fg</code>, <code>on</code>,
           <code>random</code>. See <code>llms.txt</code>.
         </p>
 
         <h2 class="mt-10 text-2xl font-semibold">Credits</h2>
-        <ul class="mt-3 list-disc space-y-1 pl-5 text-sm text-fg-muted">
-          <li>Inspired by Noel Delgado’s <em>values.js</em> & <em>parse-css-color</em></li>
-          <li>Color math via culori</li>
-          <li>Playground UX evolved from the zen-themes experiments</li>
+        <ul class="mt-3 list-disc space-y-1 pl-5 text-theme-fg-muted">
+          <li>
+            Inspired by Noel Delgado's
+            <a href="https://github.com/noeldelgado/values.js" title="info about 'values.js'">
+              values.js,
+            </a>
+            <a
+              href="https://github.com/noeldelgado/parse-css-color"
+              title="info about 'parse-css-color'"
+            >
+              parse-css-color
+            </a>
+            and
+            <a href="https://github.com/noeldelgado/shadowlord" title="info about 'shadowlord'">
+              shadowlord
+            </a>
+            projects.
+          </li>
+          <li>
+            Color math via
+            <a href="https://github.com/evercoder/culori" title="info about 'culori'">culori</a>.
+          </li>
           <li>zen-colors by kematzy · MIT</li>
         </ul>
+
+        <h2 class="mt-10 mb-4 text-2xl font-semibold">License</h2>
+
+        <div id="license">
+          <p>MIT License</p>
+
+          <p>
+            &copy; Copyright Noel Delgado [pixelia.me@gmail.com] (pixelia.me) - inspiration and some
+            concepts
+          </p>
+
+          <p>
+            &copy; Copyright 2026 kematzy [kematzy@gmail.com] (github.com/kematzy) - assisted by
+            Grok 4.5 (grok.com)
+          </p>
+
+          <p>
+            Permission is hereby granted, free of charge, to any person obtaining a copy of this
+            software and associated documentation files (the "Software"), to deal in the Software
+            without restriction, including without limitation the rights to use, copy, modify,
+            merge, publish, distribute, sublicense, and/or sell copies of the Software, and to
+            permit persons to whom the Software is furnished to do so, subject to the following
+            conditions:
+          </p>
+
+          <p>
+            The above copyright notice and this permission notice shall be included in all copies or
+            substantial portions of the Software.
+          </p>
+
+          <p>
+            THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED,
+            INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR
+            PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE
+            LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT
+            OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR
+            OTHER DEALINGS IN THE SOFTWARE.
+          </p>
+        </div>
       </section>
 
       <!-- ========== API ========== -->
       <section x-show="mode === 'api'" class="page-pad space-y-4">
         <div class="panel">
           <h2 class="text-lg font-semibold">Browser JSON API</h2>
-          <p class="mt-1 text-sm text-fg-muted">
+
+          <p class="mt-1 text-sm text-theme-fg-muted">
             Static demo helper for agents — not a networked HTTP service. Shareable via query
             params.
           </p>
+
           <div class="mt-4 flex flex-wrap gap-3">
             <label class="text-sm">
-              <span class="mb-1 block text-fg-muted">op</span>
+              <span class="mb-1 block text-theme-fg-muted">op</span>
               <select class="input" x-model="apiOp" @change="runApiDemo()">
                 <option>parse</option>
                 <option>tint</option>
@@ -779,7 +1067,7 @@
               </select>
             </label>
             <label class="text-sm" x-show="apiOp === 'scale'">
-              <span class="mb-1 block text-fg-muted">preset</span>
+              <span class="mb-1 block text-theme-fg-muted">preset</span>
               <select class="input" x-model="apiPreset" @change="runApiDemo()">
                 <option value="zen">zen</option>
                 <option value="tailwind">tailwind</option>
@@ -793,14 +1081,15 @@
               Copy JSON
             </button>
           </div>
-          <pre
-            class="code-block mt-4 max-h-[28rem] overflow-auto"
-          ><code x-text="apiJson || 'Click Run to generate JSON'"></code></pre>
+          <pre class="code-block mt-4 max-h-112 overflow-auto">
+            <code x-text="apiJson || 'Click Run to generate JSON'"></code>
+          </pre>
         </div>
       </section>
     </main>
 
     <!-- Drawer overlay -->
+
     <div
       x-show="drawerOpen"
       x-transition.opacity
@@ -817,11 +1106,11 @@
       x-transition:leave="transition transform ease-in duration-200"
       x-transition:leave-start="translate-x-0"
       x-transition:leave-end="translate-x-full"
-      class="fixed top-0 right-0 bottom-0 flex w-full max-w-xl flex-col border-l border-border bg-surface shadow-2xl"
+      class="fixed top-0 right-0 bottom-0 flex w-full max-w-xl flex-col border-l border-theme-border bg-theme-t01 shadow-2xl"
       style="z-index: var(--z-drawer)"
     >
-      <div class="flex items-center justify-between border-b border-border px-4 py-3">
-        <div class="flex gap-2">
+      <div class="flex items-center justify-between border-b border-theme-border px-4 pt-3">
+        <div class="flex gap-x-2">
           <button
             type="button"
             class="nav-link"
@@ -848,24 +1137,34 @@
         <div x-show="drawerTab === 'export'" class="space-y-5">
           <div>
             <h2 class="text-xl font-semibold">CSS Export</h2>
-            <p class="mt-1 text-sm text-fg-muted">zen keys by default · Tailwind steps optional</p>
+
+            <p class="mt-1 text-sm text-theme-fg-muted">
+              zen keys by default · Tailwind steps optional
+            </p>
           </div>
           <label class="block text-sm">
             <span class="mb-1 block font-medium">Palette name</span>
             <input type="text" class="input w-full font-mono" x-model="variableName" />
-            <p class="mt-1 text-xs text-danger" x-show="varNameError()" x-text="varNameError()"></p>
+
+            <p
+              class="mt-1 text-xs text-theme-danger"
+              x-show="varNameError()"
+              x-text="varNameError()"
+            ></p>
           </label>
+
           <div class="text-sm">
             <span class="mb-2 block font-medium">Format</span>
+
             <div class="flex flex-wrap gap-3">
-              <label class="flex items-center gap-2"
-                ><input type="radio" value="oklch" x-model="outputFormat" /> OKLCH</label
+              <label class="flex items-center gap-2">
+                <input type="radio" value="oklch" x-model="outputFormat" /> OKLCH</label
               >
-              <label class="flex items-center gap-2"
-                ><input type="radio" value="hex" x-model="outputFormat" /> HEX</label
+              <label class="flex items-center gap-2">
+                <input type="radio" value="hex" x-model="outputFormat" /> HEX</label
               >
-              <label class="flex items-center gap-2"
-                ><input type="radio" value="rgb" x-model="outputFormat" /> RGB</label
+              <label class="flex items-center gap-2">
+                <input type="radio" value="rgb" x-model="outputFormat" /> RGB</label
               >
             </div>
           </div>
@@ -891,7 +1190,9 @@
                 Copy
               </button>
             </div>
-            <pre class="code-block max-h-80 overflow-auto"><code x-text="exportCss()"></code></pre>
+            <pre
+              class="code-block max-h-80 lg:max-h-full overflow-auto"
+            ><code x-text="exportCss()"></code></pre>
           </div>
         </div>
 
@@ -900,31 +1201,32 @@
             <h2 class="text-xl font-semibold">History</h2>
             <button
               type="button"
-              class="btn btn-danger text-xs"
+              class="btn btn-danger"
               x-show="history.length"
               @click="clearHistory()"
             >
               Clear
             </button>
           </div>
-          <p x-show="!history.length" class="text-sm text-fg-muted">
+
+          <p x-show="!history.length" class="text-sm text-theme-fg-muted">
             Generated scales will appear here (local only).
           </p>
           <ul class="space-y-2">
             <template x-for="entry in history" :key="entry.id">
-              <li class="flex items-center gap-3 rounded-lg border border-border p-3">
+              <li class="flex items-center gap-3 rounded-lg border border-theme-border p-3">
                 <button
                   type="button"
                   class="flex flex-1 items-center gap-3 text-left"
                   @click="loadHistoryEntry(entry)"
                 >
                   <span
-                    class="h-8 w-8 rounded border border-border"
+                    class="h-8 w-8 rounded border border-theme-border"
                     :style="`background:${entry.inputColor}`"
                   ></span>
                   <span>
                     <span class="block font-mono text-sm" x-text="entry.inputColor"></span>
-                    <span class="block text-xs text-fg-muted">
+                    <span class="block text-xs text-theme-fg-muted">
                       w=<span x-text="entry.weight"></span> ·
                       <span x-text="relTime(entry.createdAt)"></span>
                     </span>
@@ -932,7 +1234,7 @@
                 </button>
                 <button
                   type="button"
-                  class="btn-icon text-danger"
+                  class="btn-icon text-theme-danger"
                   @click="deleteHistoryEntry(entry.id)"
                   aria-label="Delete"
                 >
@@ -945,17 +1247,17 @@
       </div>
     </aside>
 
-    <footer class="border-t border-border px-5 py-4 text-center text-xs text-fg-muted">
+    <footer class="border-t border-theme-border px-5 py-4 text-center text-xs text-theme-fg-muted">
       zen-colors v<span x-text="VERSION"></span> ·
       <a
         class="underline"
         href="https://github.com/kematzy/zen-colors"
         target="_blank"
         rel="noreferrer"
-        >GitHub</a
       >
+        GitHub
+      </a>
     </footer>
-
     <script type="module" src="/src/main.js"></script>
   </body>
 </html>
