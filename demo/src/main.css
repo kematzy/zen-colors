@@ -73,9 +73,9 @@
   --color-theme-success: light-dark(oklch(45% 0.12 145), oklch(62% 0.12 145));
   --color-theme-success-fg: oklch(98% 0 0);
 
-  --color-theme-link: light-dark(var(--color-primary-s30), var(--color-primary-t30));
-  /* s40/t40 tokens are not generated for this primary scale — use nearest existing steps */
-  --color-theme-link-hover: light-dark(var(--color-primary-s20), var(--color-primary-t20));
+  --color-theme-link: light-dark(var(--color-primary-s30), var(--color-primary-t30))
+    /* s40/t40 tokens are not generated for this primary scale — use nearest existing steps */
+    --color-theme-link-hover: light-dark(var(--color-primary-s20), var(--color-primary-t20));
 
   --font-sans: 'Montserrat', system-ui, -apple-system, sans-serif;
   --font-mono: 'Roboto Mono', ui-monospace, Menlo, monospace;
