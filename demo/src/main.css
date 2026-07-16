@@ -80,6 +80,7 @@
   --font-sans: 'Montserrat', system-ui, -apple-system, sans-serif;
   --font-mono: 'Roboto Mono', ui-monospace, Menlo, monospace;
 
+  --z-drawer: 40;
   --z-overlay: 35;
 }
 
