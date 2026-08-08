@@ -1,5 +1,5 @@
 import Alpine from 'alpinejs';
-import { Color, VERSION, parse } from 'zen-colors';
+import { Color, VERSION, parse } from '@kematzy/zen-colors';
 
 import { runApi } from './lib/api.js';
 import { methodChainSample } from './lib/code-sample.js';
@@ -32,10 +32,10 @@ document.addEventListener('alpine:init', () => {
     error: '',
     skipIntro: false,
 
-    /** @type {import('zen-colors').Color | null} */
+    /** @type {import('@kematzy/zen-colors').Color | null} */
     baseColor: null,
 
-    /** @type {import('zen-colors').Color[]} */
+    /** @type {import('@kematzy/zen-colors').Color[]} */
     scaleColors: [],
 
     oklch: { l: 52.1, c: 0.023, h: 104, alpha: 1 },
@@ -410,9 +410,9 @@ document.addEventListener('alpine:init', () => {
     async refreshHighlights() {
       const mode = this.theme;
       const jobs = {
-        introInstall: await highlightCode('npm install zen-colors', 'bash', mode),
+        introInstall: await highlightCode('npm install @kematzy/zen-colors', 'bash', mode),
         introUsage: await highlightCode(
-          `import { Color } from 'zen-colors'\n\nconst c = new Color('${this.colorInput}')\n  .tint(25).oklchString();`,
+          `import { Color } from '@kematzy/zen-colors'\n\nconst c = new Color('${this.colorInput}')\n  .tint(25).oklchString();`,
           'javascript',
           mode,
         ),
@@ -422,7 +422,7 @@ document.addEventListener('alpine:init', () => {
           mode,
         ),
         docsStart: await highlightCode(
-          `import { Color } from 'zen-colors'\n\nconst c = new Color('#0af')\nc.tint(25).oklchString()\nc.all(10)\nc.scale(10, { preset: 'zen' })\nc.fg().rgbString()\nc.on(4.5)`,
+          `import { Color } from '@kematzy/zen-colors'\n\nconst c = new Color('#0af')\nc.tint(25).oklchString()\nc.all(10)\nc.scale(10, { preset: 'zen' })\nc.fg().rgbString()\nc.on(4.5)`,
           'javascript',
           mode,
         ),

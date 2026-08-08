@@ -1,4 +1,4 @@
-import { Color, VERSION, parse } from 'zen-colors';
+import { Color, VERSION, parse } from '@kematzy/zen-colors';
 
 /**
  * Client-side JSON API for agents & demos (no server).
@@ -103,7 +103,7 @@ function parseOrThrow(c) {
 }
 
 /**
- * @param {import('zen-colors').Color} color
+ * @param {import('@kematzy/zen-colors').Color} color
  */
 function serializeColor(color) {
   return {
@@ -125,7 +125,7 @@ function serializeColor(color) {
  * @param {string} op
  * @param {Record<string, unknown>} input
  * @param {unknown} result
- * @param {import('zen-colors').Color} [base]
+ * @param {import('@kematzy/zen-colors').Color} [base]
  */
 function envelope(op, input, result, base) {
   const api = new URL(window.location.href);
@@ -139,7 +139,7 @@ function envelope(op, input, result, base) {
 
   return {
     ok: true,
-    lib: 'zen-colors',
+    lib: '@kematzy/zen-colors',
     version: VERSION,
     op,
     input,
@@ -156,7 +156,7 @@ function envelope(op, input, result, base) {
 function errorEnvelope(message, op) {
   return {
     ok: false,
-    lib: 'zen-colors',
+    lib: '@kematzy/zen-colors',
     version: VERSION,
     op,
     error: message,

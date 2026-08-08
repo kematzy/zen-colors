@@ -8,7 +8,7 @@ Playground: this GitHub Pages site
 ## Package
 
 ```ts
-import { Color, parse } from 'zen-colors'
+import { Color, parse } from '@kematzy/zen-colors'
 new Color('#0af').tint(25).oklchString()
 ```
 

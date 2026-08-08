@@ -5,7 +5,7 @@ Zen-like CSS color scales, tints, shades, and contrast helpers — **OKLCH by de
 > Turn any common CSS color into perceptual tints, shades, scales, and readable foregrounds.
 
 ```ts
-import { Color } from 'zen-colors';
+import { Color } from '@kematzy/zen-colors';
 
 new Color('#0af').tint(25).oklchString();
 // → 'oklch(78.04% 0.126 242.04)'
@@ -14,7 +14,7 @@ new Color('#0af').tint(25).oklchString();
 ## Install
 
 ```bash
-npm install zen-colors
+npm install @kematzy/zen-colors
 ```
 
 **Requirements:** Node.js ≥ 20
@@ -22,7 +22,7 @@ npm install zen-colors
 ## Quick start
 
 ```ts
-import { Color, parse } from 'zen-colors';
+import { Color, parse } from '@kematzy/zen-colors';
 
 const cyan = new Color('#0af');
 

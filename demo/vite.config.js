@@ -11,7 +11,7 @@ export default defineConfig({
   resolve: {
     alias: {
       // Dev/build resolves the local library source
-      'zen-colors': resolve(import.meta.dirname, '../src/index.ts'),
+      '@kematzy/zen-colors': resolve(import.meta.dirname, '../src/index.ts'),
     },
   },
   server: {
