@@ -7,13 +7,16 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.1.0] - 2026-08-08
+
+First public release on npm as **`@kematzy/zen-colors`**.
+
 ### Added
 
 - Local `pre-push` hook (`.githooks/`) and `npm run check` so bad builds cannot be pushed easily; `prepare` enables hooks on install.
 - Interactive playground under `demo/` (Intro, Scale, Methods, Contrast, Docs, browser JSON API).
 - CSS export drawer with zen keys by default, optional Tailwind 50–950, share-URL comment.
 - GitHub Pages deploy workflow (`.github/workflows/pages.yml`).
-
 - Project scaffold: TypeScript, tsup, Vitest (≥90% coverage), ESLint, Prettier, CI, MIT license.
 - `Color` construction from common CSS color strings (via culori) and null-safe `parse()`.
 - Formatters: `oklchString()`, `rgbString()`, `hslString()`, `hexString()`, `toString()`, `toJSON()`.
@@ -27,3 +30,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - `npm run test:ui` for Vitest interactive UI.
 - ESLint support for `examples/**` Node scripts.
 - Project CSpell config (`.cspell.json`) and `npm run spellcheck` (CI: Node 24 only; optional quality gate).
+
+### Changed
+
+- Package name set to `@kematzy/zen-colors` with public `publishConfig` for npm.
