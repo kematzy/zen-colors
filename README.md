@@ -126,8 +126,8 @@ npm run test:coverage # ≥ 90% thresholds enforced
 npm run test:browser  # vitest browser smoke (Playwright / Chromium)
 npm run typecheck
 npm run lint
-npm run spellcheck    # project dictionary via cspell
-npm run check         # typecheck + lint + format + test (pre-push gate)
+npm run spellcheck    # project dictionary via cspell (`.cspell.json`)
+npm run check         # typecheck + lint + format + spellcheck + test (pre-push gate)
 npm run build
 npm run demo:dev      # playground (Vite)
 npm run demo:build    # static demo → demo/dist
@@ -137,18 +137,21 @@ npm run demo:build    # static demo → demo/dist
 
 This library is developed **test-first** (TDD).
 
-### Quality gates (push / main)
+### Quality gates (push / main / publish)
 
 **Local `pre-push` hook** (installed via `npm install` / `prepare`):
 
 - Runs `npm run check` and **blocks the push** if anything fails
+- `check` matches CI’s quality steps, including **spellcheck** (same dictionary as Node 24 CI)
 - See [`.githooks/README.md`](./.githooks/README.md)
 - Bypass only when intentional: `git push --no-verify`
+
+**`npm publish` (`prepublishOnly`):** typecheck, lint, format, spellcheck, coverage tests, and build — so dictionary/format drift fails before a release tarball is uploaded.
 
 **GitHub (required for real protection):** on `main`, enable a
 [ruleset / branch protection](https://docs.github.com/en/repositories/configuring-branches-and-merges-in-your-repository/managing-rulesets/about-rulesets)
 with **Require status checks to pass**, selecting the CI `test (…)` jobs from
-`.github/workflows/ci.yml`. That cannot be skipped with `--no-verify`.
+`.github/workflows/ci.yml` (at least **`test (24)`**, which runs spellcheck + demo build). That cannot be skipped with `--no-verify`.
 
 ## Playground demo
 

@@ -7,6 +7,14 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Fixed
+
+- Spellcheck: allow `lightningcss` in the project dictionary (CI Node 24).
+
+### Changed
+
+- `npm run check` and `prepublishOnly` now include spellcheck (and publish also runs lint + format) so local pre-push and releases match CI quality gates.
+
 ## [0.1.0] - 2026-08-08
 
 First public release on npm as **`@kematzy/zen-colors`**.

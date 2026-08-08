@@ -4,7 +4,9 @@ This repo uses **`core.hooksPath=.githooks`** so hooks are versioned with the pr
 
 ## pre-push
 
-Runs `npm run check` (typecheck → lint → format:check → test) and **blocks the push** if anything fails.
+Runs `npm run check` (typecheck → lint → format:check → spellcheck → test) and **blocks the push** if anything fails.
+
+Spellcheck uses the same `cspell` config as CI (Node 24 job). Add legitimate project terms to [`.cspell.json`](../.cspell.json) `words` when they are intentional, not typos.
 
 ```bash
 git push
