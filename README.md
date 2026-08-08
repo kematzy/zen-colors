@@ -1,5 +1,10 @@
 # zen-colors
 
+[![npm](https://img.shields.io/npm/v/@kematzy/zen-colors.svg)](https://www.npmjs.com/package/@kematzy/zen-colors)
+[![Node.js](https://img.shields.io/node/v/@kematzy/zen-colors.svg)](https://www.npmjs.com/package/@kematzy/zen-colors)
+[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](./LICENSE)
+[![CI](https://github.com/kematzy/zen-colors/actions/workflows/ci.yml/badge.svg)](https://github.com/kematzy/zen-colors/actions/workflows/ci.yml)
+
 Zen-like CSS color scales, tints, shades, and contrast helpers — **OKLCH by default**.
 
 > Turn any common CSS color into perceptual tints, shades, scales, and readable foregrounds.
