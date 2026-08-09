@@ -14,3 +14,4 @@
 ## zen-colors
 
 - Design and implementation by **kematzy**.
+- Helpfully assisted by **Grok 4.5** using [Pi Coding Agent](https://pi.dev) and [Grok Build](https://grok.com/build).

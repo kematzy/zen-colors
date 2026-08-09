@@ -175,6 +175,8 @@ npm run demo:dev
 Inspired by Noel Delgado’s [values.js](https://github.com/noeldelgado/values.js) and [parse-css-color](https://github.com/noeldelgado/parse-css-color).  
 Color math via [culori](https://github.com/Evercoder/culori).
 
+Helpfully assisted by **Grok 4.5** using [Pi Coding Agent](https://pi.dev) and [Grok Build](https://grok.com/build).
+
 See [CREDITS.md](./CREDITS.md).
 
 ## License
