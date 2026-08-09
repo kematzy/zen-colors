@@ -1,0 +1,513 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <title>@kematzy/zen-colors — social preview</title>
+    <meta
+      name="description"
+      content="Source for assets/social-preview.png (GitHub 1280×640). Re-render with Playwright after edits."
+    />
+    <!--
+      Swatch colors computed with @kematzy/zen-colors (tint/shade in OKLCH).
+
+      Row 1 surface: oklch(52.1% 0.023 104) → tint 70…10 + base + shade 10…70
+      Row 2 primary: oklch(39.42% 0.0865 137) → tint 60…10 + base + shade 10…60
+      Row 3 warning: oklch(56.3% 0.123 68) → tint 50…10 + base + shade 10…50
+
+      Re-render PNG (from repo root):
+        node assets/render-social-preview.mjs
+    -->
+    <style>
+      @import url('https://fonts.googleapis.com/css2?family=Montserrat:wght@500;600;700&family=Roboto+Mono:wght@400;500&display=swap');
+
+      * {
+        box-sizing: border-box;
+        margin: 0;
+        padding: 0;
+      }
+
+      body {
+        width: 1280px;
+        height: 640px;
+        overflow: hidden;
+        font-family: 'Montserrat', system-ui, sans-serif;
+        color: oklch(92% 0.01 103);
+        background: oklch(14% 0.012 103);
+      }
+
+      .frame {
+        width: 1280px;
+        height: 640px;
+        position: relative;
+        padding: 48px 64px 44px;
+        display: flex;
+        flex-direction: column;
+        justify-content: space-between;
+        background:
+          radial-gradient(ellipse 70% 80% at 88% 12%, oklch(30% 0.06 138 / 0.8), transparent 55%),
+          radial-gradient(ellipse 55% 55% at 8% 92%, oklch(26% 0.05 242 / 0.48), transparent 50%),
+          linear-gradient(145deg, oklch(16% 0.014 103), oklch(11% 0.01 103));
+      }
+
+      .frame::before {
+        content: '';
+        position: absolute;
+        inset: 0;
+        background-image:
+          linear-gradient(oklch(100% 0 0 / 0.03) 1px, transparent 1px),
+          linear-gradient(90deg, oklch(100% 0 0 / 0.03) 1px, transparent 1px);
+        background-size: 40px 40px;
+        mask-image: radial-gradient(ellipse 80% 70% at 50% 40%, black, transparent);
+        pointer-events: none;
+      }
+
+      .top,
+      .bottom {
+        position: relative;
+        z-index: 1;
+      }
+
+      .badge {
+        display: inline-flex;
+        align-items: center;
+        gap: 10px;
+        font-family: 'Roboto Mono', ui-monospace, monospace;
+        font-size: 17px;
+        font-weight: 500;
+        letter-spacing: 0.02em;
+        color: oklch(78% 0.04 138);
+        background: oklch(22% 0.02 138 / 0.55);
+        border: 1px solid oklch(45% 0.06 138 / 0.45);
+        border-radius: 999px;
+        padding: 8px 16px 8px 12px;
+        margin-bottom: 22px;
+      }
+
+      .dot {
+        width: 10px;
+        height: 10px;
+        border-radius: 50%;
+        background: oklch(62% 0.14 138);
+        box-shadow: 0 0 12px oklch(62% 0.14 138 / 0.7);
+      }
+
+      h1 {
+        font-size: 64px;
+        font-weight: 700;
+        letter-spacing: -0.03em;
+        line-height: 1.05;
+        color: oklch(96% 0.008 103);
+      }
+
+      h1 .scope {
+        color: oklch(66% 0.008 103);
+        font-weight: 600;
+      }
+
+      .tagline {
+        margin-top: 16px;
+        max-width: 880px;
+        font-size: 32px;
+        font-weight: 500;
+        line-height: 1.3;
+        color: oklch(78% 0.02 103);
+      }
+
+      .tagline em {
+        font-style: normal;
+        color: oklch(83% 0.02 103);
+        font-weight: 600;
+      }
+
+      .bottom {
+        display: flex;
+        flex-direction: column;
+        gap: 14px;
+      }
+
+      .scale-block {
+        display: flex;
+        flex-direction: column;
+        gap: 8px;
+      }
+
+      .scale-label {
+        font-family: 'Roboto Mono', ui-monospace, monospace;
+        font-size: 20px;
+        letter-spacing: 0.06em;
+        text-transform: uppercase;
+        color: oklch(62% 0.02 103);
+      }
+
+      .scale-label.secondary {
+        font-size: 15px;
+        letter-spacing: 0.05em;
+        color: oklch(56% 0.018 103);
+      }
+
+      .scale {
+        display: flex;
+        gap: 8px;
+        height: 60px;
+      }
+
+      .scale.roles {
+        height: 50px;
+        gap: 0;
+      }
+
+      .role-group {
+        display: flex;
+        flex: 1;
+        gap: 5px;
+        min-width: 0;
+      }
+
+      .role-group + .role-group {
+        margin-left: 12px;
+      }
+
+      .swatch {
+        flex: 1;
+        min-width: 0;
+        border-radius: 10px;
+        box-shadow: inset 0 0 0 1px oklch(100% 0 0 / 0.08);
+
+        display: flex;
+        justify-content: center;
+        padding: 2px 4px;
+        font-size: 12px;
+        align-items: center;
+      }
+
+      .swatch.base {
+        box-shadow:
+          inset 0 0 0 1px oklch(80% 0 0 / 0.42),
+          0 0 0 1px oklch(100% 0 0 / 0.06);
+      }
+
+      .meta {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-top: 4px;
+        font-family: 'Roboto Mono', ui-monospace, monospace;
+        font-size: 15px;
+        color: oklch(58% 0.02 103);
+      }
+
+      .meta strong {
+        color: oklch(80% 0.03 103);
+        font-weight: 500;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="frame">
+      <div class="top">
+        <div class="badge"><span class="dot"></span>npm · @kematzy/zen-colors</div>
+        <h1><span class="scope">@kematzy/</span>zen-colors</h1>
+        <p class="tagline">
+          Zen-like CSS color scales, tints/shades &amp; contrasts<br />
+          — <em>OKLCH by default</em>.
+        </p>
+      </div>
+
+      <div class="bottom">
+        <div class="scale-block">
+          <div class="scale-label">Perceptual tint → base → shade</div>
+          <div class="scale" style="height: 50px" aria-label="surface colors">
+            <div
+              class="swatch"
+              title="t70"
+              style="background: oklch(85.6% 0.006 104); color: oklch(60% 0 100)"
+            >
+              t70
+            </div>
+            <div
+              class="swatch"
+              title="t60"
+              style="background: oklch(80.8% 0.009 104); color: oklch(55% 0 100)"
+            >
+              t60
+            </div>
+            <div
+              class="swatch"
+              title="t50"
+              style="background: oklch(76% 0.011 104); color: oklch(50% 0 100)"
+            >
+              t50
+            </div>
+            <div
+              class="swatch"
+              title="t40"
+              style="background: oklch(71.2% 0.013 104); color: oklch(50% 0 100)"
+            >
+              t40
+            </div>
+            <div
+              class="swatch"
+              title="t30"
+              style="background: oklch(66.4% 0.016 104); color: oklch(48% 0 100)"
+            >
+              t30
+            </div>
+            <div
+              class="swatch"
+              title="t20"
+              style="background: oklch(61.6% 0.018 104); color: oklch(45% 0 100)"
+            >
+              t20
+            </div>
+            <div
+              class="swatch"
+              title="t10"
+              style="background: oklch(56.8% 0.02 104); color: oklch(40% 0 100)"
+            >
+              t10
+            </div>
+            <div
+              class="swatch"
+              title="x00"
+              style="background: oklch(52.1% 0.023 104); color: oklch(70% 0 100)"
+            >
+              BASE
+            </div>
+            <div
+              class="swatch"
+              title="s10"
+              style="background: oklch(46.8% 0.02 104); color: oklch(70% 0 100)"
+            >
+              s10
+            </div>
+            <div
+              class="swatch"
+              title="s20"
+              style="background: oklch(41.6% 0.018 104); color: oklch(70% 0 100)"
+            >
+              s20
+            </div>
+            <div
+              class="swatch"
+              title="s30"
+              style="background: oklch(36.4% 0.016 104); color: oklch(70% 0 100)"
+            >
+              s30
+            </div>
+            <div
+              class="swatch"
+              title="s40"
+              style="background: oklch(31.2% 0.013 104); color: oklch(70% 0 100)"
+            >
+              s40
+            </div>
+            <div
+              class="swatch"
+              title="s50"
+              style="background: oklch(26% 0.011 104); color: oklch(70% 0 100)"
+            >
+              s50
+            </div>
+            <div
+              class="swatch"
+              title="s60"
+              style="background: oklch(20.8% 0.009 104); color: oklch(62% 0 100)"
+            >
+              s60
+            </div>
+            <div
+              class="swatch"
+              title="s70"
+              style="background: oklch(15.6% 0.006 104); color: oklch(60% 0 100)"
+            >
+              s70
+            </div>
+          </div>
+        </div>
+
+        <div class="scale-block" aria-label="primary color scale">
+          <div class="scale" style="height: 45px">
+            <div
+              class="swatch"
+              title="t60"
+              style="background: oklch(75.77% 0.0346 137); color: oklch(50% 0 100)"
+            >
+              <!--t60-->
+            </div>
+            <div
+              class="swatch"
+              title="t50"
+              style="background: oklch(69.71% 0.0432 137); color: oklch(50% 0 100)"
+            >
+              <!--t50-->
+            </div>
+            <div
+              class="swatch"
+              title="t40"
+              style="background: oklch(63.65% 0.0519 137); color: oklch(40% 0 100)"
+            >
+              <!--t40-->
+            </div>
+            <div
+              class="swatch"
+              title="t30"
+              style="background: oklch(57.59% 0.0605 137); color: oklch(80% 0 100)"
+            >
+              <!--t30-->
+            </div>
+            <div
+              class="swatch"
+              title="t20"
+              style="background: oklch(51.54% 0.0692 137); color: oklch(75% 0 100)"
+            >
+              <!--t20-->
+            </div>
+            <div
+              class="swatch"
+              title="t10"
+              style="background: oklch(45.48% 0.0778 137); color: oklch(70% 0 100)"
+            >
+              <!--t10-->
+            </div>
+            <div
+              class="swatch"
+              title="Base"
+              style="background: oklch(39.42% 0.0865 137); color: oklch(70% 0 100)"
+            >
+              <!--BASE-->
+            </div>
+            <div
+              class="swatch"
+              title="s10"
+              style="background: oklch(35.48% 0.0778 137); color: oklch(70% 0 100)"
+            >
+              <!--s10-->
+            </div>
+            <div
+              class="swatch"
+              title="s20"
+              style="background: oklch(31.54% 0.0692 137); color: oklch(70% 0 100)"
+            >
+              <!--s20-->
+            </div>
+            <div
+              class="swatch"
+              title="s30"
+              style="background: oklch(27.59% 0.0605 137); color: oklch(70% 0 100)"
+            >
+              <!--s30-->
+            </div>
+            <div
+              class="swatch"
+              title="s40"
+              style="background: oklch(23.65% 0.0519 137); color: oklch(70% 0 100)"
+            >
+              <!--s40-->
+            </div>
+            <div
+              class="swatch"
+              title="s50"
+              style="background: oklch(19.71% 0.0432 137); color: oklch(70% 0 100)"
+            >
+              <!--s50-->
+            </div>
+            <div
+              class="swatch"
+              title="s60"
+              style="background: oklch(15.77% 0.0346 137); color: oklch(65% 0 100)"
+            >
+              <!--s60-->
+            </div>
+          </div>
+        </div>
+
+        <div class="scale-block" aria-label="warning color scale">
+          <div class="scale" style="height: 40px">
+            <div
+              class="swatch"
+              title="t50"
+              style="background: oklch(78.1% 0.061 68); color: oklch(40% 0 100)"
+            >
+              <!--t50-->
+            </div>
+            <div
+              class="swatch"
+              title="t40"
+              style="background: oklch(73.7% 0.074 68); color: oklch(40% 0 100)"
+            >
+              <!--t40-->
+            </div>
+            <div
+              class="swatch"
+              title="t30"
+              style="background: oklch(69.4% 0.086 68); color: oklch(40% 0 100)"
+            >
+              <!--t30-->
+            </div>
+            <div
+              class="swatch"
+              title="t20"
+              style="background: oklch(65% 0.098 68); color: oklch(40% 0 100)"
+            >
+              <!--t20-->
+            </div>
+            <div
+              class="swatch"
+              title="t10"
+              style="background: oklch(60.6% 0.111 68); color: oklch(40% 0 100)"
+            >
+              <!--t10-->
+            </div>
+            <div
+              class="swatch"
+              title="Base"
+              style="background: oklch(56.3% 0.123 68); color: oklch(35% 0 100)"
+            >
+              <!--BASE-->
+            </div>
+            <div
+              class="swatch"
+              title="s10"
+              style="background: oklch(50.6% 0.111 68); color: oklch(70% 0 100)"
+            >
+              <!--s10-->
+            </div>
+            <div
+              class="swatch"
+              title="s20"
+              style="background: oklch(45% 0.098 68); color: oklch(70% 0 100)"
+            >
+              <!--s20-->
+            </div>
+            <div
+              class="swatch"
+              title="s30"
+              style="background: oklch(39.4% 0.086 68); color: oklch(70% 0 100)"
+            >
+              <!--s30-->
+            </div>
+            <div
+              class="swatch"
+              title="s40"
+              style="background: oklch(33.7% 0.074 68); color: oklch(70% 0 100)"
+            >
+              <!--s40-->
+            </div>
+            <div
+              class="swatch"
+              title="s50"
+              style="background: oklch(28.1% 0.061 68); color: oklch(70% 0 100)"
+            >
+              <!--s50-->
+            </div>
+          </div>
+        </div>
+
+        <div class="meta">
+          <span><strong>tint · shade · scale · contrast</strong></span>
+          <span>github.com/kematzy/zen-colors</span>
+        </div>
+      </div>
+    </div>
+  </body>
+</html>
