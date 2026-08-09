@@ -39,7 +39,8 @@ export default defineConfig({
   build: {
     outDir: resolve(demoRoot, 'dist'),
     emptyOutDir: true,
-    sourcemap: true,
+    // Demo Pages build: no prod sourcemaps (avoids @tailwindcss/vite SOURCEMAP_BROKEN noise)
+    sourcemap: false,
     // Vite 8 defaults to lightningcss for CSS minify, which rewrites native
     // light-dark() into --lightningcss-light/--lightningcss-dark var pairs.
     // That breaks our @theme semantic tokens. Keep native light-dark().
