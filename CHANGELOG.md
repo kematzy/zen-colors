@@ -14,6 +14,11 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Changed
 
 - `npm run check` and `prepublishOnly` now include spellcheck (and publish also runs lint + format) so local pre-push and releases match CI quality gates.
+- Demo markup split into Handlebars partials (`demo/partials/`) via `vite-plugin-handlebars` so `demo/index.html` stays a short shell.
+
+### Added
+
+- GitHub social preview assets under `assets/` (HTML source, render script, PNG).
 
 ## [0.1.0] - 2026-08-08
 

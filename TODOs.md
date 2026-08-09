@@ -3,9 +3,10 @@
 ## Confirmed
 
 
-1) **DEMO: Convert to `vite-plugin-handlebars` & partials** 
+1) **DEMO: Convert to `vite-plugin-handlebars` & partials** ✅
 
-The HTML is too long and complex. Split into smaller partials.
+Done on branch `demo/handlebars-partials`: `demo/index.html` shell + `demo/partials/*.html`
+(header, pages, drawer, footer) via `vite-plugin-handlebars`.
 
 2) **DEMO: Improve the Contrast section**
 

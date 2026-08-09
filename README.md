@@ -165,6 +165,9 @@ Static GitHub Pages app under `demo/`:
 - **API** — browser-only JSON builder for agents
 - Drawer: CSS export (zen keys default, Tailwind optional) + history
 
+Markup is split with [vite-plugin-handlebars](https://www.npmjs.com/package/vite-plugin-handlebars):
+`demo/index.html` is a short shell; sections live in `demo/partials/` (`header`, `page-*`, `drawer`, `footer`, …).
+
 ```bash
 npm run demo:dev
 # http://localhost:5173/zen-colors/

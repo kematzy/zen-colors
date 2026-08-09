@@ -1,0 +1,204 @@
+<!-- ========== INTRO ========== -->
+<section x-show="mode === 'intro'" class="intro-hero page-pad">
+  <h1 class="mt-3 max-w-3xl lg:max-w-2xl">
+    <span class="text-4xl sm:text-4xl lg:text-5xl font-semibold mb-4 block"> Zen Colors </span>
+    <span class="font-light text-3xl sm:text-3xl lg:text-4xl mb-8 block">
+      easily create perceptual color tints, shades and scales
+    </span>
+  </h1>
+
+  <!--
+        <p class="mt-4 max-w-2xl text-sm leading-relaxed text-theme-fg-muted sm:text-base">
+          Paste any common CSS color, explore a full series, export Tailwind-ready variables, check
+          contrast, and copy agent-friendly JSON — all in the browser.
+        </p>
+        -->
+
+  <!--<div class="mt-8 flex flex-wrap gap-3">
+          <button type="button" class="btn btn-primary" @click="goToScaleFromIntro()">
+            Open Scale
+          </button>
+          <button type="button" class="btn" @click="mode = 'methods'">Browse methods</button>
+          <button type="button" class="btn" @click="mode = 'docs'">Read docs</button>
+        </div>-->
+
+  <div class="my-8 text-2xl text-theme-fg">Library Features</div>
+
+  <div class="mt-10 grid gap-4 sm:grid-cols-2 xl:grid-cols-3">
+    <div class="feature-panel">
+      <h3>Works with your color</h3>
+
+      <p x-html="featureColors()"></p>
+
+      <pre
+        class="feature-code"
+      ><code><span class="opacity-60">const c =</span> new Color('#6b6a5b');</code></pre>
+    </div>
+
+    <div class="feature-panel">
+      <h3>Effortless color scales</h3>
+
+      <p>
+        Generate predictable color palettes from a single color with <kbd>.all(weight)</kbd>
+        that includes tints and shades.
+      </p>
+
+      <pre
+        class="feature-code"
+      ><code><span class="opacity-60">new Color('#6b6a5b')</span>.all(10);</code></pre>
+    </div>
+
+    <div class="feature-panel">
+      <h3>Easy Tints</h3>
+
+      <p>
+        Mix a base color with white and create a single <kbd>.tint()</kbd> or multiple
+        <kbd>.tints()</kbd>.
+      </p>
+      <pre
+        class="feature-code"
+      ><code><span class="opacity-60">new Color('#6b6a5b')</span>.tint(10);</code></pre>
+    </div>
+
+    <div class="feature-panel">
+      <h3>Quick Shades</h3>
+
+      <p>
+        Mix a base color with black and create a single <kbd>.shade()</kbd> or multiple
+        <kbd>.shades()</kbd>.
+      </p>
+      <pre
+        class="feature-code"
+      ><code><span class="opacity-60">new Color('#6b6a5b')</span>.shades(10);</code></pre>
+    </div>
+
+    <div class="feature-panel">
+      <h3><kdb>oklch()</kdb> by default</h3>
+
+      <p>
+        Working with modern CSS colors creates predictable color matching aligned with our vision
+        capabilities.
+      </p>
+
+      <pre class="feature-code"><code>oklch(73% 0.1 161)</code></pre>
+    </div>
+
+    <div class="feature-panel">
+      <h3>Contrast information</h3>
+
+      <p>Get WCAG contrast information via <kbd>.contrast(color)</kbd>.</p>
+      <pre
+        class="feature-code"
+      ><code><span class="opacity-60">new Color('#6b6a5b')</span>.contrast('#fff');</code></pre>
+    </div>
+
+    <div class="feature-panel">
+      <h3>Readable text colors</h3>
+
+      <p>Use <kbd>.fg()</kbd> to quickly get an AA - AAA contrast text color.</p>
+
+      <pre
+        class="feature-code"
+      ><code><span class="opacity-60">new Color('#6b6a5b')</span>.fg();<span class="opacity-60"> // #fff</span></code></pre>
+    </div>
+
+    <div class="feature-panel">
+      <h3>Output as strings</h3>
+
+      <p>
+        Easily output your color scale as <kbd>oklch</kbd> / <kbd>hex</kbd> / <kbd>rgb</kbd> /
+        <kbd>hsl</kbd>.
+      </p>
+
+      <pre class="feature-code"><code><span class="opacity-60">new Color('#6b6a5b')</span>
+   .rgbString(); <span class="opacity-60">// 'rgb(107 106 91)'</span> </code></pre>
+    </div>
+
+    <div class="feature-panel">
+      <h3>Output as CSS variables</h3>
+
+      <p>Output single colors or scales as: <kbd>--color-{name}-*</kbd>.</p>
+
+      <pre class="feature-code"><code><span class="opacity-60">new Color('#6b6a5b').all(10)</span>
+   .cssVariablesString('primary');</code></pre>
+    </div>
+  </div>
+
+  <div class="my-8 text-2xl text-theme-fg">Demo Features</div>
+
+  <div class="mt-10 grid gap-4 sm:grid-cols-2 xl:grid-cols-3">
+    <div class="feature-panel">
+      <h3>Fine-tune your color</h3>
+
+      <p>
+        Click the header swatch to adjust the lightness, chroma and hue of your color to fit your
+        style.
+      </p>
+    </div>
+
+    <div class="feature-panel">
+      <h3>Color scale previews</h3>
+
+      <p>Preview generated color palettes with tints and shades from a single color.</p>
+    </div>
+
+    <div class="feature-panel">
+      <h3>Export CSS variables</h3>
+
+      <!--<p>Copy color scales as CSS variables for easy use in your project.</p>-->
+
+      <p>
+        Choose between the <kbd>50 … 950</kbd> scale, or a scale with tint (<kbd>-tN</kbd>) and
+        shade (<kbd>-sN</kbd>) keys for your exported color scales.
+      </p>
+    </div>
+
+    <div class="feature-panel">
+      <h3>Tailwind ready</h3>
+
+      <p>
+        Export color scales as Tailwind CSS ready <kbd>@theme {}</kbd> variables for easy use within
+        your Tailwind project.
+      </p>
+      <p><kbd>--color-brand: &hellip;;</kbd> &#8594; <kbd>.bg-brand</kbd></p>
+    </div>
+
+    <div class="feature-panel">
+      <h3>History saved</h3>
+
+      <p>
+        Go back in time to your last 20 colors saved in your own browser. Available in the sidebar.
+      </p>
+    </div>
+  </div>
+
+  <div class="my-16 text-2xl text-theme-fg">Installation &amp; Usage</div>
+
+  <div class="mt-10 grid gap-8 sm:grid-cols-2">
+    <div class="feature-panel">
+      <h3>Install</h3>
+
+      <p>Install using <kbd>npm</kbd>, <kbd>pnpm</kbd>, <kbd>bun</kbd> or <kbd>yarn</kbd>.</p>
+
+      <div class="mt-3" x-html="shiny.introInstall || ''"></div>
+    </div>
+
+    <div class="feature-panel">
+      <h3>Usage</h3>
+
+      <div class="mt-3" x-html="shiny.introUsage || ''"></div>
+    </div>
+  </div>
+
+  <label class="mt-10 flex cursor-pointer items-center gap-2 text-sm text-theme-fg-muted">
+    <input
+      type="checkbox"
+      class="rounded"
+      :checked="skipIntro"
+      @change="setSkipIntro($event.target.checked)"
+    />
+    Skip intro next time (go straight to Scale)
+  </label>
+
+  <p class="mt-6 text-xs text-theme-fg-muted">Library v<span x-text="VERSION"></span> · MIT</p>
+</section>

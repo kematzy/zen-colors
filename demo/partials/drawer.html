@@ -1,0 +1,156 @@
+<!-- Drawer overlay -->
+
+<div
+  x-show="drawerOpen"
+  x-transition.opacity
+  class="fixed inset-0 bg-black/40"
+  style="z-index: var(--z-overlay)"
+  @click="drawerOpen = false"
+></div>
+
+<aside
+  x-show="drawerOpen"
+  x-transition:enter="transition transform ease-out duration-300"
+  x-transition:enter-start="translate-x-full"
+  x-transition:enter-end="translate-x-0"
+  x-transition:leave="transition transform ease-in duration-200"
+  x-transition:leave-start="translate-x-0"
+  x-transition:leave-end="translate-x-full"
+  class="fixed top-0 right-0 bottom-0 flex w-full max-w-xl flex-col border-l border-theme-border bg-theme-t01 shadow-2xl"
+  style="z-index: var(--z-drawer)"
+>
+  <div class="flex items-center justify-between border-b border-theme-border px-4 pt-3">
+    <div class="flex gap-x-2">
+      <button
+        type="button"
+        class="nav-link"
+        :class="{ active: drawerTab === 'export' }"
+        @click="drawerTab = 'export'"
+      >
+        Export
+      </button>
+      <button
+        type="button"
+        class="nav-link"
+        :class="{ active: drawerTab === 'history' }"
+        @click="drawerTab = 'history'"
+      >
+        History
+      </button>
+    </div>
+    <button type="button" class="btn-icon" @click="drawerOpen = false" aria-label="Close">✕</button>
+  </div>
+
+  <div class="flex-1 overflow-y-auto p-5">
+    <div x-show="drawerTab === 'export'" class="space-y-5">
+      <div>
+        <h2 class="text-xl font-semibold">CSS Export</h2>
+
+        <p class="mt-1 text-sm text-theme-fg-muted">
+          zen keys by default · Tailwind steps optional
+        </p>
+      </div>
+      <label class="block text-sm">
+        <span class="mb-1 block font-medium">Palette name</span>
+        <input type="text" class="input w-full font-mono" x-model="variableName" />
+
+        <p
+          class="mt-1 text-xs text-theme-danger"
+          x-show="varNameError()"
+          x-text="varNameError()"
+        ></p>
+      </label>
+
+      <div class="text-sm">
+        <span class="mb-2 block font-medium">Format</span>
+
+        <div class="flex flex-wrap gap-3">
+          <label class="flex items-center gap-2">
+            <input type="radio" value="oklch" x-model="outputFormat" /> OKLCH</label
+          >
+          <label class="flex items-center gap-2">
+            <input type="radio" value="hex" x-model="outputFormat" /> HEX</label
+          >
+          <label class="flex items-center gap-2">
+            <input type="radio" value="rgb" x-model="outputFormat" /> RGB</label
+          >
+        </div>
+      </div>
+      <label class="flex items-center gap-2 text-sm"
+        ><input type="checkbox" x-model="includeThemeWrapper" /> Include
+        <code>@theme</code> wrapper</label
+      >
+      <label class="flex items-center gap-2 text-sm"
+        ><input type="checkbox" x-model="clearDefaults" /> Clear default Tailwind colors</label
+      >
+      <label class="flex items-center gap-2 text-sm"
+        ><input type="checkbox" x-model="tailwindSteps" /> Tailwind steps (50…950)</label
+      >
+
+      <div>
+        <div class="mb-2 flex items-center justify-between">
+          <h3 class="font-semibold">Output</h3>
+          <button
+            type="button"
+            class="btn btn-primary text-xs uppercase"
+            @click="copyText(exportCss(), 'CSS copied')"
+          >
+            Copy
+          </button>
+        </div>
+        <pre
+          class="code-block max-h-80 lg:max-h-full overflow-auto"
+        ><code x-text="exportCss()"></code></pre>
+      </div>
+    </div>
+
+    <div x-show="drawerTab === 'history'" class="space-y-4">
+      <div class="flex items-center justify-between">
+        <h2 class="text-xl font-semibold">History</h2>
+        <button
+          type="button"
+          class="btn btn-danger"
+          x-show="history.length"
+          @click="clearHistory()"
+        >
+          Clear
+        </button>
+      </div>
+
+      <p x-show="!history.length" class="text-sm text-theme-fg-muted">
+        Generated scales will appear here (local only).
+      </p>
+      <ul class="space-y-2">
+        <template x-for="entry in history" :key="entry.id">
+          <li class="flex items-center gap-3 rounded-lg border border-theme-border p-3">
+            <button
+              type="button"
+              class="flex flex-1 items-center gap-3 text-left"
+              @click="loadHistoryEntry(entry)"
+            >
+              <span
+                class="h-8 w-8 rounded border border-theme-border"
+                :style="`background:${entry.inputColor}`"
+              ></span>
+              <span>
+                <span class="block font-mono text-sm" x-text="entry.inputColor"></span>
+                <span class="block text-xs text-theme-fg-muted">
+                  w=<span x-text="entry.weight"></span> ·
+                  <span x-text="relTime(entry.createdAt)"></span>
+                </span>
+              </span>
+            </button>
+            <button
+              type="button"
+              class="btn-icon text-theme-danger"
+              @click="deleteHistoryEntry(entry.id)"
+              aria-label="Delete"
+            >
+              ✕
+            </button>
+          </li>
+        </template>
+      </ul>
+    </div>
+  </div>
+</aside>

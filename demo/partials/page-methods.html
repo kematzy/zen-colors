@@ -1,0 +1,184 @@
+<!-- ========== METHODS ========== -->
+<section x-show="mode === 'methods'" class="page-pad space-y-8">
+  <!-- tint + shade share weight -->
+
+  <div class="flex flex-wrap items-center gap-3">
+    <label class="text-sm text-theme-fg-muted">
+      Shared mix weight
+      <input
+        type="range"
+        min="0"
+        max="100"
+        step="1"
+        class="ml-2 align-middle"
+        x-model.number="methodWeight"
+      />
+      <span class="ml-2 font-mono text-theme-fg" x-text="methodWeight"></span>
+    </label>
+  </div>
+
+  <div class="grid gap-6 lg:grid-cols-2">
+    <div class="panel">
+      <h3 class="panel-title-code">.tint(weight)</h3>
+
+      <p>Lighten toward white in OKLCH by <kbd>weight</kbd> percent (default <kbd>50</kbd>).</p>
+
+      <div class="mt-4 grid gap-4 lg:grid-cols-3">
+        <template x-if="methodTint()">
+          <div
+            class="flex min-h-28 flex-col justify-end rounded-lg p-3 lg:col-span-1"
+            :style="`background:${methodTint().hexString()};color:${methodTint().fg().hexString()}`"
+          >
+            <span class="font-mono text-xs" x-text="methodTint().oklchString()"></span>
+            <span class="text-sm font-semibold" x-text="methodTint().hexString()"></span>
+          </div>
+        </template>
+
+        <div class="lg:col-span-2" x-html="chainSample('.tint(' + methodWeight + ')')"></div>
+      </div>
+    </div>
+
+    <div class="panel">
+      <h3 class="panel-title-code">.shade(weight)</h3>
+
+      <p>Darken toward black in OKLCH by <kbd>weight</kbd> percent (default <kbd>50</kbd>).</p>
+
+      <div class="mt-4 grid gap-4 lg:grid-cols-3">
+        <template x-if="methodShade()">
+          <div
+            class="flex min-h-28 flex-col justify-end rounded-lg p-3 lg:col-span-1"
+            :style="`background:${methodShade().hexString()};color:${methodShade().fg().hexString()}`"
+          >
+            <span class="font-mono text-xs" x-text="methodShade().oklchString()"></span>
+            <span class="text-sm font-semibold" x-text="methodShade().hexString()"></span>
+          </div>
+        </template>
+
+        <div class="lg:col-span-2" x-html="chainSample('.shade(' + methodWeight + ')')"></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- series share step -->
+
+  <div class="flex flex-wrap items-center gap-3 border-t border-theme-border pt-6">
+    <label class="text-theme-fg-muted">
+      Shared series step <kbd>(2–25)</kbd>
+      <input
+        type="range"
+        min="2"
+        max="25"
+        step="1"
+        class="ml-2 align-middle"
+        x-model.number="methodStep"
+      />
+      <span class="ml-2 font-mono text-theme-fg" x-text="methodStep"></span>
+    </label>
+  </div>
+
+  <div class="panel">
+    <h3 class="panel-title-code">.tints(step)</h3>
+
+    <p>
+      Series of tints at every <kbd>step</kbd> percent, including weight <kbd>100</kbd> (white).
+    </p>
+
+    <div class="mt-4 flex flex-wrap gap-1">
+      <template x-for="(c, i) in methodTints()" :key="'ti'+i">
+        <div class="method-chip" :style="`background:${c.hexString()};color:${c.fg().hexString()}`">
+          <span x-text="'tint: ' + c.weight"></span>
+        </div>
+      </template>
+    </div>
+
+    <div class="mt-4" x-html="chainSample('.tints(' + methodStep + ')')"></div>
+  </div>
+
+  <div class="panel">
+    <h3 class="panel-title-code">.shades(step)</h3>
+
+    <p>
+      Series of shades at every <kbd>step</kbd> percent, including weight <kbd>100</kbd> (black).
+    </p>
+
+    <div class="mt-4 flex flex-wrap gap-1">
+      <template x-for="(c, i) in methodShades()" :key="'sh'+i">
+        <div class="method-chip" :style="`background:${c.hexString()};color:${c.fg().hexString()}`">
+          <span x-text="'shade: ' + c.weight"></span>
+        </div>
+      </template>
+    </div>
+
+    <div class="mt-4" x-html="chainSample('.shades(' + methodStep + ')')"></div>
+  </div>
+
+  <div class="panel">
+    <h3 class="panel-title-code">.all(step)</h3>
+
+    <p>
+      Full series lightest → base → darkest. This panel uses the
+      <strong>global</strong> header color & weight (<kbd x-text="weight"></kbd>).
+    </p>
+
+    <div class="mt-4 flex flex-wrap gap-1">
+      <template x-for="(c, i) in methodAll()" :key="'al'+i">
+        <div class="method-chip" :style="`background:${c.hexString()};color:${c.fg().hexString()}`">
+          <span x-text="chipLabel(c)"></span>
+        </div>
+      </template>
+    </div>
+
+    <div class="mt-4" x-html="chainSample('.all(' + weight + ')')"></div>
+  </div>
+
+  <div class="panel">
+    <h3 class="panel-title-code">.scale(weight)</h3>
+
+    <p>Basic scale as a flat array — skips pure white/black. Uses the series step control.</p>
+
+    <div class="mt-4 flex flex-wrap gap-1">
+      <template x-for="(c, i) in methodScaleBasic()" :key="'sc'+i">
+        <div class="method-chip" :style="`background:${c.hexString()};color:${c.fg().hexString()}`">
+          <span x-text="chipLabel(c)"></span>
+        </div>
+      </template>
+    </div>
+
+    <div class="mt-4" x-html="shiny.scaleBasic || ''"></div>
+  </div>
+
+  <div class="panel">
+    <h3 class="panel-title-code">.scale(weight, { preset: 'zen' })</h3>
+
+    <p>
+      Weight-driven keys <kbd>tN</kbd> / <kbd>base</kbd> / <kbd>sN</kbd> — default export
+      vocabulary.
+    </p>
+
+    <div class="mt-4 flex flex-wrap gap-1">
+      <template x-for="([k, c]) in Object.entries(methodScaleZen())" :key="'zn'+k">
+        <div class="method-chip" :style="`background:${c.hexString()};color:${c.fg().hexString()}`">
+          <span x-text="k"></span>
+        </div>
+      </template>
+    </div>
+
+    <div class="mt-4" x-html="shiny.scaleZen || ''"></div>
+  </div>
+
+  <div class="panel">
+    <h3 class="panel-title-code">.scale(weight, { preset: 'tailwind' })</h3>
+
+    <p>Fixed stops <kbd>50…950</kbd> with the base color at <kbd>500</kbd>.</p>
+
+    <div class="mt-4 flex flex-wrap gap-1">
+      <template x-for="([k, c]) in Object.entries(methodScaleTw())" :key="'tw'+k">
+        <div class="method-chip" :style="`background:${c.hexString()};color:${c.fg().hexString()}`">
+          <span x-text="k"></span>
+        </div>
+      </template>
+    </div>
+
+    <div class="mt-4" x-html="shiny.scaleTw || ''"></div>
+  </div>
+</section>

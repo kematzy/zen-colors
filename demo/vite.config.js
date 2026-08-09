@@ -2,16 +2,25 @@ import tailwindcss from '@tailwindcss/vite';
 import { resolve } from 'node:path';
 import { env } from 'node:process';
 import { defineConfig } from 'vite';
+import handlebars from 'vite-plugin-handlebars';
+
+const demoRoot = import.meta.dirname;
 
 export default defineConfig({
   // GitHub Pages project site: https://kematzy.github.io/zen-colors/
   base: env.VITE_BASE || '/zen-colors/',
-  plugins: [tailwindcss()],
-  root: resolve(import.meta.dirname),
+  plugins: [
+    handlebars({
+      // Split demo/index.html into demo/partials/*.html
+      partialDirectory: resolve(demoRoot, 'partials'),
+    }),
+    tailwindcss(),
+  ],
+  root: resolve(demoRoot),
   resolve: {
     alias: {
       // Dev/build resolves the local library source
-      '@kematzy/zen-colors': resolve(import.meta.dirname, '../src/index.ts'),
+      '@kematzy/zen-colors': resolve(demoRoot, '../src/index.ts'),
     },
   },
   server: {
@@ -28,7 +37,7 @@ export default defineConfig({
     },
   },
   build: {
-    outDir: resolve(import.meta.dirname, 'dist'),
+    outDir: resolve(demoRoot, 'dist'),
     emptyOutDir: true,
     sourcemap: true,
     // Vite 8 defaults to lightningcss for CSS minify, which rewrites native

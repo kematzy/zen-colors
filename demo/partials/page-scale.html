@@ -1,0 +1,67 @@
+<!-- ========== SCALE ========== -->
+<section x-show="mode === 'scale'" class="w-full">
+  <div class="scale-toolbar">
+    <div class="min-w-0 text-xs text-theme-fg-muted sm:text-sm">
+      Canvas:
+      <code class="font-mono pl-4"> new Color(c).all(<span x-text="weight"></span>) </code>
+    </div>
+
+    <div class="flex gap-2">
+      <button type="button" class="btn text-xs sm:text-sm" @click="openDrawer('export')">
+        CSS Export
+      </button>
+      <button type="button" class="btn text-xs sm:text-sm" @click="openDrawer('history')">
+        History
+      </button>
+    </div>
+  </div>
+
+  <div class="flex flex-wrap">
+    <template x-for="(color, index) in scaleColors" :key="index + color.hexString()">
+      <div
+        class="color-swatch"
+        :class="{ base: color.type === 'base' }"
+        :style="`background-color:${color.hexString()};color:${color.fg().hexString()}`"
+      >
+        <div class="text-sm leading-none">
+          <span class="uppercase" x-text="labelFor(color)"></span>
+          <span class="ml-1 font-semibold" x-text="color.weight + '%'"></span>
+        </div>
+
+        <div class="mt-6 space-y-0.5">
+          <button
+            type="button"
+            class="swatch-copy"
+            @click="copyText(color.oklchString(), 'OKLCH copied')"
+            x-text="color.oklchString()"
+          ></button>
+          <button
+            type="button"
+            class="swatch-copy"
+            @click="copyText(color.hexString(), 'HEX copied')"
+            x-text="color.hexString()"
+          ></button>
+          <button
+            type="button"
+            class="swatch-copy"
+            @click="copyText(color.rgbString(), 'RGB copied')"
+            x-text="color.rgbString()"
+          ></button>
+
+          <p class="mt-3 text-xs uppercase opacity-80">
+            Brightness:
+            <span class="font-semibold" x-text="color.oklch.l.toFixed(1) + '%'"></span>
+          </p>
+        </div>
+        <button
+          type="button"
+          class="btn-set-base"
+          x-show="color.type !== 'base'"
+          @click="setAsBase(color)"
+        >
+          Set Base
+        </button>
+      </div>
+    </template>
+  </div>
+</section>

@@ -1,0 +1,118 @@
+<!-- ========== DOCS (single page) ========== -->
+<section x-show="mode === 'docs'" class="prose-demo page-pad max-w-3xl">
+  <h2 class="mt-0 text-2xl font-semibold">Getting started</h2>
+
+  <p class="mt-4 text-theme-fg-muted">
+    This playground is a static GitHub Pages demo. The npm package is the library of record.
+  </p>
+
+  <div class="mt-3" x-html="shiny.docsStart || ''"></div>
+
+  <h2 class="mt-10 text-2xl font-semibold">Concepts</h2>
+
+  <ul class="mt-3 list-disc space-y-1 pl-5 text-theme-fg-muted">
+    <li>
+      <strong>Mix space:</strong>
+      OKLCH (perceptual lightness, stable hue)
+    </li>
+
+    <li>
+      <strong>Weight:</strong>
+      integer <kbd>2–25</kbd> for scale series; &nbsp; single tint/shade accepts
+      <kbd>0–100</kbd>
+    </li>
+
+    <li>
+      <strong class="font-mono">all(weight):</strong>
+      includes pure white/black at <kdb>100%</kdb>
+    </li>
+
+    <li>
+      <strong class="font-mono">scale(weight):</strong>
+      skips pure white/black; optional presets <kbd>zen</kbd> / <kbd>tailwind</kbd>
+    </li>
+
+    <li>
+      <strong>OKLCH object L:</strong>
+      percent <kbd>0–100</kbd>
+    </li>
+  </ul>
+
+  <h2 class="mt-10 text-2xl font-semibold">API cheatsheet</h2>
+
+  <div class="mt-3" x-html="shiny.docsApi || ''"></div>
+
+  <h2 class="mt-10 text-2xl font-semibold">Agents / browser JSON</h2>
+
+  <p class="mt-3 text-theme-fg-muted">
+    v1 is <strong class="text-theme-fg">client-side only</strong> (GitHub Pages). Use the
+    <button type="button" class="underline" @click="mode = 'api'; runApiDemo()">API</button>
+    mode to build query strings and copy JSON envelopes.
+  </p>
+
+  <p class="mt-3 text-sm text-theme-fg-muted">
+    Ops: <code>parse</code>, <code>tint</code>, <code>shade</code>, <code>all</code>,
+    <code>scale</code>, <code>contrast</code>, <code>fg</code>, <code>on</code>,
+    <code>random</code>. See <code>llms.txt</code>.
+  </p>
+
+  <h2 class="mt-10 text-2xl font-semibold">Credits</h2>
+  <ul class="mt-3 list-disc space-y-1 pl-5 text-theme-fg-muted">
+    <li>
+      Inspired by Noel Delgado's
+      <a href="https://github.com/noeldelgado/values.js" title="info about 'values.js'">
+        values.js,
+      </a>
+      <a href="https://github.com/noeldelgado/parse-css-color" title="info about 'parse-css-color'">
+        parse-css-color
+      </a>
+      and
+      <a href="https://github.com/noeldelgado/shadowlord" title="info about 'shadowlord'">
+        shadowlord
+      </a>
+      projects.
+    </li>
+    <li>
+      Color math via
+      <a href="https://github.com/evercoder/culori" title="info about 'culori'">culori</a>.
+    </li>
+    <li>zen-colors by kematzy · MIT</li>
+  </ul>
+
+  <h2 class="mt-10 mb-4 text-2xl font-semibold">License</h2>
+
+  <div id="license">
+    <p>MIT License</p>
+
+    <p>
+      &copy; Copyright Noel Delgado [pixelia.me@gmail.com] (pixelia.me) - inspiration and some
+      concepts
+    </p>
+
+    <p>
+      &copy; Copyright 2026 kematzy [kematzy@gmail.com] (github.com/kematzy) - assisted by Grok 4.5
+      (grok.com)
+    </p>
+
+    <p>
+      Permission is hereby granted, free of charge, to any person obtaining a copy of this software
+      and associated documentation files (the "Software"), to deal in the Software without
+      restriction, including without limitation the rights to use, copy, modify, merge, publish,
+      distribute, sublicense, and/or sell copies of the Software, and to permit persons to whom the
+      Software is furnished to do so, subject to the following conditions:
+    </p>
+
+    <p>
+      The above copyright notice and this permission notice shall be included in all copies or
+      substantial portions of the Software.
+    </p>
+
+    <p>
+      THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING
+      BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND
+      NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM,
+      DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+      OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
+    </p>
+  </div>
+</section>

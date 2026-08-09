@@ -1,0 +1,44 @@
+<!-- ========== API ========== -->
+<section x-show="mode === 'api'" class="page-pad space-y-4">
+  <div class="panel">
+    <h2 class="text-lg font-semibold">Browser JSON API</h2>
+
+    <p class="mt-1 text-sm text-theme-fg-muted">
+      Static demo helper for agents — not a networked HTTP service. Shareable via query params.
+    </p>
+
+    <div class="mt-4 flex flex-wrap gap-3">
+      <label class="text-sm">
+        <span class="mb-1 block text-theme-fg-muted">op</span>
+        <select class="input" x-model="apiOp" @change="runApiDemo()">
+          <option>parse</option>
+          <option>tint</option>
+          <option>shade</option>
+          <option>tints</option>
+          <option>shades</option>
+          <option>all</option>
+          <option>scale</option>
+          <option>contrast</option>
+          <option>fg</option>
+          <option>on</option>
+          <option>random</option>
+        </select>
+      </label>
+      <label class="text-sm" x-show="apiOp === 'scale'">
+        <span class="mb-1 block text-theme-fg-muted">preset</span>
+        <select class="input" x-model="apiPreset" @change="runApiDemo()">
+          <option value="zen">zen</option>
+          <option value="tailwind">tailwind</option>
+          <option value="">null (basic)</option>
+        </select>
+      </label>
+      <button type="button" class="btn btn-primary self-end" @click="runApiDemo()">Run</button>
+      <button type="button" class="btn self-end" @click="copyText(apiJson, 'JSON copied')">
+        Copy JSON
+      </button>
+    </div>
+    <pre class="code-block mt-4 max-h-112 overflow-auto">
+            <code x-text="apiJson || 'Click Run to generate JSON'"></code>
+          </pre>
+  </div>
+</section>
