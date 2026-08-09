@@ -406,45 +406,39 @@ document.addEventListener('alpine:init', () => {
       return `Convert <kbd>${hexStr}</kbd> or <kbd>${rgbStr}</kbd> or <kbd>${lchStr}</kbd> or <kbd>${hslStr}</kbd> and even <kbd>rebeccapurple</kbd>.`;
     },
 
-    // ---------- shiki ----------
+    // ---------- prism (syntax highlight → shiny.*) ----------
     async refreshHighlights() {
-      const mode = this.theme;
+      // Theme colors come from prism.css light-dark(); we still re-run when
+      // color/weight change so snippets stay in sync with the playground state.
       const jobs = {
-        introInstall: await highlightCode('npm install @kematzy/zen-colors', 'bash', mode),
+        introInstall: await highlightCode('npm install @kematzy/zen-colors', 'bash'),
         introUsage: await highlightCode(
           `import { Color } from '@kematzy/zen-colors'\n\nconst c = new Color('${this.colorInput}')\n  .tint(25).oklchString();`,
           'javascript',
-          mode,
         ),
         scaleCanvas: await highlightCode(
           `new Color('${this.colorInput}').all(${this.weight})`,
           'javascript',
-          mode,
         ),
         docsStart: await highlightCode(
           `import { Color } from '@kematzy/zen-colors'\n\nconst c = new Color('#0af')\nc.tint(25).oklchString()\nc.all(10)\nc.scale(10, { preset: 'zen' })\nc.fg().rgbString()\nc.on(4.5)`,
           'javascript',
-          mode,
         ),
         docsApi: await highlightCode(
           `new Color(input)\nparse(input)                 // Color | null\ncolor.tint(w?) / shade(w?)\ncolor.tints(step?) / shades(step?) / all(step?)\ncolor.scale(weight?, { preset?: 'zen' | 'tailwind' | null })\ncolor.contrast(other)\ncolor.fg() / bestForeground()\ncolor.on(ratio, { against? })\ncolor.oklchString() / rgbString() / hslString() / hexString()`,
           'javascript',
-          mode,
         ),
         scaleZen: await highlightCode(
           `new Color('${this.colorInput}')\n  .scale(${this.methodStep}, { preset: 'zen' })`,
           'javascript',
-          mode,
         ),
         scaleTw: await highlightCode(
           `new Color('${this.colorInput}')\n  .scale(${this.methodStep}, { preset: 'tailwind' })`,
           'javascript',
-          mode,
         ),
         scaleBasic: await highlightCode(
           `new Color('${this.colorInput}')\n  .scale(${this.methodStep})`,
           'javascript',
-          mode,
         ),
       };
       this.shiny = jobs;

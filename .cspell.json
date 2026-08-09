@@ -37,6 +37,8 @@
     "pixelia",
     "WCAG",
     "rebeccapurple",
-    "networkidle"
+    "networkidle",
+    "clike",
+    "prismjs"
   ]
 }

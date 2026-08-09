@@ -1,0 +1,100 @@
+/**
+ * Prism token theme for the zen-colors demo.
+ * Uses CSS variables + light-dark() so light/dark track body color-scheme
+ * (see .theme-light / .theme-dark on body — no re-highlight on theme toggle needed for colors).
+ */
+
+.code-block,
+pre[class*='language-'] {
+  --prism-fg: light-dark(oklch(28% 0.02 103), oklch(90% 0.015 103));
+  --prism-comment: light-dark(oklch(52% 0.02 103), oklch(62% 0.02 103));
+  --prism-punctuation: light-dark(oklch(45% 0.02 103), oklch(72% 0.02 103));
+  --prism-keyword: light-dark(oklch(42% 0.12 300), oklch(78% 0.1 300));
+  --prism-string: light-dark(oklch(42% 0.11 145), oklch(78% 0.1 145));
+  --prism-function: light-dark(oklch(48% 0.1 250), oklch(78% 0.09 250));
+  --prism-number: light-dark(oklch(48% 0.12 55), oklch(80% 0.1 75));
+  --prism-boolean: light-dark(oklch(45% 0.1 25), oklch(78% 0.09 25));
+  --prism-class: light-dark(oklch(48% 0.1 200), oklch(80% 0.08 200));
+  --prism-operator: light-dark(oklch(40% 0.04 103), oklch(75% 0.03 103));
+  --prism-property: light-dark(oklch(45% 0.08 250), oklch(78% 0.07 250));
+  --prism-regex: light-dark(oklch(48% 0.1 25), oklch(78% 0.09 25));
+  --prism-important: light-dark(oklch(48% 0.14 25), oklch(78% 0.12 25));
+
+  color: var(--prism-fg);
+}
+
+.code-block .token.comment,
+.code-block .token.prolog,
+.code-block .token.doctype,
+.code-block .token.cdata {
+  color: var(--prism-comment);
+  font-style: italic;
+}
+
+.code-block .token.punctuation {
+  color: var(--prism-punctuation);
+}
+
+.code-block .token.property,
+.code-block .token.tag,
+.code-block .token.constant,
+.code-block .token.symbol,
+.code-block .token.deleted {
+  color: var(--prism-property);
+}
+
+.code-block .token.boolean,
+.code-block .token.null {
+  color: var(--prism-boolean);
+}
+
+.code-block .token.number {
+  color: var(--prism-number);
+}
+
+.code-block .token.selector,
+.code-block .token.attr-name,
+.code-block .token.string,
+.code-block .token.char,
+.code-block .token.builtin,
+.code-block .token.inserted {
+  color: var(--prism-string);
+}
+
+.code-block .token.operator,
+.code-block .token.entity,
+.code-block .token.url,
+.language-css .token.string,
+.style .token.string {
+  color: var(--prism-operator);
+}
+
+.code-block .token.atrule,
+.code-block .token.attr-value,
+.code-block .token.keyword {
+  color: var(--prism-keyword);
+}
+
+.code-block .token.function,
+.code-block .token.class-name {
+  color: var(--prism-function);
+}
+
+.code-block .token.class-name {
+  color: var(--prism-class);
+}
+
+.code-block .token.regex,
+.code-block .token.important,
+.code-block .token.variable {
+  color: var(--prism-regex);
+}
+
+.code-block .token.important,
+.code-block .token.bold {
+  font-weight: 600;
+}
+
+.code-block .token.italic {
+  font-style: italic;
+}

@@ -1,7 +1,28 @@
 /**
- * Lightweight code presentation (no Shiki runtime — keeps the demo bundle small).
- * Dedents by the first non-empty line so indented HTML source stays clean.
+ * Syntax highlighting via Prism.js (javascript, bash, markup/html).
+ * Theme colors live in prism.css (CSS variables + light-dark()).
  */
+import Prism from 'prismjs';
+import 'prismjs/components/prism-markup.js';
+import 'prismjs/components/prism-clike.js';
+import 'prismjs/components/prism-javascript.js';
+import 'prismjs/components/prism-bash.js';
+
+import './prism.css';
+
+/** @type {Record<string, string>} */
+const LANG_ALIASES = {
+  js: 'javascript',
+  javascript: 'javascript',
+  ts: 'javascript',
+  typescript: 'javascript',
+  bash: 'bash',
+  shell: 'bash',
+  sh: 'bash',
+  html: 'markup',
+  markup: 'markup',
+  xml: 'markup',
+};
 
 /**
  * @param {string} code
@@ -19,20 +40,19 @@ export function dedentCode(code) {
 }
 
 /**
+ * Highlight a code string. Returns a ready-to-inject HTML fragment.
+ * `themeMode` is accepted for API compatibility; token colors follow
+ * the document color-scheme via light-dark() in prism.css.
+ *
  * @param {string} code
- * @param {string} [_lang]
+ * @param {string} [lang]
  * @param {'light' | 'dark'} [_themeMode]
  */
-export async function highlightCode(code, _lang = 'javascript', _themeMode = 'dark') {
+export async function highlightCode(code, lang = 'javascript', _themeMode = 'dark') {
   const clean = dedentCode(code);
-  return `<pre class="code-block"><code>${escapeHtml(clean)}</code></pre>`;
-}
+  const grammarKey = LANG_ALIASES[lang] ?? LANG_ALIASES[String(lang).toLowerCase()] ?? 'javascript';
+  const grammar = Prism.languages[grammarKey] ?? Prism.languages.javascript;
+  const highlighted = Prism.highlight(clean, grammar, grammarKey);
 
-/** @param {string} s */
-function escapeHtml(s) {
-  return s
-    .replaceAll('&', '&' + 'amp;')
-    .replaceAll('<', '&' + 'lt;')
-    .replaceAll('>', '&' + 'gt;')
-    .replaceAll('"', '&' + 'quot;');
+  return `<pre class="code-block language-${grammarKey}"><code class="language-${grammarKey}">${highlighted}</code></pre>`;
 }

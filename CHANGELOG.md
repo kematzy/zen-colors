@@ -19,6 +19,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Added
 
 - GitHub social preview assets under `assets/` (HTML source, render script, PNG).
+- Demo syntax highlighting via Prism.js (`javascript`, `bash`, `markup`) and a custom `light-dark()` token theme (`demo/src/lib/prism.css`).
 
 ## [0.1.0] - 2026-08-08
 

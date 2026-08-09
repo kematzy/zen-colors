@@ -10,7 +10,7 @@ Fine-tuning for the demo page. Status as of the responsive UX pass.
 | 4 | Full-bleed scale; padded other modes | **Done** |
 | 5 | zen-themes favicons | **Done** |
 | 6 | Montserrat + Roboto Mono | **Done** |
-| 7 | Code blocks: no `text-xs`, dedent, emphasized samples | **Done** (Shiki deferred — full runtime blew the bundle; plain mono + strong/muted chains) |
+| 7 | Code blocks: no `text-xs`, dedent, emphasized samples | **Done** (Prism.js + `prism.css` light-dark theme; method chains still strong/muted) |
 | 8 | Intro refresh | **Done** |
 | 9 | Scale toolbar + swatch UX | **Done** |
 | 10 | Methods one-panel-per-method | **Done** |

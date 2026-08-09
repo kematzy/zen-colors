@@ -200,12 +200,7 @@
     @apply block text-base leading-6;
   }
 
-  /* Soften optional highlighter backgrounds so they match the theme surface */
-  pre.shiki,
-  pre code.shi-code,
-  .code-block.shi {
-    background: var(--color-theme-t02) !important;
-  }
+  /* Prism tokens: see lib/prism.css (light-dark() theme) */
 
   .code-block .line {
     display: block;

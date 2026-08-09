@@ -12,9 +12,11 @@ Done on branch `demo/handlebars-partials`: `demo/index.html` shell + `demo/parti
 
 This section is confusing and not clear. Can be improved.
 
-3) **DEMO: Syntax highlighted code examples**
+3) **DEMO: Syntax highlighted code examples** ✅
 
-Work out some way to have code examples syntax highlighted. Ideally with shiki, but others are OK as well.
+Done on branch `demo/prism-highlight`: Prism.js (js / bash / markup) + custom
+`demo/src/lib/prism.css` with CSS variables and `light-dark()`. Method panels
+still use strong/muted `code-sample` emphasis (not full token HL).
 
 4) **Library: Build in `cssExport(name, preset)`**
 
