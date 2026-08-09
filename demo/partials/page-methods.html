@@ -181,4 +181,148 @@
 
     <div class="mt-4" x-html="shiny.scaleTw || ''"></div>
   </div>
+
+  <!-- ========== CSS VARIABLES ========== -->
+
+  <div class="flex flex-wrap items-end justify-between gap-4 border-t border-theme-border pt-8">
+    <div class="min-w-0 max-w-2xl space-y-2">
+      <h2 class="text-xl font-semibold text-theme-fg">CSS variables</h2>
+      <p class="text-sm text-theme-fg-muted">
+        Export a scale as custom properties for Tailwind
+        <kbd>@theme</kbd>, design tokens, or plain CSS. Defaults: <kbd>preset: 'zen'</kbd>,
+        <kbd>weight: 10</kbd>, <kbd>format: 'oklch'</kbd>, prefix <kbd>color</kbd> →
+        <code class="font-mono">--color-name-key</code>
+        (e.g. <code class="font-mono">--color-primary-t90</code>).
+      </p>
+    </div>
+    <label class="text-sm">
+      <span class="mb-1 block text-theme-fg-muted">Palette name</span>
+      <input
+        type="text"
+        class="input w-40 font-mono"
+        x-model="variableName"
+        placeholder="primary"
+        spellcheck="false"
+        autocomplete="off"
+      />
+    </label>
+  </div>
+
+  <div class="panel space-y-4">
+    <div class="flex flex-wrap items-start justify-between gap-3">
+      <div>
+        <h3 class="panel-title-code">.cssVariablesString(name)</h3>
+        <p class="mt-2">
+          Zen keys at the default weight — the usual design-token shape:
+          <kbd>tN</kbd> / <kbd>base</kbd> / <kbd>sN</kbd>.
+        </p>
+      </div>
+      <button
+        type="button"
+        class="btn btn-primary text-xs uppercase shrink-0"
+        @click="copyText(methodCssZen(), 'CSS copied')"
+        :disabled="!methodCssZen()"
+      >
+        Copy CSS
+      </button>
+    </div>
+    <div x-html="shiny.cssVarZen || ''"></div>
+    <div x-html="shiny.cssVarZenWeight || ''"></div>
+    <p class="text-xs text-theme-fg-muted">
+      Live output uses series step <kbd x-text="methodStep"></kbd> and name
+      <kbd x-text="cssDemoName()"></kbd> (same control as the Export drawer).
+    </p>
+    <pre
+      class="code-block max-h-64 overflow-auto text-sm"
+    ><code x-text="methodCssZen() || '/* parse a color in the header */'"></code></pre>
+  </div>
+
+  <div class="panel space-y-4">
+    <div class="flex flex-wrap items-start justify-between gap-3">
+      <div>
+        <h3 class="panel-title-code">.cssVariablesString(name, { preset: 'tailwind' })</h3>
+        <p class="mt-2">
+          Fixed stops <kbd>50…950</kbd> with the base at <kbd>500</kbd>. Weight is ignored.
+        </p>
+      </div>
+      <button
+        type="button"
+        class="btn btn-primary text-xs uppercase shrink-0"
+        @click="copyText(methodCssTw(), 'CSS copied')"
+        :disabled="!methodCssTw()"
+      >
+        Copy CSS
+      </button>
+    </div>
+    <div x-html="shiny.cssVarTw || ''"></div>
+    <pre
+      class="code-block max-h-64 overflow-auto text-sm"
+    ><code x-text="methodCssTw() || '/* parse a color in the header */'"></code></pre>
+  </div>
+
+  <div class="panel space-y-4">
+    <div class="flex flex-wrap items-start justify-between gap-3">
+      <div>
+        <h3 class="panel-title-code">cssVariablesString(colors, name)</h3>
+        <p class="mt-2">
+          Free function: format any <kbd>Color[]</kbd> or keyed record you already built. Below uses
+          <kbd>.all(step)</kbd> (includes pure white/black as <kbd>t100</kbd> / <kbd>s100</kbd>).
+        </p>
+      </div>
+      <button
+        type="button"
+        class="btn btn-primary text-xs uppercase shrink-0"
+        @click="copyText(methodCssAll(), 'CSS copied')"
+        :disabled="!methodCssAll()"
+      >
+        Copy CSS
+      </button>
+    </div>
+    <div x-html="shiny.cssVarAll || ''"></div>
+    <pre
+      class="code-block max-h-64 overflow-auto text-sm"
+    ><code x-text="methodCssAll() || '/* parse a color in the header */'"></code></pre>
+  </div>
+
+  <div class="grid gap-6 lg:grid-cols-2">
+    <div class="panel space-y-4">
+      <div class="flex flex-wrap items-start justify-between gap-3">
+        <div>
+          <h3 class="panel-title-code">format: 'hex'</h3>
+          <p class="mt-2">
+            Values as <kbd>#rrggbb</kbd> (also <kbd>rgb</kbd> / <kbd>hsl</kbd>). Default is
+            <kbd>oklch</kbd>.
+          </p>
+        </div>
+        <button
+          type="button"
+          class="btn btn-primary text-xs uppercase shrink-0"
+          @click="copyText(methodCssHex(), 'CSS copied')"
+          :disabled="!methodCssHex()"
+        >
+          Copy CSS
+        </button>
+      </div>
+      <div x-html="shiny.cssVarHex || ''"></div>
+      <pre
+        class="code-block max-h-48 overflow-auto text-sm"
+      ><code x-text="methodCssHex() || ''"></code></pre>
+    </div>
+
+    <div class="panel space-y-4">
+      <div>
+        <h3 class="panel-title-code">prefix &amp; format</h3>
+        <p class="mt-2">
+          Change the middle segment (default <kbd>color</kbd>) and value syntax together — e.g.
+          <code class="font-mono">--zen-primary-base: rgb(…)</code>.
+        </p>
+      </div>
+      <div x-html="shiny.cssVarPrefix || ''"></div>
+      <p class="text-xs text-theme-fg-muted">
+        Full options:
+        <kbd>weight</kbd>, <kbd>preset</kbd> (<kbd>zen</kbd> · <kbd>tailwind</kbd> ·
+        <kbd>null</kbd>), <kbd>format</kbd>, <kbd>prefix</kbd>.
+      </p>
+    </div>
+  </div>
 </section>

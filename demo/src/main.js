@@ -1,5 +1,5 @@
 import Alpine from 'alpinejs';
-import { Color, VERSION, parse } from '@kematzy/zen-colors';
+import { Color, VERSION, cssVariablesString, parse } from '@kematzy/zen-colors';
 
 import { runApi } from './lib/api.js';
 import { methodChainSample } from './lib/code-sample.js';
@@ -113,6 +113,7 @@ document.addEventListener('alpine:init', () => {
       });
       this.$watch('methodWeight', () => this.refreshHighlights());
       this.$watch('methodStep', () => this.refreshHighlights());
+      this.$watch('variableName', () => this.refreshHighlights());
       this.$watch('theme', () => this.refreshHighlights());
 
       document.addEventListener('keydown', (e) => {
@@ -347,6 +348,61 @@ document.addEventListener('alpine:init', () => {
       }
     },
 
+    /** Safe palette name for CSS demos (falls back to primary). */
+    cssDemoName() {
+      const n = sanitizeVarName(this.variableName);
+      return n || 'primary';
+    },
+
+    /** Live CSS from Color#cssVariablesString — zen keys (default). */
+    methodCssZen() {
+      if (!this.baseColor) return '';
+      try {
+        return this.baseColor.cssVariablesString(this.cssDemoName(), {
+          weight: this.methodStep,
+          preset: 'zen',
+        });
+      } catch {
+        return '';
+      }
+    },
+
+    /** Live CSS — Tailwind 50…950. */
+    methodCssTw() {
+      if (!this.baseColor) return '';
+      try {
+        return this.baseColor.cssVariablesString(this.cssDemoName(), {
+          preset: 'tailwind',
+        });
+      } catch {
+        return '';
+      }
+    },
+
+    /** Live CSS — free function on all(weight) series. */
+    methodCssAll() {
+      if (!this.baseColor) return '';
+      try {
+        return cssVariablesString(this.baseColor.all(this.methodStep), this.cssDemoName());
+      } catch {
+        return '';
+      }
+    },
+
+    /** Live CSS — zen keys as hex. */
+    methodCssHex() {
+      if (!this.baseColor) return '';
+      try {
+        return this.baseColor.cssVariablesString(this.cssDemoName(), {
+          weight: this.methodStep,
+          preset: 'zen',
+          format: 'hex',
+        });
+      } catch {
+        return '';
+      }
+    },
+
     /** Emphasized multi-line sample HTML */
     chainSample(methodLine) {
       return methodChainSample({
@@ -438,6 +494,30 @@ document.addEventListener('alpine:init', () => {
         ),
         scaleBasic: await highlightCode(
           `new Color('${this.colorInput}')\n  .scale(${this.methodStep})`,
+          'javascript',
+        ),
+        cssVarZen: await highlightCode(
+          `new Color('${this.colorInput}')\n  .cssVariablesString('${this.cssDemoName()}')\n// default: preset 'zen', weight 10 → --color-${this.cssDemoName()}-t* / base / s*`,
+          'javascript',
+        ),
+        cssVarZenWeight: await highlightCode(
+          `new Color('${this.colorInput}')\n  .cssVariablesString('${this.cssDemoName()}', {\n    weight: ${this.methodStep},\n    preset: 'zen',\n  })`,
+          'javascript',
+        ),
+        cssVarTw: await highlightCode(
+          `new Color('${this.colorInput}')\n  .cssVariablesString('${this.cssDemoName()}', {\n    preset: 'tailwind',\n  })\n// --color-${this.cssDemoName()}-50 … 500 … 950`,
+          'javascript',
+        ),
+        cssVarAll: await highlightCode(
+          `import { cssVariablesString } from '@kematzy/zen-colors'\n\ncssVariablesString(\n  new Color('${this.colorInput}').all(${this.methodStep}),\n  '${this.cssDemoName()}',\n)\n// keys from type + weight (includes t100 / s100)`,
+          'javascript',
+        ),
+        cssVarHex: await highlightCode(
+          `new Color('${this.colorInput}')\n  .cssVariablesString('${this.cssDemoName()}', {\n    weight: ${this.methodStep},\n    preset: 'zen',\n    format: 'hex',\n  })`,
+          'javascript',
+        ),
+        cssVarPrefix: await highlightCode(
+          `new Color('${this.colorInput}')\n  .cssVariablesString('${this.cssDemoName()}', {\n    prefix: 'zen',\n    format: 'rgb',\n  })\n// --zen-${this.cssDemoName()}-base: rgb(...)`,
           'javascript',
         ),
       };
