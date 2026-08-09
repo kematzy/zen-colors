@@ -18,34 +18,20 @@ Done on branch `demo/prism-highlight`: Prism.js (js / bash / markup) + custom
 `demo/src/lib/prism.css` with CSS variables and `light-dark()`. Method panels
 still use strong/muted `code-sample` emphasis (not full token HL).
 
-4) **Library: Build in `cssExport(name, preset)`**
+4) **Library: Build in `cssExport(name, preset)`** ✅
 
-It should be easy to export a color scale to CSS variables with a passed name
-
-```js
-new Color('#ff9900')
-  .all(10)
-  .cssVariablesString('primary');
-
-  // --color-primary-t90:...;
-  // ...
-  // --color-primary-t10:...;
-  // --color-primary-base:...;
-  // --color-primary-s10:...;
-  // ...
-  // --color-primary-s90:...;
-```
+`Color#cssVariablesString(name, options?)` and free `cssVariablesString(colors, name, options?)`.
 
 ```js
-new Color('#ff9900')
-  .scales(10, { preset: 'tailwind' })
-  .cssVariablesString('primary');
+new Color('#ff9900').cssVariablesString('primary');
+// --color-primary-t90:…; … --color-primary-base:…; … --color-primary-s90:…;
 
-  // --color-primary-50:...;
-  // ...
-  // --color-primary-500:...;
-  // ...
-  // --color-primary-950:...;
+new Color('#ff9900').cssVariablesString('primary', { preset: 'tailwind' });
+// --color-primary-50:…; … --color-primary-500:…; … --color-primary-950:…;
+
+// Existing series / scales:
+cssVariablesString(new Color('#ff9900').all(10), 'primary');
+cssVariablesString(new Color('#ff9900').scale(10, { preset: 'zen' }), 'primary');
 ```
 
 

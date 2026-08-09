@@ -20,6 +20,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 - GitHub social preview assets under `assets/` (HTML source, render script, PNG).
 - Demo syntax highlighting via Prism.js (`javascript`, `bash`, `markup`) and a custom `light-dark()` token theme (`demo/src/lib/prism.css`).
+- `Color#cssVariablesString(name, options?)` and free `cssVariablesString(colors, name, options?)` to export scales as CSS custom properties (`zen` / `tailwind` / series; formats oklch, hex, rgb, hsl).
 
 ## [0.1.0] - 2026-08-08
 

@@ -20,8 +20,16 @@ import {
 } from './format.js';
 import { normalizeWeight, seriesWeights, shadeOklch, tintOklch } from './mix.js';
 import { parseCulori } from './parse.js';
+import { cssVariablesString as formatCssVariablesString } from './css-export.js';
 import { buildScale } from './scale.js';
-import type { ColorJSON, ColorType, OklchChannels, RgbChannels, ScaleOptions } from './types.js';
+import type {
+  ColorJSON,
+  ColorType,
+  CssVariablesOptions,
+  OklchChannels,
+  RgbChannels,
+  ScaleOptions,
+} from './types.js';
 
 /**
  * A CSS color with OKLCH-first mixing, formatting, and (upcoming) scale helpers.
@@ -193,6 +201,36 @@ export class Color {
    */
   scale(weight?: number, options?: ScaleOptions): Color[] | Record<string, Color> {
     return buildScale(this, weight, options);
+  }
+
+  /**
+   * Export a generated scale as CSS custom properties.
+   *
+   * Default preset is **`zen`** (weight-driven `t* / base / s*` keys) so names are
+   * stable for design tokens. Pass `{ preset: 'tailwind' }` for `50…950`.
+   *
+   * @example
+   * ```ts
+   * new Color('#ff9900').cssVariablesString('primary')
+   * // --color-primary-t90: oklch(...);
+   * // --color-primary-base: oklch(...);
+   * // --color-primary-s10: oklch(...);
+   *
+   * new Color('#ff9900').cssVariablesString('primary', { preset: 'tailwind' })
+   * // --color-primary-50: …; … --color-primary-500: …;
+   * ```
+   *
+   * For an already-built series (`all()`, basic `scale()`, or a record), use the
+   * free function {@link cssVariablesString} instead.
+   */
+  cssVariablesString(name: string, options?: CssVariablesOptions): string {
+    const preset = options?.preset === undefined ? 'zen' : options.preset;
+    const weight = options?.weight;
+    const scale = buildScale(this, weight, { preset });
+    const formatOpts: CssVariablesOptions = {};
+    if (options?.format !== undefined) formatOpts.format = options.format;
+    if (options?.prefix !== undefined) formatOpts.prefix = options.prefix;
+    return formatCssVariablesString(scale, name, formatOpts);
   }
 
   /**

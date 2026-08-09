@@ -7,10 +7,18 @@
 
 export { Color, parse } from './color.js';
 export type { ContrastPasses, ContrastResult, OnOptions } from './contrast.js';
+export {
+  assertCssNameSegment,
+  cssKeyForColor,
+  cssVariablesString,
+  formatCssColorValue,
+} from './css-export.js';
 export { ColorError } from './errors.js';
 export type {
   ColorJSON,
   ColorType,
+  CssColorFormat,
+  CssVariablesOptions,
   OklchChannels,
   RgbChannels,
   ScaleOptions,

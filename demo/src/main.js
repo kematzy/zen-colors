@@ -425,7 +425,7 @@ document.addEventListener('alpine:init', () => {
           'javascript',
         ),
         docsApi: await highlightCode(
-          `new Color(input)\nparse(input)                 // Color | null\ncolor.tint(w?) / shade(w?)\ncolor.tints(step?) / shades(step?) / all(step?)\ncolor.scale(weight?, { preset?: 'zen' | 'tailwind' | null })\ncolor.contrast(other)\ncolor.fg() / bestForeground()\ncolor.on(ratio, { against? })\ncolor.oklchString() / rgbString() / hslString() / hexString()`,
+          `new Color(input)\nparse(input)                 // Color | null\ncolor.tint(w?) / shade(w?)\ncolor.tints(step?) / shades(step?) / all(step?)\ncolor.scale(weight?, { preset?: 'zen' | 'tailwind' | null })\ncolor.cssVariablesString(name, opts?)\ncssVariablesString(colors, name, opts?)\ncolor.contrast(other)\ncolor.fg() / bestForeground()\ncolor.on(ratio, { against? })\ncolor.oklchString() / rgbString() / hslString() / hexString()`,
           'javascript',
         ),
         scaleZen: await highlightCode(

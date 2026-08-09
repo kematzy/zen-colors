@@ -39,3 +39,31 @@ export type ScalePreset = 'tailwind' | 'zen' | null;
 export interface ScaleOptions {
   preset?: ScalePreset;
 }
+
+/** CSS color value format for variable export. Default: `oklch`. */
+export type CssColorFormat = 'oklch' | 'hex' | 'rgb' | 'hsl';
+
+/**
+ * Options for {@link cssVariablesString} (standalone) and
+ * {@link Color.cssVariablesString}.
+ */
+export interface CssVariablesOptions {
+  /**
+   * Scale weight for generation from a single {@link Color} (`2–25`, default `10`).
+   * Ignored when `preset` is `'tailwind'`.
+   */
+  weight?: number;
+  /**
+   * Scale shape when generating from a {@link Color}.
+   * Default for `Color#cssVariablesString`: `'zen'` (stable keys for CSS).
+   * Use `'tailwind'` for `50…950`. Use `null` for a basic `Color[]` keyed by type/weight.
+   */
+  preset?: ScalePreset;
+  /** CSS color function / hex for values. Default: `oklch`. */
+  format?: CssColorFormat;
+  /**
+   * Middle segment before the palette name.
+   * Default `color` → `--color-{name}-{key}`.
+   */
+  prefix?: string;
+}

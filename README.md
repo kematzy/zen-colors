@@ -50,6 +50,19 @@ cyan.scale(10, { preset: 'zen' }); // { t90…t10, base, s10…s90 }
 cyan.scale(25, { preset: 'zen' }); // { t75, t50, t25, base, s25, s50, s75 }
 cyan.scale(2, { preset: 'zen' }); // { t98…t2, base, s2…s98 }
 
+// CSS custom properties (default: zen keys at weight 10, oklch values)
+cyan.cssVariablesString('primary');
+// --color-primary-t90: oklch(...);
+// --color-primary-base: oklch(...);
+// --color-primary-s10: oklch(...);
+cyan.cssVariablesString('primary', { preset: 'tailwind', format: 'hex' });
+// --color-primary-50: #...; … --color-primary-500: #...; …
+
+// Or format any scale / series you already built
+import { cssVariablesString } from '@kematzy/zen-colors';
+cssVariablesString(cyan.all(10), 'accent'); // keys from type + weight
+cssVariablesString(cyan.scale(10, { preset: 'zen' }), 'primary');
+
 // Contrast (current-color centric)
 cyan.contrast('#fff'); // { ratio, passes, darker, lighter, current }
 cyan.fg().rgbString(); // best black/white on top of cyan
@@ -104,15 +117,28 @@ Any string [culori](https://culorijs.org/) understands in common CSS, including:
 - Named CSS keywords
 - `transparent`
 
+### CSS variables
+
+| Call | Result |
+| --- | --- |
+| `color.cssVariablesString(name)` | Zen scale (`weight` 10) → `--color-{name}-t* / base / s*` |
+| `color.cssVariablesString(name, { preset: 'tailwind' })` | `--color-{name}-50…950` |
+| `color.cssVariablesString(name, { weight, preset, format, prefix })` | Same with options |
+| `cssVariablesString(colors, name, options?)` | Format an existing `Color[]` or `Record` |
+
+Default value format is **oklch**; set `format: 'hex' | 'rgb' | 'hsl'` as needed. Default prefix is `color` (`--color-…`); override with `prefix`.
+
 ## API surface
 
 | Export | Kind |
 | --- | --- |
 | `Color` | class |
+| `Color#cssVariablesString(name, options?)` | method → CSS custom properties string |
+| `cssVariablesString(colors, name, options?)` | format `Color[]` / `Record` as CSS vars |
 | `parse(input)` | `Color \| null` |
 | `ColorError` | error class |
 | `VERSION` | string |
-| Types | `ColorJSON`, `ColorType`, `OklchChannels`, `RgbChannels`, `ScaleOptions`, `ScalePreset`, `ContrastResult`, `ContrastPasses`, `OnOptions` |
+| Types | `ColorJSON`, `ColorType`, `OklchChannels`, `RgbChannels`, `ScaleOptions`, `ScalePreset`, `CssVariablesOptions`, `CssColorFormat`, `ContrastResult`, `ContrastPasses`, `OnOptions` |
 
 Full signatures are in the published TypeScript declarations (`dist/index.d.ts`).
 
