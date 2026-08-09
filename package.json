@@ -66,7 +66,7 @@
   "bugs": {
     "url": "https://github.com/kematzy/zen-colors/issues"
   },
-  "homepage": "https://github.com/kematzy/zen-colors#readme",
+  "homepage": "https://kematzy.github.io/zen-colors/",
   "engines": {
     "node": ">=20"
   },
