@@ -226,15 +226,20 @@
         Copy CSS
       </button>
     </div>
-    <div x-html="shiny.cssVarZen || ''"></div>
-    <div x-html="shiny.cssVarZenWeight || ''"></div>
-    <p class="text-xs text-theme-fg-muted">
-      Live output uses series step <kbd x-text="methodStep"></kbd> and name
-      <kbd x-text="cssDemoName()"></kbd> (same control as the Export drawer).
-    </p>
-    <pre
-      class="code-block max-h-64 overflow-auto text-sm"
-    ><code x-text="methodCssZen() || '/* parse a color in the header */'"></code></pre>
+    <!-- Stacked &lt;1280px; call samples | live CSS side-by-side at xl -->
+    <div class="grid gap-4 xl:grid-cols-2 xl:items-start">
+      <div class="min-w-0 space-y-3">
+        <div x-html="shiny.cssVarZen || ''"></div>
+        <div x-html="shiny.cssVarZenWeight || ''"></div>
+        <p class="text-xs text-theme-fg-muted">
+          Live output uses series step <kbd x-text="methodStep"></kbd> and name
+          <kbd x-text="cssDemoName()"></kbd> (same control as the Export drawer).
+        </p>
+      </div>
+      <pre
+        class="code-block max-h-80 xl:max-h-[28rem] overflow-auto text-sm min-w-0"
+      ><code x-text="methodCssZen() || '/* parse a color in the header */'"></code></pre>
+    </div>
   </div>
 
   <div class="panel space-y-4">
@@ -254,10 +259,12 @@
         Copy CSS
       </button>
     </div>
-    <div x-html="shiny.cssVarTw || ''"></div>
-    <pre
-      class="code-block max-h-64 overflow-auto text-sm"
-    ><code x-text="methodCssTw() || '/* parse a color in the header */'"></code></pre>
+    <div class="grid gap-4 xl:grid-cols-2 xl:items-start">
+      <div class="min-w-0" x-html="shiny.cssVarTw || ''"></div>
+      <pre
+        class="code-block max-h-80 xl:max-h-[28rem] overflow-auto text-sm min-w-0"
+      ><code x-text="methodCssTw() || '/* parse a color in the header */'"></code></pre>
+    </div>
   </div>
 
   <div class="panel space-y-4">
@@ -278,10 +285,12 @@
         Copy CSS
       </button>
     </div>
-    <div x-html="shiny.cssVarAll || ''"></div>
-    <pre
-      class="code-block max-h-64 overflow-auto text-sm"
-    ><code x-text="methodCssAll() || '/* parse a color in the header */'"></code></pre>
+    <div class="grid gap-4 xl:grid-cols-2 xl:items-start">
+      <div class="min-w-0" x-html="shiny.cssVarAll || ''"></div>
+      <pre
+        class="code-block max-h-80 xl:max-h-[28rem] overflow-auto text-sm min-w-0"
+      ><code x-text="methodCssAll() || '/* parse a color in the header */'"></code></pre>
+    </div>
   </div>
 
   <div class="grid gap-6 lg:grid-cols-2">
