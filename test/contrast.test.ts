@@ -1,6 +1,6 @@
 import { describe, expect, it } from 'vitest';
 
-import { Color, ColorError } from '../src/index.js';
+import { Color, ColorError, FG_LEVEL_MIN_RATIO } from '../src/index.js';
 
 describe('Color.contrast()', () => {
   it('returns ratio 21 for black vs white', () => {
@@ -34,7 +34,6 @@ describe('Color.contrast()', () => {
   });
 
   it('reports WCAG pass flags for mid contrast pairs', () => {
-    // black on #0af ≈ 8.19
     const result = new Color('#0af').contrast('#000');
     expect(result.ratio).toBeGreaterThan(7);
     expect(result.passes.aa).toBe(true);
@@ -47,44 +46,32 @@ describe('Color.contrast()', () => {
 });
 
 describe('Color.fg() / bestForeground()', () => {
-  it('returns black on a light background (default base ≥ 5:1)', () => {
-    const fg = new Color('#fff').fg();
-    expect(fg.hexString().toLowerCase()).toBe('#000000');
+  it('returns pure black on white when no level', () => {
+    expect(new Color('#fff').fg().hexString().toLowerCase()).toBe('#000000');
   });
 
-  it('returns white on a dark background', () => {
-    const fg = new Color('#000').fg();
-    expect(fg.hexString().toLowerCase()).toBe('#ffffff');
+  it('returns pure white on black when no level', () => {
+    expect(new Color('#000').fg().hexString().toLowerCase()).toBe('#ffffff');
   });
 
-  it('returns black on cyan (#0af) for higher contrast', () => {
-    // black:~8.19 vs white:~2.56
-    const fg = new Color('#0af').fg();
-    expect(fg.hexString().toLowerCase()).toBe('#000000');
+  it('returns pure black on cyan without level (higher than white)', () => {
+    expect(new Color('#0af').fg().hexString().toLowerCase()).toBe('#000000');
   });
 
-  it('empty fg() matches explicit base level', () => {
-    const c = new Color('#0af');
-    expect(c.fg().hexString()).toBe(c.fg('base').hexString());
+  it('with level returns soft grey meeting the floor on white', () => {
+    const bg = new Color('#fff');
+    const fg = bg.fg('base');
+    expect(fg.hexString().toLowerCase()).not.toBe('#000000');
+    expect(fg.hexString().toLowerCase()).not.toBe('#ffffff');
+    expect(fg.contrast(bg).ratio).toBeGreaterThanOrEqual(FG_LEVEL_MIN_RATIO.base);
+    expect(fg.hexString()).toBe(new Color('#fff').on(5, { against: bg }).hexString());
   });
 
-  it('prefers a B/W that meets the minimum when only one does', () => {
-    // On #0af white fails aa (4.5); black passes → black for aa and strong
-    const bg = new Color('#0af');
-    expect(bg.fg('aa').hexString().toLowerCase()).toBe('#000000');
-    expect(bg.fg('strong').hexString().toLowerCase()).toBe('#000000');
-    expect(bg.fg('ui').hexString().toLowerCase()).toBe('#000000');
-  });
-
-  it('best-effort when neither B/W meets a high floor', () => {
-    // Mid grey: both ratios modest; aaa may be unreachable for both in some cases
-    // Use a mid chroma mid L where white and black are closer
-    const bg = new Color('oklch(55% 0.02 100)');
-    const fg = bg.fg('aaa');
-    const rBlack = new Color('#000').contrast(bg).ratio;
-    const rWhite = new Color('#fff').contrast(bg).ratio;
-    const chosen = fg.hexString().toLowerCase() === '#000000' ? rBlack : rWhite;
-    expect(chosen).toBeGreaterThanOrEqual(Math.max(rBlack, rWhite) - 1e-9);
+  it('with level on black returns soft grey meeting the floor', () => {
+    const bg = new Color('#000');
+    const fg = bg.fg('aa');
+    expect(fg.hexString().toLowerCase()).not.toBe('#000000');
+    expect(fg.contrast(bg).ratio).toBeGreaterThanOrEqual(4.5);
   });
 
   it('throws ColorError for unknown or alias levels', () => {
@@ -95,8 +82,7 @@ describe('Color.fg() / bestForeground()', () => {
   });
 
   it('returns a Color that chains to formatters', () => {
-    const s = new Color('#0af').fg().rgbString();
-    expect(s).toBe('rgb(0 0 0)');
+    expect(new Color('#0af').fg().rgbString()).toBe('rgb(0 0 0)');
   });
 
   it('bestForeground is an alias of fg', () => {
@@ -108,23 +94,31 @@ describe('Color.fg() / bestForeground()', () => {
 
 describe('Color.on()', () => {
   it('defaults against white and returns a Color from the current family', () => {
-    // pure cyan on white fails AA; a darker shade should pass 4.5
     const result = new Color('#0af').on(4.5);
     expect(result).toBeInstanceOf(Color);
-    // Should be darker than base (a shade)
     expect(result.oklch.l).toBeLessThan(new Color('#0af').oklch.l);
     expect(result.contrast('#fff').ratio).toBeGreaterThanOrEqual(4.5);
   });
 
   it('returns base unchanged when base already meets the target', () => {
-    // black already has 21:1 on white
     const black = new Color('#000');
     const result = black.on(4.5);
     expect(result.hexString().toLowerCase()).toBe('#000000');
   });
 
+  it('against black tints black to a grey that meets the ratio', () => {
+    const result = new Color('#000').on(4.5, { against: '#000' });
+    expect(result.hexString().toLowerCase()).not.toBe('#000000');
+    expect(result.contrast('#000').ratio).toBeGreaterThanOrEqual(4.5);
+  });
+
+  it('against white shades white to a grey that meets the ratio', () => {
+    const result = new Color('#fff').on(4.5, { against: '#fff' });
+    expect(result.hexString().toLowerCase()).not.toBe('#ffffff');
+    expect(result.contrast('#fff').ratio).toBeGreaterThanOrEqual(4.5);
+  });
+
   it('supports an explicit against surface', () => {
-    // light color on black → likely a tint of itself
     const result = new Color('#0af').on(4.5, { against: '#000' });
     expect(result).toBeInstanceOf(Color);
     expect(result.contrast('#000').ratio).toBeGreaterThanOrEqual(4.5);

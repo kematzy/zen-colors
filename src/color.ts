@@ -243,14 +243,15 @@ export class Color {
   }
 
   /**
-   * Best black or white foreground on top of this color (as background).
+   * Foreground color on top of this color (as **background**).
    *
-   * Optional `level` is a **minimum** contrast target (see {@link FgLevel}):
-   * WCAG keys (`aa`, `aaa`, `ui`, …) or intent bands (`strong`, `base`, `muted`, `subtle`).
-   * Prefers a B/W candidate that meets the floor; otherwise best effort.
-   * Omit `level` → same as `'base'` (minimum 5:1).
+   * - **`fg()`** — pure black or white (higher contrast).
+   * - **`fg(level)`** — color meeting that level’s **minimum** ratio against this
+   *   background (soft grey when possible; black/white only if out of range).
+   *   Levels: WCAG `aaa` · `aaa-large` · `aa` · `aa-large` · `ui`, or intent
+   *   `strong` · `base` · `muted` · `subtle` (see {@link FgLevel}).
    *
-   * Never leaves black/white — use {@link on} to tint/shade this color to a ratio.
+   * Use {@link on} to adjust **this** color’s own tint/shade to meet a ratio on a surface.
    */
   fg(level?: FgLevel): Color {
     return bestForegroundOf(this, level);

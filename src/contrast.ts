@@ -115,31 +115,46 @@ export function contrastOf(current: Color, other: string | Color): ContrastResul
 }
 
 /**
- * Pick black or white as a foreground on top of `background`.
+ * Foreground color for text (or UI) on top of `background`.
  *
- * - Optional `level` sets a **minimum** target ratio (see {@link FG_LEVEL_MIN_RATIO}).
- * - Prefers a candidate that meets the minimum; if neither does, returns the
- *   higher-ratio of black/white (**best effort**).
- * - Never leaves the black/white pair (use {@link onContrast} for family tints/shades).
- * - Omit `level` → same as `'base'` (minimum 5:1).
+ * - **No `level`:** pure **black or white** only — whichever has the higher contrast.
+ * - **With `level`:** a color that meets the **minimum** ratio for that level against
+ *   this background (see {@link FG_LEVEL_MIN_RATIO}). Implemented by searching from
+ *   white and black along tint/shade (via {@link onContrast} with `against: background`),
+ *   then preferring the candidate that meets the floor with the **smallest** ratio
+ *   (closest to the band minimum). If neither side can meet the floor, returns the
+ *   better pure black/white (**best effort**).
  */
 export function bestForegroundOf(background: Color, level?: FgLevel): Color {
-  const minRatio = level === undefined ? FG_LEVEL_MIN_RATIO.base : resolveFgLevel(level);
-
   const black = new Color('#000000');
   const white = new Color('#ffffff');
   const blackRatio = wcagContrast(black.toCulori(), background.toCulori());
   const whiteRatio = wcagContrast(white.toCulori(), background.toCulori());
 
-  const blackOk = blackRatio >= minRatio;
-  const whiteOk = whiteRatio >= minRatio;
-
-  if (blackOk && whiteOk) {
+  // Default: pure black / white only
+  if (level === undefined) {
     return blackRatio >= whiteRatio ? black : white;
   }
-  if (blackOk) return black;
-  if (whiteOk) return white;
-  // Best effort: neither meets the band floor
+
+  const minRatio = resolveFgLevel(level);
+
+  // Soft greys / family members that just clear the floor against this surface
+  const fromWhite = onContrast(white, minRatio, { against: background });
+  const fromBlack = onContrast(black, minRatio, { against: background });
+  const ratioW = wcagContrast(fromWhite.toCulori(), background.toCulori());
+  const ratioB = wcagContrast(fromBlack.toCulori(), background.toCulori());
+
+  const whiteOk = ratioW >= minRatio;
+  const blackOk = ratioB >= minRatio;
+
+  if (whiteOk && blackOk) {
+    // Prefer the softer ink (ratio closer to the band floor)
+    return ratioW <= ratioB ? fromWhite : fromBlack;
+  }
+  if (whiteOk) return fromWhite;
+  if (blackOk) return fromBlack;
+
+  // Out of range for soft greys — fall back to pure B/W best effort
   return blackRatio >= whiteRatio ? black : white;
 }
 

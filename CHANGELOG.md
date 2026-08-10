@@ -21,12 +21,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - GitHub social preview assets under `assets/` (HTML source, render script, PNG).
 - Demo syntax highlighting via Prism.js (`javascript`, `bash`, `markup`) and a custom `light-dark()` token theme (`demo/src/lib/prism.css`).
 - `Color#cssVariablesString(name, options?)` and free `cssVariablesString(colors, name, options?)` to export scales as CSS custom properties (`zen` / `tailwind` / series; formats oklch, hex, rgb, hsl).
-- `Color#fg(level?)` minimum-ratio levels: WCAG (`aaa`, `aaa-large`, `aa`, `aa-large`, `ui`) and intent bands (`strong`, `base`, `muted`, `subtle`); default empty = `base` (5:1). Black/white only, best effort.
-- Contrast demo rebuilt: colors A/B, surface toggle, level chips, `.on` slider, scale clarity strip.
+- `Color#fg(level?)`: no level → pure black/white; with level → soft grey meeting that minimum ratio on the background (via tint/shade search), else B/W best effort. Levels: WCAG + intent (`strong`/`base`/`muted`/`subtle`).
+- Contrast demo rebuilt: A/B pickers with OKLCH overlays, surface toggle, dual-row level chips, `.on` slider, scale clarity strip.
 
 ### Changed
 
-- Default `fg()` behavior targets the `base` band floor (5:1) when possible, then best effort (still B/W only).
+- `fg(level)` no longer returns only black/white for named levels — it targets the band floor with greys when possible.
 
 ## [0.1.0] - 2026-08-08
 

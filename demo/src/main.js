@@ -65,22 +65,27 @@ document.addEventListener('alpine:init', () => {
 
     /** Color B for contrast tools (A is header colorInput / baseColor). */
     contrastB: '#ffffff',
+    oklchB: { l: 100, c: 0, h: 0, alpha: 1 },
+    showContrastASliders: false,
+    showContrastBPicker: false,
     /** Which side is the surface/background for .fg / .on previews. */
     contrastSurface: /** @type {'A' | 'B'} */ ('B'),
-    /** @type {import('@kematzy/zen-colors').FgLevel} */
+    /** @type {import('@kematzy/zen-colors').FgLevel | null} */
     fgLevel: 'base',
     onRatio: 4.5,
 
-    fgLevelOptions: [
-      { id: 'base', title: 'Intent · minimum 5:1 (default)' },
-      { id: 'strong', title: 'Intent · minimum 6:1' },
-      { id: 'muted', title: 'Intent · minimum 4:1' },
-      { id: 'subtle', title: 'Intent · minimum 3:1' },
-      { id: 'aa', title: 'WCAG AA body · minimum 4.5:1' },
-      { id: 'aa-large', title: 'WCAG AA large · minimum 3:1' },
-      { id: 'aaa', title: 'WCAG AAA body · minimum 7:1' },
-      { id: 'aaa-large', title: 'WCAG AAA large · minimum 4.5:1' },
+    fgLevelOptionsWcag: [
       { id: 'ui', title: 'UI non-text · minimum 3:1' },
+      { id: 'aa-large', title: 'WCAG AA large · minimum 3:1' },
+      { id: 'aa', title: 'WCAG AA body · minimum 4.5:1' },
+      { id: 'aaa-large', title: 'WCAG AAA large · minimum 4.5:1' },
+      { id: 'aaa', title: 'WCAG AAA body · minimum 7:1' },
+    ],
+    fgLevelOptionsIntent: [
+      { id: 'subtle', title: 'Intent · minimum 3:1' },
+      { id: 'muted', title: 'Intent · minimum 4:1' },
+      { id: 'base', title: 'Intent · minimum 5:1' },
+      { id: 'strong', title: 'Intent · minimum 6:1' },
     ],
 
     apiOp: 'scale',
@@ -110,6 +115,7 @@ document.addEventListener('alpine:init', () => {
       }
 
       this.applyColorInput({ silentUrl: true });
+      this.syncContrastBOklch();
       this.refreshHighlights();
 
       if (this.mode === 'api') this.runApiFromLocation();
@@ -439,7 +445,6 @@ document.addEventListener('alpine:init', () => {
       return this.contrastSurface === 'A' ? this.contrastColorA() : this.contrastColorB();
     },
     contrastInkColor() {
-      // Non-surface color — family source for .on()
       return this.contrastSurface === 'A' ? this.contrastColorB() : this.contrastColorA();
     },
     swapContrastColors() {
@@ -447,19 +452,41 @@ document.addEventListener('alpine:init', () => {
       this.colorInput = this.contrastB;
       this.contrastB = a;
       this.applyColorInput();
+      this.syncContrastBOklch();
     },
-    contrastBHex() {
+    toggleContrastBPicker() {
+      this.showContrastASliders = false;
+      this.showContrastBPicker = !this.showContrastBPicker;
+      if (this.showContrastBPicker) this.syncContrastBOklch();
+    },
+    syncContrastBOklch() {
       const c = this.contrastColorB();
-      if (!c) return '#ffffff';
-      try {
-        return c.hexString().slice(0, 7);
-      } catch {
-        return '#ffffff';
-      }
+      if (!c) return;
+      const o = c.oklch;
+      this.oklchB = {
+        l: round(o.l, 2),
+        c: round(o.c, 4),
+        h: round(o.h, 2),
+        alpha: round(o.alpha, 4),
+      };
     },
-    onContrastBColorInput(ev) {
-      const hex = /** @type {HTMLInputElement} */ (ev.target).value;
-      this.contrastB = hex;
+    applyContrastBFromSliders() {
+      const { l, c, h, alpha } = this.oklchB;
+      const a = alpha < 1 ? ` / ${alpha}` : '';
+      this.contrastB = `oklch(${round(l, 2)}% ${round(c, 4)} ${round(h, 2)}${a})`;
+    },
+    setContrastBFromColor(color) {
+      this.contrastB = color.oklchString();
+      this.syncContrastBOklch();
+    },
+    contrastBScale() {
+      const c = this.contrastColorB();
+      if (!c) return [];
+      try {
+        return c.all(this.weight);
+      } catch {
+        return [];
+      }
     },
     contrastReport() {
       const a = this.contrastColorA();
@@ -471,21 +498,38 @@ document.addEventListener('alpine:init', () => {
         return null;
       }
     },
+    /** Badges ordered by threshold: UI, AA large, AA, AAA large, AAA */
+    contrastBadgesOrdered() {
+      const r = this.contrastReport();
+      if (!r) return [];
+      const { passes } = r;
+      return [
+        { key: 'ui', label: 'UI', pass: passes.aaLarge, title: '≥ 3:1 non-text / large' },
+        { key: 'aaL', label: 'AA large', pass: passes.aaLarge, title: '≥ 3:1 large text' },
+        { key: 'aa', label: 'AA', pass: passes.aa, title: '≥ 4.5:1 body text' },
+        { key: 'aaaL', label: 'AAA large', pass: passes.aaaLarge, title: '≥ 4.5:1 large enhanced' },
+        { key: 'aaa', label: 'AAA', pass: passes.aaa, title: '≥ 7:1 body enhanced' },
+      ];
+    },
     fgMinRatio() {
-      return FG_LEVEL_MIN_RATIO[this.fgLevel] ?? FG_LEVEL_MIN_RATIO.base;
+      if (!this.fgLevel) return null;
+      return FG_LEVEL_MIN_RATIO[this.fgLevel] ?? null;
     },
     fgLevelHint() {
+      if (this.fgLevel === null) {
+        return 'No level: pure black or white (higher contrast).';
+      }
       const r = this.fgMinRatio();
       const intent = ['strong', 'base', 'muted', 'subtle'].includes(this.fgLevel);
       return intent
-        ? `Intent band “${this.fgLevel}”: minimum ${r}:1 (not a WCAG grade name).`
-        : `WCAG/UI level “${this.fgLevel}”: minimum ${r}:1.`;
+        ? `Intent “${this.fgLevel}”: soft grey with minimum ${r}:1 when possible (not a WCAG grade).`
+        : `WCAG/UI “${this.fgLevel}”: soft grey with minimum ${r}:1 when possible.`;
     },
     foregroundOnSurface() {
       const surface = this.contrastSurfaceColor();
       if (!surface) return null;
       try {
-        return surface.fg(this.fgLevel);
+        return this.fgLevel === null ? surface.fg() : surface.fg(this.fgLevel);
       } catch {
         return null;
       }
@@ -500,6 +544,16 @@ document.addEventListener('alpine:init', () => {
         return null;
       }
     },
+    /**
+     * Highest WCAG-style band met by a ratio (for scale strip badges).
+     * @param {number} ratio
+     */
+    badgeForRatio(ratio) {
+      if (ratio >= 7) return { label: 'AAA', pass: true };
+      if (ratio >= 4.5) return { label: 'AA', pass: true };
+      if (ratio >= 3) return { label: 'AA large', pass: true };
+      return { label: 'FAIL', pass: false };
+    },
     contrastScaleRows() {
       const palette = this.contrastColorA();
       const surface = this.contrastSurfaceColor();
@@ -507,15 +561,18 @@ document.addEventListener('alpine:init', () => {
       try {
         return palette.all(this.weight).map((step) => {
           const report = step.contrast(surface);
+          const badge = this.badgeForRatio(report.ratio);
           const passTitle = [
             `ratio ${report.ratio.toFixed(2)}:1`,
-            report.passes.aa ? 'AA pass' : 'AA fail',
-            report.passes.aaa ? 'AAA pass' : 'AAA fail',
+            `UI/AA-large ${report.passes.aaLarge ? 'pass' : 'fail'}`,
+            `AA ${report.passes.aa ? 'pass' : 'fail'}`,
+            `AAA ${report.passes.aaa ? 'pass' : 'fail'}`,
           ].join(' · ');
           return {
             step,
             ratio: report.ratio,
-            passes: report.passes,
+            badgeLabel: badge.label,
+            badgePass: badge.pass,
             passTitle,
           };
         });

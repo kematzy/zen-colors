@@ -65,9 +65,9 @@ cssVariablesString(cyan.scale(10, { preset: 'zen' }), 'primary');
 
 // Contrast (current-color centric)
 cyan.contrast('#fff'); // { ratio, passes, darker, lighter, current }
-cyan.fg(); // black/white on cyan, minimum 5:1 ("base") when possible
-cyan.fg('aa'); // prefer B/W meeting ≥ 4.5:1; else best effort
-cyan.fg('strong'); // intent band minimum 6:1 (not a WCAG grade)
+cyan.fg(); // pure black or white on cyan (higher contrast)
+cyan.fg('aa'); // soft grey meeting ≥ 4.5:1 on cyan when possible
+cyan.fg('base'); // intent minimum 5:1 (not a WCAG grade name)
 cyan.on(4.5); // tint/shade of cyan with ≥ 4.5:1 on white
 
 // Formats
@@ -105,8 +105,9 @@ new Color('not-a-color'); // throws ColorError
 ### Contrast helpers
 
 - **`contrast(other)`** — rich report for custom checks (`ratio`, WCAG `passes`, `darker` / `lighter`).
-- **`fg(level?)` / `bestForeground(level?)`** — this color is the **background**; pick **black or white** only. Optional exact levels: WCAG `aaa` · `aaa-large` · `aa` · `aa-large` · `ui`, or intent **minimums** `strong` (6) · `base` (5, default) · `muted` (4) · `subtle` (3). Prefers a candidate that meets the floor; otherwise best effort.
-- **`on(ratio, { against? })`** — this color is the **palette**; pick a tint/shade that meets the ratio (default surface: white).
+- **`fg()`** — pure **black or white** on this background (higher contrast).
+- **`fg(level)`** — soft grey (when possible) meeting that level’s **minimum** ratio on this background. Levels: WCAG `aaa` · `aaa-large` · `aa` · `aa-large` · `ui`, or intent `strong` (6) · `base` (5) · `muted` (4) · `subtle` (3). Falls back to pure B/W if out of range.
+- **`on(ratio, { against? })`** — adjust **this** color’s tint/shade until it meets the ratio against a surface (default white).
 
 ## Supported input
 
