@@ -37,6 +37,47 @@ export interface OnOptions {
   against?: string | Color;
 }
 
+/**
+ * Named minimum contrast targets for {@link Color.fg}.
+ *
+ * **WCAG-oriented** (`aaa`, `aa`, …) use standard thresholds.
+ * **Intent** (`strong`, `base`, `muted`, `subtle`) use Zen minimums for
+ * those bands — not WCAG grade names.
+ *
+ * Strings are exact lowercase only (no aliases like `aalarge` or `best`).
+ */
+export type FgLevel =
+  'aaa' | 'aaa-large' | 'aa' | 'aa-large' | 'ui' | 'strong' | 'base' | 'muted' | 'subtle';
+
+/**
+ * Minimum contrast ratio for each {@link FgLevel}.
+ * Intent levels are band floors (prefer meeting them; black/white only).
+ */
+export const FG_LEVEL_MIN_RATIO: Readonly<Record<FgLevel, number>> = {
+  aaa: 7,
+  'aaa-large': 4.5,
+  aa: 4.5,
+  'aa-large': 3,
+  ui: 3,
+  strong: 6,
+  base: 5,
+  muted: 4,
+  subtle: 3,
+};
+
+const FG_LEVELS = new Set<string>(Object.keys(FG_LEVEL_MIN_RATIO));
+
+/**
+ * Resolve a foreground level string to its minimum ratio.
+ * @throws {ColorError} on unknown level
+ */
+export function resolveFgLevel(level: FgLevel | string): number {
+  if (typeof level !== 'string' || !FG_LEVELS.has(level)) {
+    throw new ColorError(`Unknown fg level "${String(level)}". Use: ${[...FG_LEVELS].join(', ')}`);
+  }
+  return FG_LEVEL_MIN_RATIO[level as FgLevel];
+}
+
 function passesFromRatio(ratio: number): ContrastPasses {
   return {
     aa: ratio >= 4.5,
@@ -74,14 +115,31 @@ export function contrastOf(current: Color, other: string | Color): ContrastResul
 }
 
 /**
- * Pick black or white as a foreground that sits on top of `background`.
- * Chooses the candidate with the higher contrast ratio.
+ * Pick black or white as a foreground on top of `background`.
+ *
+ * - Optional `level` sets a **minimum** target ratio (see {@link FG_LEVEL_MIN_RATIO}).
+ * - Prefers a candidate that meets the minimum; if neither does, returns the
+ *   higher-ratio of black/white (**best effort**).
+ * - Never leaves the black/white pair (use {@link onContrast} for family tints/shades).
+ * - Omit `level` → same as `'base'` (minimum 5:1).
  */
-export function bestForegroundOf(background: Color): Color {
+export function bestForegroundOf(background: Color, level?: FgLevel): Color {
+  const minRatio = level === undefined ? FG_LEVEL_MIN_RATIO.base : resolveFgLevel(level);
+
   const black = new Color('#000000');
   const white = new Color('#ffffff');
   const blackRatio = wcagContrast(black.toCulori(), background.toCulori());
   const whiteRatio = wcagContrast(white.toCulori(), background.toCulori());
+
+  const blackOk = blackRatio >= minRatio;
+  const whiteOk = whiteRatio >= minRatio;
+
+  if (blackOk && whiteOk) {
+    return blackRatio >= whiteRatio ? black : white;
+  }
+  if (blackOk) return black;
+  if (whiteOk) return white;
+  // Best effort: neither meets the band floor
   return blackRatio >= whiteRatio ? black : white;
 }
 

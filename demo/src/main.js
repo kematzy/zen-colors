@@ -1,5 +1,5 @@
 import Alpine from 'alpinejs';
-import { Color, VERSION, cssVariablesString, parse } from '@kematzy/zen-colors';
+import { Color, FG_LEVEL_MIN_RATIO, VERSION, cssVariablesString, parse } from '@kematzy/zen-colors';
 
 import { runApi } from './lib/api.js';
 import { methodChainSample } from './lib/code-sample.js';
@@ -63,8 +63,25 @@ document.addEventListener('alpine:init', () => {
     methodWeight: 25,
     methodStep: 10,
 
-    contrastAgainst: '#ffffff',
+    /** Color B for contrast tools (A is header colorInput / baseColor). */
+    contrastB: '#ffffff',
+    /** Which side is the surface/background for .fg / .on previews. */
+    contrastSurface: /** @type {'A' | 'B'} */ ('B'),
+    /** @type {import('@kematzy/zen-colors').FgLevel} */
+    fgLevel: 'base',
     onRatio: 4.5,
+
+    fgLevelOptions: [
+      { id: 'base', title: 'Intent · minimum 5:1 (default)' },
+      { id: 'strong', title: 'Intent · minimum 6:1' },
+      { id: 'muted', title: 'Intent · minimum 4:1' },
+      { id: 'subtle', title: 'Intent · minimum 3:1' },
+      { id: 'aa', title: 'WCAG AA body · minimum 4.5:1' },
+      { id: 'aa-large', title: 'WCAG AA large · minimum 3:1' },
+      { id: 'aaa', title: 'WCAG AAA body · minimum 7:1' },
+      { id: 'aaa-large', title: 'WCAG AAA large · minimum 4.5:1' },
+      { id: 'ui', title: 'UI non-text · minimum 3:1' },
+    ],
 
     apiOp: 'scale',
     apiPreset: 'zen',
@@ -411,33 +428,100 @@ document.addEventListener('alpine:init', () => {
       });
     },
 
-    // ---------- contrast ----------
-    contrastReport() {
-      if (!this.baseColor) return null;
+    // ---------- contrast (A = header, B = contrastB) ----------
+    contrastColorA() {
+      return this.baseColor;
+    },
+    contrastColorB() {
+      return parse(this.contrastB);
+    },
+    contrastSurfaceColor() {
+      return this.contrastSurface === 'A' ? this.contrastColorA() : this.contrastColorB();
+    },
+    contrastInkColor() {
+      // Non-surface color — family source for .on()
+      return this.contrastSurface === 'A' ? this.contrastColorB() : this.contrastColorA();
+    },
+    swapContrastColors() {
+      const a = this.colorInput;
+      this.colorInput = this.contrastB;
+      this.contrastB = a;
+      this.applyColorInput();
+    },
+    contrastBHex() {
+      const c = this.contrastColorB();
+      if (!c) return '#ffffff';
       try {
-        return this.baseColor.contrast(this.contrastAgainst);
+        return c.hexString().slice(0, 7);
+      } catch {
+        return '#ffffff';
+      }
+    },
+    onContrastBColorInput(ev) {
+      const hex = /** @type {HTMLInputElement} */ (ev.target).value;
+      this.contrastB = hex;
+    },
+    contrastReport() {
+      const a = this.contrastColorA();
+      const b = this.contrastColorB();
+      if (!a || !b) return null;
+      try {
+        return a.contrast(b);
       } catch {
         return null;
       }
     },
-    foregroundOnBase() {
-      return this.baseColor?.fg() ?? null;
+    fgMinRatio() {
+      return FG_LEVEL_MIN_RATIO[this.fgLevel] ?? FG_LEVEL_MIN_RATIO.base;
+    },
+    fgLevelHint() {
+      const r = this.fgMinRatio();
+      const intent = ['strong', 'base', 'muted', 'subtle'].includes(this.fgLevel);
+      return intent
+        ? `Intent band “${this.fgLevel}”: minimum ${r}:1 (not a WCAG grade name).`
+        : `WCAG/UI level “${this.fgLevel}”: minimum ${r}:1.`;
+    },
+    foregroundOnSurface() {
+      const surface = this.contrastSurfaceColor();
+      if (!surface) return null;
+      try {
+        return surface.fg(this.fgLevel);
+      } catch {
+        return null;
+      }
     },
     onTarget() {
-      if (!this.baseColor) return null;
+      const ink = this.contrastInkColor();
+      const surface = this.contrastSurfaceColor();
+      if (!ink || !surface) return null;
       try {
-        return this.baseColor.on(this.onRatio, { against: this.contrastAgainst });
+        return ink.on(this.onRatio, { against: surface });
       } catch {
         return null;
       }
     },
-    contrastMatrix() {
-      if (!this.baseColor) return [];
-      return this.baseColor.all(this.weight).map((step) => {
-        const vsWhite = step.contrast('#fff');
-        const vsBlack = step.contrast('#000');
-        return { step, vsWhite, vsBlack };
-      });
+    contrastScaleRows() {
+      const palette = this.contrastColorA();
+      const surface = this.contrastSurfaceColor();
+      if (!palette || !surface) return [];
+      try {
+        return palette.all(this.weight).map((step) => {
+          const report = step.contrast(surface);
+          const passTitle = [
+            `ratio ${report.ratio.toFixed(2)}:1`,
+            report.passes.aa ? 'AA pass' : 'AA fail',
+            report.passes.aaa ? 'AAA pass' : 'AAA fail',
+          ].join(' · ');
+          return {
+            step,
+            ratio: report.ratio,
+            passes: report.passes,
+            passTitle,
+          };
+        });
+      } catch {
+        return [];
+      }
     },
 
     labelFor(color) {
@@ -481,7 +565,7 @@ document.addEventListener('alpine:init', () => {
           'javascript',
         ),
         docsApi: await highlightCode(
-          `new Color(input)\nparse(input)                 // Color | null\ncolor.tint(w?) / shade(w?)\ncolor.tints(step?) / shades(step?) / all(step?)\ncolor.scale(weight?, { preset?: 'zen' | 'tailwind' | null })\ncolor.cssVariablesString(name, opts?)\ncssVariablesString(colors, name, opts?)\ncolor.contrast(other)\ncolor.fg() / bestForeground()\ncolor.on(ratio, { against? })\ncolor.oklchString() / rgbString() / hslString() / hexString()`,
+          `new Color(input)\nparse(input)                 // Color | null\ncolor.tint(w?) / shade(w?)\ncolor.tints(step?) / shades(step?) / all(step?)\ncolor.scale(weight?, { preset?: 'zen' | 'tailwind' | null })\ncolor.cssVariablesString(name, opts?)\ncssVariablesString(colors, name, opts?)\ncolor.contrast(other)\ncolor.fg() / fg('aa'|'base'|…)\ncolor.on(ratio, { against? })\ncolor.oklchString() / rgbString() / hslString() / hexString()`,
           'javascript',
         ),
         scaleZen: await highlightCode(
@@ -535,7 +619,7 @@ document.addEventListener('alpine:init', () => {
         params.preset = this.apiPreset;
       }
       if (this.apiOp === 'contrast' || this.apiOp === 'on') {
-        params.against = this.contrastAgainst;
+        params.against = this.contrastB;
       }
       if (this.apiOp === 'on') params.ratio = String(this.onRatio);
       const result = runApi(params);

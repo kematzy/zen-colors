@@ -47,7 +47,7 @@ describe('Color.contrast()', () => {
 });
 
 describe('Color.fg() / bestForeground()', () => {
-  it('returns black on a light background', () => {
+  it('returns black on a light background (default base ≥ 5:1)', () => {
     const fg = new Color('#fff').fg();
     expect(fg.hexString().toLowerCase()).toBe('#000000');
   });
@@ -63,6 +63,37 @@ describe('Color.fg() / bestForeground()', () => {
     expect(fg.hexString().toLowerCase()).toBe('#000000');
   });
 
+  it('empty fg() matches explicit base level', () => {
+    const c = new Color('#0af');
+    expect(c.fg().hexString()).toBe(c.fg('base').hexString());
+  });
+
+  it('prefers a B/W that meets the minimum when only one does', () => {
+    // On #0af white fails aa (4.5); black passes → black for aa and strong
+    const bg = new Color('#0af');
+    expect(bg.fg('aa').hexString().toLowerCase()).toBe('#000000');
+    expect(bg.fg('strong').hexString().toLowerCase()).toBe('#000000');
+    expect(bg.fg('ui').hexString().toLowerCase()).toBe('#000000');
+  });
+
+  it('best-effort when neither B/W meets a high floor', () => {
+    // Mid grey: both ratios modest; aaa may be unreachable for both in some cases
+    // Use a mid chroma mid L where white and black are closer
+    const bg = new Color('oklch(55% 0.02 100)');
+    const fg = bg.fg('aaa');
+    const rBlack = new Color('#000').contrast(bg).ratio;
+    const rWhite = new Color('#fff').contrast(bg).ratio;
+    const chosen = fg.hexString().toLowerCase() === '#000000' ? rBlack : rWhite;
+    expect(chosen).toBeGreaterThanOrEqual(Math.max(rBlack, rWhite) - 1e-9);
+  });
+
+  it('throws ColorError for unknown or alias levels', () => {
+    const c = new Color('#0af');
+    expect(() => c.fg('best' as 'aa')).toThrow(ColorError);
+    expect(() => c.fg('aalarge' as 'aa')).toThrow(ColorError);
+    expect(() => c.fg('normal' as 'aa')).toThrow(ColorError);
+  });
+
   it('returns a Color that chains to formatters', () => {
     const s = new Color('#0af').fg().rgbString();
     expect(s).toBe('rgb(0 0 0)');
@@ -71,6 +102,7 @@ describe('Color.fg() / bestForeground()', () => {
   it('bestForeground is an alias of fg', () => {
     const c = new Color('#333');
     expect(c.bestForeground().hexString()).toBe(c.fg().hexString());
+    expect(c.bestForeground('aaa').hexString()).toBe(c.fg('aaa').hexString());
   });
 });
 

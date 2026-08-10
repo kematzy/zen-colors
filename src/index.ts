@@ -6,7 +6,8 @@
  */
 
 export { Color, parse } from './color.js';
-export type { ContrastPasses, ContrastResult, OnOptions } from './contrast.js';
+export type { ContrastPasses, ContrastResult, FgLevel, OnOptions } from './contrast.js';
+export { FG_LEVEL_MIN_RATIO, resolveFgLevel } from './contrast.js';
 export {
   assertCssNameSegment,
   cssKeyForColor,

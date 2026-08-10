@@ -5,6 +5,7 @@ import {
   contrastOf,
   onContrast,
   type ContrastResult,
+  type FgLevel,
   type OnOptions,
 } from './contrast.js';
 import { ColorError } from './errors.js';
@@ -242,15 +243,22 @@ export class Color {
   }
 
   /**
-   * Best black or white foreground to place on top of this color (as a background).
+   * Best black or white foreground on top of this color (as background).
+   *
+   * Optional `level` is a **minimum** contrast target (see {@link FgLevel}):
+   * WCAG keys (`aa`, `aaa`, `ui`, …) or intent bands (`strong`, `base`, `muted`, `subtle`).
+   * Prefers a B/W candidate that meets the floor; otherwise best effort.
+   * Omit `level` → same as `'base'` (minimum 5:1).
+   *
+   * Never leaves black/white — use {@link on} to tint/shade this color to a ratio.
    */
-  fg(): Color {
-    return bestForegroundOf(this);
+  fg(level?: FgLevel): Color {
+    return bestForegroundOf(this, level);
   }
 
   /** Alias of {@link fg}. */
-  bestForeground(): Color {
-    return this.fg();
+  bestForeground(level?: FgLevel): Color {
+    return this.fg(level);
   }
 
   /**

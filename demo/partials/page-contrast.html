@@ -1,33 +1,102 @@
 <!-- ========== CONTRAST ========== -->
-<section x-show="mode === 'contrast'" class="page-pad space-y-6">
-  <div class="flex flex-wrap items-end gap-4">
-    <label class="text-sm">
-      <span class="mb-1 block text-theme-fg-muted">Against</span>
-      <input type="text" class="input w-40 font-mono" x-model="contrastAgainst" />
-    </label>
-    <label class="text-sm">
-      <span class="mb-1 block text-theme-fg-muted">on() target ratio</span>
-      <input
-        type="number"
-        min="1"
-        max="21"
-        step="0.1"
-        class="input w-24"
-        x-model.number="onRatio"
-      />
-    </label>
+<section x-show="mode === 'contrast'" class="page-pad space-y-8">
+  <div class="max-w-3xl space-y-2">
+    <h2 class="text-xl font-semibold text-theme-fg">Contrast</h2>
+    <p class="text-sm text-theme-fg-muted">
+      Three jobs: <strong class="text-theme-fg">measure</strong> a pair,
+      <strong class="text-theme-fg">pick black/white ink</strong> on a surface (<kbd>.fg</kbd>), or
+      <strong class="text-theme-fg">nudge a color</strong> along its tint/shade ladder until it
+      meets a ratio (<kbd>.on</kbd>). Color <strong class="text-theme-fg">A</strong> is the header
+      playground color; set <strong class="text-theme-fg">B</strong> below (any CSS color).
+    </p>
   </div>
 
-  <div class="grid gap-4 md:grid-cols-3">
-    <div class="panel">
-      <h3 class="panel-title-code">.contrast(against)</h3>
+  <!-- A / B controls -->
+  <div class="panel space-y-4">
+    <div class="flex flex-wrap items-center justify-between gap-3">
+      <h3 class="text-base font-semibold">Colors A &amp; B</h3>
+      <button type="button" class="btn text-xs uppercase" @click="swapContrastColors()">
+        Swap A ↔ B
+      </button>
+    </div>
+
+    <div class="grid gap-4 md:grid-cols-2">
+      <div class="space-y-2">
+        <p class="text-xs font-semibold tracking-wide text-theme-fg-muted uppercase">
+          A · header color
+        </p>
+        <div class="flex items-center gap-2">
+          <span
+            class="h-10 w-10 shrink-0 rounded-lg border border-theme-border shadow-sm"
+            :style="`background:${baseColor ? baseColor.hexString() : '#888'}`"
+            title="Edit via header color input"
+          ></span>
+          <code class="font-mono text-sm break-all" x-text="colorInput"></code>
+        </div>
+        <p class="text-xs text-theme-fg-muted">Change A with the main color field in the header.</p>
+      </div>
+
+      <div class="space-y-2">
+        <p class="text-xs font-semibold tracking-wide text-theme-fg-muted uppercase">B · compare</p>
+        <div class="flex items-center gap-2">
+          <input
+            type="color"
+            class="h-10 w-10 cursor-pointer rounded-lg border border-theme-border bg-transparent p-0"
+            :value="contrastBHex()"
+            @input="onContrastBColorInput($event)"
+            title="Pick color B"
+            aria-label="Pick color B"
+          />
+          <input
+            type="text"
+            class="input min-w-0 flex-1 font-mono"
+            x-model="contrastB"
+            placeholder="#fff · oklch(…) · white"
+            spellcheck="false"
+            autocomplete="off"
+          />
+        </div>
+        <p class="text-xs text-theme-fg-muted">Paste any CSS color string Zen-Colors accepts.</p>
+      </div>
+    </div>
+
+    <div class="flex flex-wrap items-center gap-3 border-t border-theme-border pt-4">
+      <span class="text-sm text-theme-fg-muted">Surface for .fg / .on previews:</span>
+      <div class="flex flex-wrap gap-2">
+        <button
+          type="button"
+          class="btn text-xs"
+          :class="contrastSurface === 'A' ? 'btn-primary' : ''"
+          @click="contrastSurface = 'A'"
+        >
+          A is background
+        </button>
+        <button
+          type="button"
+          class="btn text-xs"
+          :class="contrastSurface === 'B' ? 'btn-primary' : ''"
+          @click="contrastSurface = 'B'"
+        >
+          B is background
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Three job panels -->
+  <div class="grid gap-4 lg:grid-cols-3">
+    <!-- Measure -->
+    <div class="panel space-y-3">
+      <h3 class="panel-title-code">.contrast(other)</h3>
+      <p class="text-sm text-theme-fg-muted">
+        Measure the pair <kbd>A</kbd> vs <kbd>B</kbd> — ratio, WCAG badges, which side is darker.
+      </p>
       <template x-if="contrastReport()">
-        <div class="mt-3 space-y-2 text-sm">
+        <div class="space-y-3">
           <p
-            class="font-mono text-2xl font-semibold"
+            class="font-mono text-3xl font-semibold"
             x-text="contrastReport().ratio.toFixed(2) + ' : 1'"
           ></p>
-
           <div class="flex flex-wrap gap-1">
             <span class="badge" :class="contrastReport().passes.aa ? 'badge-pass' : 'badge-fail'">
               AA
@@ -36,7 +105,7 @@
               class="badge"
               :class="contrastReport().passes.aaLarge ? 'badge-pass' : 'badge-fail'"
             >
-              AA large
+              <abbr title="AA large text ≥ 3:1">AA large</abbr>
             </span>
             <span class="badge" :class="contrastReport().passes.aaa ? 'badge-pass' : 'badge-fail'">
               AAA
@@ -45,94 +114,181 @@
               class="badge"
               :class="contrastReport().passes.aaaLarge ? 'badge-pass' : 'badge-fail'"
             >
-              AAA large
+              <abbr title="AAA large text ≥ 4.5:1">AAA large</abbr>
             </span>
           </div>
-
           <p class="text-xs text-theme-fg-muted">
-            Current is <span x-text="contrastReport().current"></span>
+            A is
+            <span class="font-medium text-theme-fg" x-text="contrastReport().current"></span>
+            of the pair
+          </p>
+          <div class="flex h-16 overflow-hidden rounded-lg border border-theme-border">
+            <div
+              class="flex flex-1 items-center justify-center text-xs font-semibold"
+              :style="`background:${contrastColorA()?.hexString()};color:${contrastColorA()?.fg().hexString()}`"
+            >
+              A
+            </div>
+            <div
+              class="flex flex-1 items-center justify-center text-xs font-semibold"
+              :style="`background:${contrastColorB()?.hexString()};color:${contrastColorB()?.fg().hexString()}`"
+            >
+              B
+            </div>
+          </div>
+        </div>
+      </template>
+      <p x-show="!contrastReport()" class="text-sm text-theme-danger">Could not parse A or B.</p>
+    </div>
+
+    <!-- fg -->
+    <div class="panel space-y-3">
+      <h3 class="panel-title-code">.fg(level?)</h3>
+      <p class="text-sm text-theme-fg-muted">
+        Black or white ink on the <strong class="text-theme-fg">surface</strong>. Optional level is
+        a <em>minimum</em> ratio (intent bands or WCAG). Best effort if neither B/W passes.
+      </p>
+
+      <div class="flex flex-wrap gap-1">
+        <template x-for="lvl in fgLevelOptions" :key="lvl.id">
+          <button
+            type="button"
+            class="btn text-xs px-2"
+            :class="fgLevel === lvl.id ? 'btn-primary' : ''"
+            @click="fgLevel = lvl.id"
+            :title="lvl.title"
+            x-text="lvl.id"
+          ></button>
+        </template>
+      </div>
+      <p class="text-xs text-theme-fg-muted" x-text="fgLevelHint()"></p>
+
+      <template x-if="foregroundOnSurface()">
+        <div class="space-y-2">
+          <div
+            class="flex h-28 flex-col items-center justify-center gap-1 rounded-lg border border-theme-border px-3 text-center"
+            :style="`background:${contrastSurfaceColor()?.hexString()};color:${foregroundOnSurface().hexString()}`"
+          >
+            <span class="text-sm font-semibold">Sample text</span>
+            <span
+              class="font-mono text-xs opacity-80"
+              x-text="foregroundOnSurface().hexString()"
+            ></span>
+          </div>
+          <p class="font-mono text-xs text-theme-fg-muted">
+            ratio
+            <span
+              x-text="foregroundOnSurface().contrast(contrastSurfaceColor()).ratio.toFixed(2)"
+            ></span>
+            : 1 · target ≥ <span x-text="fgMinRatio()"></span>
           </p>
         </div>
       </template>
     </div>
 
-    <div class="panel">
-      <h3 class="panel-title-code">.fg()</h3>
+    <!-- on -->
+    <div class="panel space-y-3">
+      <h3 class="panel-title-code">.on(ratio, { against })</h3>
+      <p class="text-sm text-theme-fg-muted">
+        Tint or shade the <strong class="text-theme-fg">non-surface</strong> color until it meets
+        the target against the surface (family search, not limited to B/W).
+      </p>
 
-      <p>Best black/white on this color as background.</p>
-      <template x-if="foregroundOnBase()">
-        <div class="mt-3 flex overflow-hidden rounded-lg border border-theme-border">
-          <div
-            class="flex h-24 flex-1 items-center justify-center text-sm font-semibold"
-            :style="`background:${baseColor.hexString()};color:${foregroundOnBase().hexString()}`"
-          >
-            Sample text
-          </div>
-        </div>
-      </template>
-    </div>
+      <div class="flex flex-wrap gap-1">
+        <button
+          type="button"
+          class="btn text-xs"
+          :class="onRatio === 3 ? 'btn-primary' : ''"
+          @click="onRatio = 3"
+        >
+          UI / large 3
+        </button>
+        <button
+          type="button"
+          class="btn text-xs"
+          :class="onRatio === 4.5 ? 'btn-primary' : ''"
+          @click="onRatio = 4.5"
+        >
+          AA 4.5
+        </button>
+        <button
+          type="button"
+          class="btn text-xs"
+          :class="onRatio === 7 ? 'btn-primary' : ''"
+          @click="onRatio = 7"
+        >
+          AAA 7
+        </button>
+      </div>
 
-    <div class="panel">
-      <h3 class="panel-title-code">.on(ratio)</h3>
+      <label class="block text-sm text-theme-fg-muted">
+        Target ratio
+        <span class="ml-2 font-mono text-theme-fg" x-text="onRatio.toFixed(1)"></span>
+        <input
+          type="range"
+          min="1"
+          max="21"
+          step="0.1"
+          class="mt-2 w-full"
+          x-model.number="onRatio"
+        />
+      </label>
 
-      <p>Tint/shade of current color that meets the ratio.</p>
       <template x-if="onTarget()">
-        <div class="mt-3">
+        <div class="space-y-2">
           <div
-            class="h-16 rounded-lg border border-theme-border"
-            :style="`background:${onTarget().hexString()}`"
-          ></div>
-
-          <p class="mt-2 font-mono text-xs" x-text="onTarget().oklchString()"></p>
-
-          <p class="font-mono text-xs" x-text="onTarget().hexString()"></p>
+            class="flex h-28 flex-col justify-end rounded-lg border border-theme-border p-3"
+            :style="`background:${contrastSurfaceColor()?.hexString()};color:${onTarget().hexString()}`"
+          >
+            <span class="text-sm font-semibold">Adjusted sample</span>
+            <span class="font-mono text-xs" x-text="onTarget().oklchString()"></span>
+          </div>
+          <p class="font-mono text-xs text-theme-fg-muted" x-text="onTarget().hexString()"></p>
         </div>
       </template>
+      <p x-show="!onTarget()" class="text-sm text-theme-danger">Need two valid colors.</p>
     </div>
   </div>
 
-  <div class="panel overflow-x-auto">
-    <h3 class="font-semibold">Scale vs white / black</h3>
-    <table class="mt-3 w-full min-w-lg text-left text-xs">
-      <thead class="text-theme-fg-muted">
-        <tr>
-          <th class="py-1 pr-3">Step</th>
-          <th class="py-1 pr-3">Swatch</th>
-          <th class="py-1 pr-3">vs white</th>
-          <th class="py-1 pr-3">AA</th>
-          <th class="py-1 pr-3">vs black</th>
-          <th class="py-1">AA</th>
-        </tr>
-      </thead>
-      <tbody>
-        <template x-for="(row, i) in contrastMatrix()" :key="'m'+i">
-          <tr class="border-t border-t-theme-border">
-            <td class="py-1.5 pr-3 font-mono" x-text="row.step.type + ' ' + row.step.weight"></td>
-            <td class="py-1.5 pr-3">
-              <span
-                class="inline-block h-5 w-10 rounded"
-                :style="`background:${row.step.hexString()}`"
-              ></span>
-            </td>
-            <td class="py-1.5 pr-3 font-mono" x-text="row.vsWhite.ratio.toFixed(2)"></td>
-            <td class="py-1.5 pr-3">
-              <span
-                class="badge"
-                :class="row.vsWhite.passes.aa ? 'badge-pass' : 'badge-fail'"
-                x-text="row.vsWhite.passes.aa ? 'pass' : 'fail'"
-              ></span>
-            </td>
-            <td class="py-1.5 pr-3 font-mono" x-text="row.vsBlack.ratio.toFixed(2)"></td>
-            <td class="py-1.5">
-              <span
-                class="badge"
-                :class="row.vsBlack.passes.aa ? 'badge-pass' : 'badge-fail'"
-                x-text="row.vsBlack.passes.aa ? 'pass' : 'fail'"
-              ></span>
-            </td>
-          </tr>
-        </template>
-      </tbody>
-    </table>
+  <!-- Scale clarity strip -->
+  <div class="panel space-y-3">
+    <div class="flex flex-wrap items-end justify-between gap-2">
+      <div>
+        <h3 class="font-semibold">Scale clarity on surface</h3>
+        <p class="mt-1 text-sm text-theme-fg-muted">
+          Each step of <kbd>A.all(weight)</kbd> as text on the surface color (B if A is bg is wrong
+          — surface from toggle). Compact ratios; hover badges for detail.
+        </p>
+      </div>
+    </div>
+
+    <div
+      class="flex flex-wrap gap-2 rounded-xl border border-theme-border p-4"
+      :style="`background:${contrastSurfaceColor()?.hexString() || '#888'}`"
+    >
+      <template x-for="(row, i) in contrastScaleRows()" :key="'cs'+i">
+        <div
+          class="flex min-w-24 flex-col gap-1 rounded-lg px-2 py-2 text-center"
+          :style="`color:${row.step.hexString()}; background: color-mix(in oklch, ${row.step.hexString()} 12%, transparent)`"
+        >
+          <span
+            class="font-mono text-[10px] uppercase opacity-90"
+            x-text="chipLabel(row.step)"
+          ></span>
+          <span class="text-sm font-semibold leading-tight">Aa</span>
+          <span class="font-mono text-[10px]" x-text="row.ratio.toFixed(1)"></span>
+          <abbr
+            class="badge mx-auto text-[10px]"
+            :class="row.passes.aa ? 'badge-pass' : 'badge-fail'"
+            :title="row.passTitle"
+            x-text="row.passes.aa ? 'AA' : '·'"
+          ></abbr>
+        </div>
+      </template>
+    </div>
+    <p class="text-xs text-theme-fg-muted">
+      Weight from header (<kbd x-text="weight"></kbd>). Strip uses surface =
+      <kbd x-text="contrastSurface"></kbd>.
+    </p>
   </div>
 </section>
