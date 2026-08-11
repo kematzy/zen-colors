@@ -2,14 +2,12 @@
 
 ## Confirmed
 
-1) **DEMO: Improve the Contrast section**
+None
 
-This section is confusing and not clear. Can be improved.
+## Ideas only (in random order)
 
-## Ideas only
-
-In random order
-
-### DEMO: GUI and semantic theme builder.
-
-A very simplified version of [daisyUI's theme generator](https://daisyui.com/theme-generator/) and similar, which allows choices for desired colors, tints/shades and displayed within a demo GUI.
+- ### DEMO: Support color collections stored in `localStorage`
+  - Basically a formalized version of "History" where user can save a color scale with a given name. Max 6.
+  - Opening the Collection presents color scale previews scale in an overlay (not main scale) in vertical order.
+    - Standard sized smaller color swatches with `t*`, `base` and `s*` strings on them.
+    - Possible ability to copy CSS variable string or color value for each swatch.

@@ -280,7 +280,7 @@
               ></span>
             </template>
           </div>
-          <p class="text-xs text-theme-fg-muted">
+          <p class="text-xs text-theme-fg-muted pl-4">
             A is
             <span class="font-medium text-theme-fg" x-text="contrastReport().current"></span>
             of the pair
@@ -313,10 +313,8 @@
       </p>
 
       <div class="space-y-2">
-        <p class="text-[10px] font-semibold tracking-wide text-theme-fg-muted uppercase">
-          WCAG / UI
-        </p>
         <div class="flex flex-wrap gap-1">
+          <p class="text-xs font-semibold text-theme-fg-muted uppercase">WCAG / UI</p>
           <template x-for="lvl in fgLevelOptionsWcag" :key="lvl.id">
             <button
               type="button"
@@ -328,8 +326,8 @@
             ></button>
           </template>
         </div>
-        <p class="text-[10px] font-semibold tracking-wide text-theme-fg-muted uppercase">Intent</p>
         <div class="flex flex-wrap gap-1">
+          <p class="text-xs font-semibold text-theme-fg-muted uppercase">Intent</p>
           <template x-for="lvl in fgLevelOptionsIntent" :key="lvl.id">
             <button
               type="button"
