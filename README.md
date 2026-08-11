@@ -149,6 +149,8 @@ Full signatures are in the published TypeScript declarations (`dist/index.d.ts`)
 
 ## Development
 
+Agent / contributor workflow lives in **[`AGENTS.md`](./AGENTS.md)** and the project skill **[`.grok/skills/dev-workflow`](./.grok/skills/dev-workflow/SKILL.md)** (git, checks, changelog, release). Other repos can install the same pattern via the user Grok skill `/setup-dev-workflow`.
+
 ```bash
 npm install
 npm test              # vitest (node)
