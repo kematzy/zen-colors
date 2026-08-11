@@ -7,27 +7,28 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
-### Fixed
-
-- Spellcheck: allow `lightningcss` in the project dictionary (CI Node 24).
-
-### Changed
-
-- `npm run check` and `prepublishOnly` now include spellcheck (and publish also runs lint + format) so local pre-push and releases match CI quality gates.
-- Demo markup split into Handlebars partials (`demo/partials/`) via `vite-plugin-handlebars` so `demo/index.html` stays a short shell.
+## [0.2.0] - 2026-08-11
 
 ### Added
 
-- GitHub social preview assets under `assets/` (HTML source, render script, PNG).
-- Demo syntax highlighting via Prism.js (`javascript`, `bash`, `markup`) and a custom `light-dark()` token theme (`demo/src/lib/prism.css`).
 - `Color#cssVariablesString(name, options?)` and free `cssVariablesString(colors, name, options?)` to export scales as CSS custom properties (`zen` / `tailwind` / series; formats oklch, hex, rgb, hsl).
-- `Color#fg(level?)`: no level → pure black/white; with level → soft grey meeting that minimum ratio on the background (via tint/shade search), else B/W best effort. Levels: WCAG + intent (`strong`/`base`/`muted`/`subtle`).
-- Contrast demo rebuilt: A/B pickers with OKLCH overlays, surface toggle, dual-row level chips, `.on` slider, scale clarity strip.
+- `Color#fg(level?)`: no level → pure black/white; with level → soft grey meeting that level’s **minimum** ratio on the background (via tint/shade search from white/black), else B/W best effort.
+  - WCAG/UI levels: `aaa`, `aaa-large`, `aa`, `aa-large`, `ui`
+  - Intent band floors: `strong` (6), `base` (5), `muted` (4), `subtle` (3)
+  - Helpers: `FgLevel`, `FG_LEVEL_MIN_RATIO`, `resolveFgLevel`
+- Demo: Methods page live docs for CSS variable export; Contrast page rebuilt (A/B pickers, surface toggle, level chips, `.on` slider, scale clarity strip).
+- Demo: Handlebars partials (`vite-plugin-handlebars`), Prism.js syntax highlighting, social preview assets.
+- Quality: spellcheck in `check` / `prepublishOnly`; coverage 100% statements/lines/functions (≥95% branches).
 
 ### Changed
 
-- `fg(level)` no longer returns only black/white for named levels — it targets the band floor with greys when possible.
-- Coverage thresholds: 100% statements/lines/functions (branches ≥95%); `src/types.ts` excluded as type-only.
+- Local `npm run check` and publish gates include spellcheck (and publish runs lint + format).
+- Demo production sourcemaps disabled (avoids Tailwind SOURCEMAP_BROKEN noise).
+- Package dictionary allows `lightningcss`, Prism/cspell terms as needed.
+
+### Fixed
+
+- Spellcheck: allow `lightningcss` in the project dictionary (CI Node 24).
 
 ## [0.1.0] - 2026-08-08
 
