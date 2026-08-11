@@ -74,10 +74,24 @@ describe('cssVariablesString (standalone)', () => {
     expect(() => cssVariablesString({ base: orange }, '')).toThrow(ColorError);
     expect(() => cssVariablesString({ base: orange }, '1bad')).toThrow(ColorError);
     expect(() => cssVariablesString({ base: orange }, 'has space')).toThrow(ColorError);
+    // @ts-expect-error intentional non-string
+    expect(() => cssVariablesString({ base: orange }, 42)).toThrow(ColorError);
   });
 
   it('throws on empty list', () => {
     expect(() => cssVariablesString([], 'primary')).toThrow(/empty/i);
+  });
+
+  it('throws on non-array non-object colors', () => {
+    // @ts-expect-error intentional
+    expect(() => cssVariablesString(null, 'primary')).toThrow(ColorError);
+    // @ts-expect-error intentional
+    expect(() => cssVariablesString('nope', 'primary')).toThrow(ColorError);
+  });
+
+  it('throws on invalid format option', () => {
+    // @ts-expect-error intentional
+    expect(() => cssVariablesString({ base: orange }, 'p', { format: 'lab' })).toThrow(ColorError);
   });
 });
 
@@ -122,6 +136,17 @@ describe('Color.cssVariablesString()', () => {
     expect(lines.some((l) => l.startsWith('--color-primary-500:'))).toBe(true);
     expect(lines[lines.length - 1]).toMatch(/^--color-primary-950: #/);
   });
+
+  it('supports format and prefix options on Color method', () => {
+    const css = orange.cssVariablesString('brand', {
+      preset: 'zen',
+      weight: 25,
+      format: 'hex',
+      prefix: 'zen',
+    });
+    expect(css).toContain('--zen-brand-base: #');
+    expect(css).toContain('--zen-brand-t75:');
+  });
 });
 
 describe('css helpers', () => {
@@ -130,6 +155,19 @@ describe('css helpers', () => {
     expect(cssKeyForColor(c)).toBe('base');
     expect(cssKeyForColor(c.tint(5))).toBe('t05');
     expect(cssKeyForColor(c.shade(10))).toBe('s10');
+  });
+
+  it('cssKeyForColor uses numeric keys for type scale', () => {
+    const tw = new Color('#0af').scale(10, { preset: 'tailwind' }) as Record<string, Color>;
+    // 500 is type base; lighter/darker steps use type scale with weight = step
+    expect(cssKeyForColor(tw['500']!)).toBe('base');
+    expect(cssKeyForColor(tw['50']!)).toBe('50');
+    expect(cssKeyForColor(tw['900']!)).toBe('900');
+  });
+
+  it('cssKeyForColor pads and handles non-finite weight', () => {
+    const c = Color.fromCulori(new Color('#0af').toCulori(), 'tint', Number.NaN);
+    expect(cssKeyForColor(c)).toBe('t0');
   });
 
   it('formatCssColorValue rejects unknown format', () => {

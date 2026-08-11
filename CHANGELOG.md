@@ -27,6 +27,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Changed
 
 - `fg(level)` no longer returns only black/white for named levels — it targets the band floor with greys when possible.
+- Coverage thresholds: 100% statements/lines/functions (branches ≥95%); `src/types.ts` excluded as type-only.
 
 ## [0.1.0] - 2026-08-08
 

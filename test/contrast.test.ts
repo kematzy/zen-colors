@@ -74,6 +74,27 @@ describe('Color.fg() / bestForeground()', () => {
     expect(fg.contrast(bg).ratio).toBeGreaterThanOrEqual(4.5);
   });
 
+  it('best-effort pure B/W when soft greys cannot meet a high floor', () => {
+    // Mid grey: max B/W contrast is ~5.3:1 — aaa (7:1) is unreachable
+    const bg = new Color('#808080');
+    const fg = bg.fg('aaa');
+    const black = new Color('#000').contrast(bg).ratio;
+    const white = new Color('#fff').contrast(bg).ratio;
+    const chosen = fg.hexString().toLowerCase() === '#000000' ? black : white;
+    expect(chosen).toBeCloseTo(Math.max(black, white), 5);
+    expect(
+      fg.hexString().toLowerCase() === '#000000' || fg.hexString().toLowerCase() === '#ffffff',
+    ).toBe(true);
+  });
+
+  it('prefers the softer of two greys when both meet the floor', () => {
+    const bg = new Color('#fff');
+    const fg = bg.fg('subtle'); // 3:1 — both white-search and black-search meet
+    expect(fg.contrast(bg).ratio).toBeGreaterThanOrEqual(3);
+    // Soft grey, not pure black
+    expect(fg.hexString().toLowerCase()).not.toBe('#000000');
+  });
+
   it('throws ColorError for unknown or alias levels', () => {
     const c = new Color('#0af');
     expect(() => c.fg('best' as 'aa')).toThrow(ColorError);

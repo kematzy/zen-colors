@@ -10,12 +10,13 @@ export default defineConfig({
       provider: 'v8',
       reporter: ['text', 'html', 'lcov'],
       include: ['src/**/*.ts'],
-      exclude: ['src/**/*.d.ts'],
+      // types.ts is type-only (erased at compile) — no runtime statements to cover
+      exclude: ['src/**/*.d.ts', 'src/types.ts'],
       thresholds: {
-        statements: 90,
-        branches: 90,
-        functions: 90,
-        lines: 90,
+        statements: 100,
+        branches: 95,
+        functions: 100,
+        lines: 100,
       },
     },
   },

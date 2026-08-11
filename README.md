@@ -153,7 +153,7 @@ Full signatures are in the published TypeScript declarations (`dist/index.d.ts`)
 npm install
 npm test              # vitest (node)
 npm run test:ui       # vitest interactive UI
-npm run test:coverage # ≥ 90% thresholds enforced
+npm run test:coverage # 100% statements/lines/functions; ≥95% branches
 npm run test:browser  # vitest browser smoke (Playwright / Chromium)
 npm run typecheck
 npm run lint

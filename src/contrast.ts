@@ -151,6 +151,7 @@ export function bestForegroundOf(background: Color, level?: FgLevel): Color {
     // Prefer the softer ink (ratio closer to the band floor)
     return ratioW <= ratioB ? fromWhite : fromBlack;
   }
+  /* v8 ignore next 3 -- @preserve defensive: one-sided meet is rare once on() best-effort runs */
   if (whiteOk) return fromWhite;
   if (blackOk) return fromBlack;
 

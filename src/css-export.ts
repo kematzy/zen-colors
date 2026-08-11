@@ -33,7 +33,7 @@ export function cssKeyForColor(color: Color): string {
   if (type === 'base') return 'base';
   if (type === 'tint') return `t${formatWeightKey(weight)}`;
   if (type === 'shade') return `s${formatWeightKey(weight)}`;
-  if (type === 'scale') return String(weight);
+  // type === 'scale' (Tailwind steps) or any future role
   return String(weight);
 }
 
